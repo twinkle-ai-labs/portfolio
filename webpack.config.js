@@ -97,11 +97,13 @@ module.exports = (env, argv) => {
             new CleanWebpackPlugin(),
             new CopyWebpackPlugin({
                 patterns: [
-                    { from: 'src/assets/models', to: 'models' },
-                    { from: 'template/robots.txt', to: 'robots.txt' },
-                    { from: 'template/manifest.json', to: 'manifest.json' },
-                    { from: 'template/404.html', to: '404.html' },
-                    { from: 'template/og.png', to: 'og.png' },
+                    {from: 'src/assets/models', to: 'models'},
+                    {from: 'src/assets/pdf', to: 'pdf'},
+                    {from: 'template/robots.txt', to: 'robots.txt'},
+                    {from: 'template/manifest.json', to: 'manifest.json'},
+                    {from: 'template/404.html', to: '404.html'},
+                    {from: 'template/og.png', to: 'og.png'},
+                    {from: 'node_modules/pdfjs-dist/build/pdf.worker.min.mjs', to: 'pdf.worker.min.mjs'},
                 ],
             }),
             new CnameWebpackPlugin({
