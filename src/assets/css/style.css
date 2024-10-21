@@ -472,7 +472,7 @@ button {
     max-height: 100%;
     overflow: hidden;
 }
-#content.wallpaper .section > * {
+#content.wallpaper .section > *:not(.section-bg) {
     width: fit-content;
 }
 /**
