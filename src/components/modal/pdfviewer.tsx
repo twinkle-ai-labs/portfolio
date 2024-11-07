@@ -3,7 +3,7 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
 import ReactModal from 'react-modal';
-import { IconButton } from '@mui/material';
+import {IconButton, Skeleton} from '@mui/material';
 import { FaTimes } from 'react-icons/fa';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa6';
 
@@ -51,6 +51,26 @@ const PdfViewerModal = (props: PdfModalProps) => {
         thumbnailRefs.current[pageNumber - 1]?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'start' });
     };
 
+    const LoadingView = () => {
+        return (
+            <div>
+                <div className={"pdf-thumbnail"}>
+                    <h6>미리 보기</h6>
+                    <ul className={'pdf-thumbnail-list overflow-scrollbar'}>
+                        {Array.from({ length: 4 }).map((_, index) => (
+                            <li key={index} className={'pdf-thumbnail-element'}>
+                                <Skeleton variant="rectangular" width={1120 / 4.25} height={1120 / 4.25} />
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+                <div className={'pdf-content'}>
+                    <Skeleton variant="rectangular" width={1120} height={1120} />
+                </div>
+            </div>
+        )
+    }
+
     return (
         <ReactModal
             isOpen={props.isOpen}
@@ -61,7 +81,7 @@ const PdfViewerModal = (props: PdfModalProps) => {
             ariaHideApp={false}
         >
             <div className={'modal-header'}>
-                <h4 className={'modal-title'}>{props.title}</h4>
+                <h5 className={'modal-title'}>{props.title}</h5>
                 <div className={'modal-pages'}>{createPages()}</div>
                 <div className={'modal-actions'}>
                     <IconButton onClick={props.onClose}>
@@ -70,7 +90,10 @@ const PdfViewerModal = (props: PdfModalProps) => {
                 </div>
             </div>
             <div className={'modal-body'}>
-                <Document file={props?.file} onLoadSuccess={onPDFLoaded} className={'pdf-container'}>
+                <Document file={props?.file}
+                          loading={<LoadingView />}
+                          onLoadSuccess={onPDFLoaded}
+                          className={'pdf-container'}>
                     <div className={"pdf-thumbnail"}>
                         <h6>미리 보기</h6>
                         <ul className={'pdf-thumbnail-list overflow-scrollbar'}>
