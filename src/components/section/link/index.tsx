@@ -1,8 +1,7 @@
 import {useEffect, useState} from 'react';
 import og, {OgData} from "@Data/og";
 import {LazyLoadImage} from "react-lazy-load-image-component";
-import {FaAngleRight} from "react-icons/fa6";
-
+import NextIcon from "@Images/icon-next.svg";
 
 export interface ILink {
     url: string
@@ -28,21 +27,21 @@ const LinkPreview = (props: ILink) => {
                     </div>
                     <div className={"og-info"}>
                         <h3 className={"og-title"}>{ogData.title}</h3>
-                        <a className={"og-link-preview"} target={"_blank"} href={props.url}>{props.url}</a>
+                        <div className={"og-link-preview"}>{props.url}</div>
                         <p>{ogData.description}</p>
                     </div>
                     <div className={"og-link"}>
-                        <a href={ogData.url} target={"_blank"}><FaAngleRight/></a>
+                        <img src={NextIcon} alt={ogData.title + " 바로가기"}/>
                     </div>
                 </>
             ) : (
                 <>
                     <div className={"og-info"}>
                         <h3 className={"og-title"}>{props.title}</h3>
-                        <a className={"og-link-preview"} target={"_blank"} href={props.url}>{props.url}</a>
+                        <div className={"og-link-preview"}>{props.url}</div>
                     </div>
                     <div className={"og-link"}>
-                        <FaAngleRight/>
+                        <img src={NextIcon} alt={props.title + " 바로가기"}/>
                     </div>
                 </>
             )}

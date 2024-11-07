@@ -21,6 +21,7 @@ import ResumeApp from "@Pages/resume";
 
 import {createBrowserRouter, RouterProvider,} from "react-router-dom";
 import * as process from "process";
+import GlobalModal from "@Components/modal/global";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -30,25 +31,29 @@ const Root = () => {
         <div>Loading</div>
     )
 }
-const router = createBrowserRouter([
+const routes = [
     {
         path: "/",
-        element: <MainApp />,
+        element: <MainApp/>,
     },
     {
-        path: "/space",
-        element: <SpaceApp />,
+        path: "space",
+        element: <SpaceApp/>,
     },
     {
-        path: "/resume",
-        element: <ResumeApp />,
+        path: "resume",
+        element: <ResumeApp/>
     },
     {
         path: "*",
-        element: <ErrorApp />,
+        element: <ErrorApp/>,
     },
-], {
-    basename: process.env.PUBLIC_URL
+]
+const router = createBrowserRouter(routes, {
+    basename: process.env.PUBLIC_URL,
+    future: {
+        v7_fetcherPersist: true,
+    },
 });
 root.render(
     <React.StrictMode>
@@ -61,6 +66,7 @@ root.render(
                     fallbackElement={<Root/>}
                 />
             </DevSupport>
+            <GlobalModal/>
         </Provider>
     </React.StrictMode>
 );

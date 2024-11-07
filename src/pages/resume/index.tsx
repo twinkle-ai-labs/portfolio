@@ -1,31 +1,23 @@
-import React, {useState} from 'react';
 import Header from "@Layout/header";
 import DrawerSection from "@Layout/drawer";
+import HomeSection from "@Pages/resume/section/home";
 
-import {Document, Page, pdfjs} from 'react-pdf';
-import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
-import 'react-pdf/dist/esm/Page/TextLayer.css';
-
-// react-pdf worker 설정
-pdfjs.GlobalWorkerOptions.workerSrc = 'pdf.worker.min.mjs';
+import '@Style/lib/aos/2.3.1/aos.css'
+import AOS from "aos";
+import {useEffect} from "react";
 
 const App = () => {
-    const [numPages, setNumPages] = useState<number>();
-    const [pageNumber, setPageNumber] = useState<number>(1);
-
-    function onDocumentLoadSuccess({numPages}: { numPages: number }): void {
-        setNumPages(numPages);
-    }
+    useEffect(() => {
+        AOS.init({duration: 1000});
+    }, []);
 
     return (
         <>
             <Header/>
             <main id="content" className={'resume'}>
-                <Document file="pdf/jobkorea-resume.pdf" onLoadSuccess={onDocumentLoadSuccess}>
-                    <Page pageNumber={pageNumber}/>
-                </Document>
+                <HomeSection />
             </main>
-            <DrawerSection/>
+            <DrawerSection />
         </>
     );
 };
