@@ -22,7 +22,8 @@ const HomeSection = () => {
                     type: "pdf",
                     props: {
                         title: '잡코리아 이력서',
-                        file: 'pdf/jobkorea-resume.pdf'
+                        file: 'pdf/jobkorea-resume.pdf',
+                        landscape: true
                     }
                 })
             );

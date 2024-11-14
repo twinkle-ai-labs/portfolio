@@ -1012,6 +1012,16 @@ button {
     opacity: 1;
 }
 
+.pdf-message.pdf-message-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    padding: 1rem;
+}
+.pdf-message.pdf-message-error img {
+    width: 70%;
+}
 /**
   Animation
  */
