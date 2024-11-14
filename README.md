@@ -26,13 +26,12 @@ Yellow (#ffd600)
 
 <br>
 
----
 
 ## 2. Hosting
 * Domain - 'twinklekhj.xyz'
 * Hosting by GitHub, Gabia
 
----
+<br>
 
 ## 3. Stack
 ### Basic
