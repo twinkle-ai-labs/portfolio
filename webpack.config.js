@@ -99,6 +99,7 @@ module.exports = (env, argv) => {
                 patterns: [
                     {from: 'src/assets/models', to: 'models'},
                     {from: 'src/assets/pdf', to: 'pdf'},
+                    {from: 'src/assets/images/star-bubble.png', to: 'logo.png'},
                     {from: 'template/robots.txt', to: 'robots.txt'},
                     {from: 'template/manifest.json', to: 'manifest.json'},
                     {from: 'template/404.html', to: '404.html'},

@@ -17,6 +17,7 @@ const FillaDesignContent = () => {
                 <li><LinkPreview title="바른치과의원" url={"http://barundc.com"}/></li>
                 <li><LinkPreview title="연세백세치과의원" url={"http://100yeardental.com"}/></li>
                 <li><LinkPreview title="김포사과나무치과" url={"http://kappleden.com"}/></li>
+                <li><LinkPreview title="아이레그" url={"http://ilegcorp.com"}/></li>
             </ul>
         </>
     );

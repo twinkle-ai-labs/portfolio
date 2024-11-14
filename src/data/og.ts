@@ -4,6 +4,8 @@ import ssjobgy from "@Images/og_ssjobgy.jpg"
 import dental100year from "@Images/og_100dental.jpg"
 import barundc from "@Images/og_barundc.jpg"
 import kappleden from "@Images/og_kappleden.png"
+import nlm from "@Images/og_nlm.png"
+import ileg from "@Images/og_ileg.png"
 
 export interface OgData {
     url: string;
@@ -46,11 +48,19 @@ og.set("http://kappleden.com", {
     "site_name": "김포사과나무치과"
 })
 
+og.set("http://ilegcorp.com", {
+    "url": "http://ilegcorp.com",
+    "title": "주식회사 아이레그",
+    "description": "다리교정기, 안짱다리 교정, 오다리 교정, X다리 교정, 휜다리 교정, 평발 교정, 발보조기",
+    "image": ileg,
+    "site_name": "주식회사 아이레그"
+})
+
 og.set("https://nlmbookcafe.com", {
     "url": "https://www.nlmbookcafe.com/en/",
     "title": "The New Life Mission Blogs",
     "description": "The New Life Mission Blogs",
-    "image": "https://i.ibb.co/C2zg258/facebook-jpg.jpg",
+    "image": nlm,
     "site_name": "The New Life Mission"
 });
 
