@@ -37,7 +37,7 @@ const HomeSection = () => {
                     PDF Viewer
                 </h1>
                 <div className={"section-desc"} data-aos="fade-up" data-aos-delay={200}>
-                    You can see the PDF files <br className={"mobile"}/> of Resume, Portfolio, Presentation.
+                    You can see the PDF files <br className={"mobile"}/> of Resume, Portfolio.
                 </div>
                 <div className={"section-content"} data-aos="fade-up" data-aos-delay={300}>
                     <ul>
