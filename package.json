@@ -1,7 +1,7 @@
 {
   "name": "hjkim1004.github.io",
   "homepage": "hjkim1004.github.io",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "private": true,
   "dependencies": {
     "@babylonjs/core": "^6.44.0",

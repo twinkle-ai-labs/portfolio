@@ -12,7 +12,7 @@ const HomeSection = () => {
                     type: "pdf",
                     props: {
                         title: '포트폴리오',
-                        file: 'pdf/portfolio.pdf'
+                        file: 'pdf/portfolio-2.pdf'
                     }
                 })
             );
@@ -24,16 +24,6 @@ const HomeSection = () => {
                         title: '잡코리아 이력서',
                         file: 'pdf/jobkorea-resume.pdf',
                         landscape: true
-                    }
-                })
-            );
-        } else if (type === 'presentation') {
-            dispatch(
-                openModal({
-                    type: "pdf",
-                    props: {
-                        title: '프리젠테이션',
-                        file: 'pdf/presentation.pdf'
                     }
                 })
             );
@@ -59,11 +49,6 @@ const HomeSection = () => {
                         <li>
                             <button onClick={e =>
                                 onPdfButtonClick(e, 'portfolio')}>Portfolio
-                            </button>
-                        </li>
-                        <li>
-                            <button onClick={e =>
-                                onPdfButtonClick(e, 'presentation')}>Presentation
                             </button>
                         </li>
                     </ul>
