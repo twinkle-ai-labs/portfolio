@@ -19,7 +19,7 @@ import SpaceApp from "@Pages/space";
 import ErrorApp from "@Pages/error";
 import ResumeApp from "@Pages/resume";
 
-import {createBrowserRouter, RouterProvider,} from "react-router-dom";
+import {createBrowserRouter, RouterProvider, useLocation,} from "react-router-dom";
 import * as process from "process";
 import GlobalModal from "@Components/modal/global";
 
@@ -31,24 +31,60 @@ const Root = () => {
         <div>Loading</div>
     )
 }
+
+const GA_MEASUREMENT_ID = 'G-5M8ND449DZ';
+
+declare global {
+    interface Window {
+        gtag?: (...args: any[]) => void;
+    }
+}
+
+const AnalyticsTracker = () => {
+    const location = useLocation();
+
+    React.useEffect(() => {
+        if (typeof window.gtag !== 'function') {
+            return;
+        }
+
+        window.gtag('config', GA_MEASUREMENT_ID, {
+            page_path: location.pathname + location.search + location.hash,
+            page_location: window.location.href,
+        });
+    }, [location]);
+
+    return null;
+};
+
+const AppShell = ({children}: { children: React.ReactNode }) => {
+    return (
+        <>
+            <AnalyticsTracker/>
+            {children}
+        </>
+    );
+};
+
 const routes = [
     {
         path: "/",
-        element: <MainApp/>,
+        element: <AppShell><MainApp/></AppShell>,
     },
     {
         path: "space",
-        element: <SpaceApp/>,
+        element: <AppShell><SpaceApp/></AppShell>,
     },
     {
         path: "resume",
-        element: <ResumeApp/>
+        element: <AppShell><ResumeApp/></AppShell>
     },
     {
         path: "*",
-        element: <ErrorApp/>,
+        element: <AppShell><ErrorApp/></AppShell>,
     },
 ]
+
 const router = createBrowserRouter(routes, {
     basename: process.env.PUBLIC_URL,
     future: {
@@ -61,10 +97,7 @@ root.render(
             <DevSupport ComponentPreviews={ComponentPreviews}
                         useInitialHook={useInitial}
             >
-                <RouterProvider
-                    router={router}
-                    fallbackElement={<Root/>}
-                />
+                <RouterProvider router={router} fallbackElement={<Root/>}/>
             </DevSupport>
             <GlobalModal/>
         </Provider>

@@ -101,6 +101,7 @@ module.exports = (env, argv) => {
                     {from: 'src/assets/pdf', to: 'pdf'},
                     {from: 'src/assets/images/star-bubble.png', to: 'logo.png'},
                     {from: 'template/robots.txt', to: 'robots.txt'},
+                    {from: 'template/sitemap.xml', to: 'sitemap.xml'},
                     {from: 'template/manifest.json', to: 'manifest.json'},
                     {from: 'template/404.html', to: '404.html'},
                     {from: 'template/og.png', to: 'og.png'},

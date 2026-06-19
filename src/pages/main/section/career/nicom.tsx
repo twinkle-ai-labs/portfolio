@@ -7,9 +7,9 @@ const NicomContent = () => {
             <div className={"title"}>수행 업무: <b>나이콤 웹 솔루션 개발</b></div>
             <div className={"desc"}>
                 <ul>
-                    <li>총 10개 이상의 프로젝트 SDLC 전반 주도 개발</li>
+                    <li>총 10개 이상의 프로젝트에서 요구사항 분석부터 개발, 배포까지 수행</li>
                     <li>주로 백오피스(관리자 프로그램) 개발</li>
-                    <li>외 API, Batch, 하이브리드 웹앱, 미들웨어 등 개발</li>
+                    <li>외부 API, Batch, 하이브리드 웹앱, 미들웨어 등 개발</li>
                 </ul>
             </div>
 

@@ -21,8 +21,15 @@ const SidebarDrawer = () => {
             <Divider/>
             <List>
                 {menus.map((menu, index) => (
-                    <ListItem key={'sidebar-'+(index+1).toString()} disablePadding>
-                        <ListItemButton onClick={() => {
+                        <ListItem key={'sidebar-'+(index+1).toString()} disablePadding>
+                            <ListItemButton onClick={() => {
+                            if (menu.link.startsWith('#')) {
+                                document.querySelector(menu.link)?.scrollIntoView({
+                                    behavior: 'smooth',
+                                    block: 'start'
+                                });
+                                return;
+                            }
                             window.location.href = menu.link;
                         }}>
                             <ListItemIcon>

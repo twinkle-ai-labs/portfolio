@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 
 <head>
     <meta charset="utf-8"/>
@@ -8,10 +8,15 @@
     <meta name="title" content="<%= process.env.TITLE_FULL %>">
     <meta name="description" content="<%= process.env.DESCRIPTION %>">
     <meta name="keywords" content="<%= process.env.KEYWORDS %>">
+    <meta name="author" content="김희정, Heejeong Kim">
+    <meta name="creator" content="김희정">
+    <meta name="publisher" content="김희정">
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="theme-color" content="#eef2f8">
+    <meta name="color-scheme" content="light dark">
 
     <meta name="apple-mobile-web-app-title" content="<%= process.env.TITLE %>">
     <meta name="application-name" content="<%= process.env.TITLE %>">
@@ -21,7 +26,8 @@
     <!-- Naver Site Check -->
     <meta name="naver-site-verification" content="c63d20bff1fe846cca0c323859ff8ba290be8ce0" />
 
-    <meta name="robots" content="all">
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+    <meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
 
     <!-- Refresh -->
     <meta http-equiv="refresh" content="6000">
@@ -30,22 +36,59 @@
     <!-- Canonical -->
     <link rel="canonical" href="<%= process.env.CUSTOM_URL %>">
     <link rel="alternate" href="<%= process.env.URL %>">
+    <link rel="manifest" href="/manifest.json">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="<%= process.env.URL %>">
+    <meta property="og:locale" content="ko_KR">
+    <meta property="og:url" content="<%= process.env.CUSTOM_URL %>">
     <meta property="og:title" content="<%= process.env.TITLE_FULL %>">
     <meta property="og:description" content="<%= process.env.DESCRIPTION %>">
-    <meta property="og:type" content="website">
-    <meta property="og:image" content="/og.png">
+    <meta property="og:image" content="<%= process.env.CUSTOM_URL %>og.png">
+    <meta property="og:image:alt" content="김희정 Product Engineer 포트폴리오">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
     <meta property="og:site_name" content="<%= process.env.TITLE %>">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:title" content="<%= process.env.TITLE_FULL %>">
-    <meta property="twitter:url" content="<%= process.env.URL %>">
-    <meta property="twitter:image" content="/og.png">
+    <meta property="twitter:url" content="<%= process.env.CUSTOM_URL %>">
+    <meta property="twitter:image" content="<%= process.env.CUSTOM_URL %>og.png">
+    <meta property="twitter:image:alt" content="김희정 Product Engineer 포트폴리오">
     <meta property="twitter:description" content="<%= process.env.DESCRIPTION %>">
+
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "Person",
+            "name": "김희정",
+            "alternateName": "Heejeong Kim",
+            "url": "<%= process.env.CUSTOM_URL %>",
+            "email": "mailto:developer.heejeong@gmail.com",
+            "jobTitle": "Product Engineer (Backend)",
+            "worksFor": {
+                "@type": "Organization",
+                "name": "아이나비시스템즈"
+            },
+            "knowsAbout": [
+                "Backend Engineering",
+                "Product Engineering",
+                "Spring Boot",
+                "Kotlin",
+                "Java",
+                "AWS",
+                "GCP",
+                "CI/CD",
+                "Prometheus",
+                "Grafana"
+            ],
+            "sameAs": [
+                "https://github.com/hjkim1004",
+                "https://velog.io/@developer_khj"
+            ]
+        }
+    </script>
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-5M8ND449DZ"></script>
@@ -54,7 +97,7 @@
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
 
-        gtag('config', 'G-5M8ND449DZ');
+        gtag('config', 'G-5M8ND449DZ', { send_page_view: false });
     </script>
 
     <!-- Start Single Page Apps for GitHub Pages -->

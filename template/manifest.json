@@ -1,6 +1,6 @@
 {
-  "short_name": "Twinkle Portfolio",
-  "name": "Twinkle's Developer Portfolio",
+  "short_name": "Heejeong Kim",
+  "name": "김희정 포트폴리오 | Product Engineer",
   "icons": [
     {
       "src": "favicon.png",
@@ -10,6 +10,6 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#eef2f8",
+  "background_color": "#eef2f8"
 }

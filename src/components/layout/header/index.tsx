@@ -8,7 +8,6 @@ import {menus} from "@Data/link";
 import {DrawerType, openDrawer} from "@Store/slice/drawer";
 import {BsMoonStarsFill, BsSunFill} from "react-icons/bs";
 import {changeTheme, ThemeType} from "@Store/slice/theme";
-import {Link} from "react-router-dom";
 import Logo from "@Components/section/logo";
 
 const Header = () => {
@@ -34,11 +33,18 @@ const Header = () => {
                     {menus.map(menu => {
                         return (
                             <li key={'menu_' + menu.id}>
-                                <Link to={menu.link}
-                                      title={menu.name}
-                                      translate="no"
-                                      className={menu.link === window.location.pathname ? 'active' : ''}
-                                >{menu.name}</Link>
+                                <a href={menu.link}
+                                   title={menu.name}
+                                   translate="no"
+                                   onClick={(event) => {
+                                       if (!menu.link.startsWith('#')) return;
+                                       event.preventDefault();
+                                       document.querySelector(menu.link)?.scrollIntoView({
+                                           behavior: 'smooth',
+                                           block: 'start'
+                                       });
+                                   }}
+                                >{menu.name}</a>
                             </li>
                         )
                     })}

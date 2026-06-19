@@ -2,12 +2,10 @@ import {ReactNode} from "react";
 import {LazyLoadImage} from "react-lazy-load-image-component";
 
 import NicomLogo from '@Images/company_nicom.svg'
-import FillaDesignLogo from '@Images/company_filladesign.png'
 import KicLogo from '@Images/company_kic.png'
 
+import InaviContent from "@Pages/main/section/career/inavi";
 import NicomContent from "@Pages/main/section/career/nicom";
-import FillaDesignContent from "@Pages/main/section/career/filladesign";
-import NewLifeMissionContent from "@Pages/main/section/career/newlifemission";
 import KicContent from "@Pages/main/section/career/kic";
 
 export interface ICareer {
@@ -21,10 +19,33 @@ export interface ICareer {
     type?: '정규직' | '계약직' | '인턴' | '프리랜서' | string;
     company?: boolean
     position: string;
+    features?: string[];
+    projects?: string[];
     content?: ReactNode | string | undefined
 }
 
 const careers: ICareer[] = [
+    {
+        id: 'inavi',
+        name: '아이나비시스템즈 (Inavi Systems)',
+        company: true,
+        type: '정규직',
+        period: [new Date('2024.12.16'), new Date()],
+        link: 'https://www.inavisystems.com/',
+        dotColor: 'info',
+        position: 'Backend Engineer · DevOps',
+        features: [
+            'DB 설계부터 API 개발, 테스트 반영까지 수행',
+            'AWS/GCP 인프라 구축 및 운영 환경 구성',
+            'Harbor, Jenkins 기반 CI/CD 자동화',
+            'Filebeat, Slack, Prometheus, Grafana 기반 운영 관측',
+        ],
+        projects: [
+            '아이나비 스탬프 오르다',
+            '내비게이션 통합통계 시스템',
+        ],
+        content: <InaviContent/>,
+    },
     {
         id: 'nicom',
         name: '(주) 나이콤 (NICOM)',
@@ -36,30 +57,17 @@ const careers: ICareer[] = [
         logo: (<LazyLoadImage src={NicomLogo} alt={"Nicom 로고"} title={"Nicom 로고"}/>),
         logoColor: '#fff',
         position: '웹 솔루션 개발',
+        features: [
+            '10개+ 프로젝트에서 요구사항 분석부터 개발, 배포까지 수행',
+            '관리자 솔루션 중심의 풀스택 개발',
+            'API, Batch, 하이브리드 웹앱, 미들웨어 개발',
+        ],
+        projects: [
+            '스마트도서관 시스템',
+            '도서 위치 추적 시스템',
+            '얼굴인식 출입통제 시스템',
+        ],
         content: <NicomContent/>,
-    },
-    {
-        id: 'filladesign',
-        name: '필러 디자인 (FillaDesign)',
-        company: true,
-        type: '계약직, 프리랜서',
-        period: [new Date('2024.02.01'), new Date('2024.02.29')],
-        link: 'http://www.pillardesign.co.kr/',
-        dotColor: 'primary',
-        logo: (<LazyLoadImage src={FillaDesignLogo} alt={"FillaDesign 로고"} title={"FillaDesign 로고"}/>),
-        logoColor: '#060606',
-        position: '웹 퍼블리싱',
-        content: <FillaDesignContent/>,
-    },
-    {
-        id: 'newlifemission',
-        name: '새생명선교회',
-        company: true,
-        type: '프리랜서',
-        period: [new Date('2023.11.22'), new Date('2023.12.04')],
-        dotColor: 'primary',
-        position: '웹 퍼블리싱',
-        content: <NewLifeMissionContent/>,
     },
     {
         id: 'kic',
@@ -72,27 +80,14 @@ const careers: ICareer[] = [
         logo: (<LazyLoadImage src={KicLogo} alt={"KIC 로고"} title={"KIC 로고"}/>),
         logoColor: '#333',
         position: 'Atlassian 솔루션 지원',
+        features: [
+            'Jira, Confluence, Bitbucket, Crowd 서버 구축',
+            'Atlassian 기반 ALM 아키텍처와 Linux 서버 환경 경험',
+        ],
+        projects: [
+            'Atlassian ALM 아키텍처 구축 산출물',
+        ],
         content: <KicContent />,
-    },
-    {
-        id: 'academy',
-        name: '중앙정보기술인재 개발원',
-        company: false,
-        type: '국비 교육',
-        period: [new Date('2019.07.09'), new Date('2019.08.31')],
-        position: 'JAVA 프레임워크 실무 개발자 양성과정_단기 Ⅰ',
-        dotColor: 'warning',
-        content: '',
-    },
-    {
-        id: 'university',
-        name: '한신대학교',
-        company: false,
-        type: '4년제, 학사 과정',
-        period: [new Date('2016.03.01'), new Date('2020.02.14')],
-        position: '컴퓨터 공학 전공',
-        dotColor: 'warning',
-        content: '',
     },
 ]
 export default careers;

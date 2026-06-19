@@ -47,7 +47,7 @@ export interface IProfile {
 export const profiles: IProfile[] = [
     {title: '이름', text: config.profile.name.korean, icon: (<FaUser/>)},
     {title: '생년월일', text: config.profile.birth, icon: (<FaCalendar/>)},
-    {title: '경력', text: "4년차 (3년 5개월)", icon: (<FaUserTie/>)},
+    {title: '경력', text: "5년차 (4년 10개월)", icon: (<FaUserTie/>)},
     {
         title: '연락처', text: (
             <Tooltip title={"전화 걸기"} arrow={true}>
