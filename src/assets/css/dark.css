@@ -13,6 +13,8 @@ body[data-theme="dark"] {
     --glass-line: rgba(255, 255, 255, 0.14);
     --glass-highlight: rgba(255, 255, 255, 0.1);
     --blue: #9bbcff;
+    --blue-soft: rgba(155, 188, 255, 0.11);
+    --blue-line: rgba(155, 188, 255, 0.22);
     --green: #9ac7aa;
     --home-bg: #0f1117;
     --profile-bg: #141821;
@@ -113,18 +115,51 @@ body[data-theme="dark"] .career-type {
     background: rgba(255, 255, 255, 0.06);
 }
 
+body[data-theme="dark"] .career-group-title span {
+    border-color: var(--blue-line);
+    background: var(--blue-soft);
+}
+
 body[data-theme="dark"] .project-impact {
-    background: rgba(245, 247, 251, 0.92);
-    color: #10131a;
+    border-color: var(--blue-line);
+    background: var(--blue-soft);
+    color: var(--ink);
 }
 
 body[data-theme="dark"] .project-impact span {
-    color: rgba(16, 19, 26, 0.6);
+    color: var(--blue);
+}
+
+body[data-theme="dark"] .project-impact li {
+    color: var(--ink-soft);
+}
+
+body[data-theme="dark"] .project-impact li svg,
+body[data-theme="dark"] .project-achievements-checklist-icon {
+    border-color: var(--blue-line);
+    background: rgba(155, 188, 255, 0.12);
+    color: var(--blue);
 }
 
 body[data-theme="dark"] .project-stack li {
     background: rgba(138, 180, 255, 0.14);
     color: #c7ddff;
+}
+
+body[data-theme="dark"] .project-stack li:hover,
+body[data-theme="dark"] .skill-tags li:hover,
+body[data-theme="dark"] .flop-item a:hover {
+    background: rgba(155, 188, 255, 0.14);
+}
+
+body[data-theme="dark"] .project-achievements-checklist,
+body[data-theme="dark"] .modal-smart .platform-flow-item,
+body[data-theme="dark"] .modal-smart .star-card,
+body[data-theme="dark"] .modal-smart .comparison-column {
+    border-color: rgba(255, 255, 255, 0.13);
+    background:
+            linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.025)),
+            rgba(23, 27, 36, 0.5);
 }
 
 body[data-theme="dark"] .footer {

@@ -25,7 +25,7 @@ const Header = () => {
 
 
     return (
-        <header className={offset > 0 ? "header scrolled" : "header"} data-aos="fade-down">
+        <header className={offset > 0 ? "header scrolled" : "header"}>
             <div className="inner">
                 <Logo/>
                 <div className="flex-1"></div>

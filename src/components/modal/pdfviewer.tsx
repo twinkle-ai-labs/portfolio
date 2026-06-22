@@ -54,6 +54,7 @@ const PdfViewerModal = (props: PdfModalProps) => {
     const [pageCount, setPageCount] = useState<number>(1);
     const [pageNumber, setPageNumber] = useState<number>(1);
     const thumbnailRefs = useRef<(HTMLLIElement | null)[]>([]); // Store refs for each thumbnail
+    const pageRefs = useRef<(HTMLDivElement | null)[]>([]); // Store refs for each main page
 
     const createPages = () => (
         <>
@@ -82,6 +83,7 @@ const PdfViewerModal = (props: PdfModalProps) => {
     const onPageChange = (pageNumber: number) => {
         setPageNumber(pageNumber);
         thumbnailRefs.current[pageNumber - 1]?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'start' });
+        pageRefs.current[pageNumber - 1]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     };
 
 
@@ -94,6 +96,17 @@ const PdfViewerModal = (props: PdfModalProps) => {
             className={'modal'}
             overlayClassName={'modal-wrapper'}
             ariaHideApp={false}
+            style={{
+                content: {
+                    position: 'static',
+                    inset: 'auto',
+                    border: 'none',
+                    background: 'none',
+                    padding: 0,
+                    overflow: 'visible',
+                    borderRadius: 0,
+                }
+            }}
         >
             <div className={'modal-header'}>
                 <h5 className={'modal-title'}>{props.title}</h5>
@@ -130,8 +143,16 @@ const PdfViewerModal = (props: PdfModalProps) => {
                             </ul>
                         </div>
 
-                        <div className={'pdf-content'}>
-                            <Page loading={null} pageNumber={pageNumber} width={1120} renderTextLayer={false} renderAnnotationLayer={false} />
+                        <div className={'pdf-content'} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem' }}>
+                            {Array.from(new Array(pageCount), (el, index) => (
+                                <div
+                                    key={`page_${index + 1}`}
+                                    ref={(el) => pageRefs.current[index] = el}
+                                    style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.15)', borderRadius: '8px', overflow: 'hidden' }}
+                                >
+                                    <Page loading={null} pageNumber={index + 1} width={1120} renderTextLayer={false} renderAnnotationLayer={false} />
+                                </div>
+                            ))}
                         </div>
                     </Document>
                 ) : (

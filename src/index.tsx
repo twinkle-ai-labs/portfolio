@@ -9,15 +9,15 @@ import '@Style/light.css';
 import '@Style/dark.css';
 import '@Style/mobile.css';
 import reportWebVitals from './reportWebVitals';
-import {Provider} from "react-redux";
-import {store} from "@Store/index";
+import {Provider, useSelector} from "react-redux";
+import {store, RootState} from "@Store/index";
 import {DevSupport} from "@react-buddy/ide-toolbox";
 import {ComponentPreviews, useInitial} from "./dev";
 
-import MainApp from "@Pages/main";
-import SpaceApp from "@Pages/space";
-import ErrorApp from "@Pages/error";
-import ResumeApp from "@Pages/resume";
+const MainApp = React.lazy(() => import("@Pages/main"));
+const SpaceApp = React.lazy(() => import("@Pages/space"));
+const ErrorApp = React.lazy(() => import("@Pages/error"));
+const ResumeApp = React.lazy(() => import("@Pages/resume"));
 
 import {createBrowserRouter, RouterProvider, useLocation,} from "react-router-dom";
 import * as process from "process";
@@ -58,11 +58,19 @@ const AnalyticsTracker = () => {
 };
 
 const AppShell = ({children}: { children: React.ReactNode }) => {
+    const theme = useSelector((state: RootState) => state.theme.value);
+
+    React.useEffect(() => {
+        if (typeof document !== 'undefined') {
+            document.body.dataset.theme = theme;
+        }
+    }, [theme]);
+
     return (
-        <>
+        <React.Suspense fallback={<Root />}>
             <AnalyticsTracker/>
             {children}
-        </>
+        </React.Suspense>
     );
 };
 

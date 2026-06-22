@@ -1,6 +1,4 @@
-import React, {useEffect} from 'react';
-import '@Style/lib/aos/2.3.1/aos.css'
-import AOS from "aos";
+import React from 'react';
 
 import Header from "@Layout/header";
 import Footer from "@Layout/footer";
@@ -15,9 +13,9 @@ import CareerSection from "@Pages/main/section/career";
 import ProjectSection from "@Pages/main/section/project";
 
 const App = () => {
-    useEffect(() => {
-        AOS.init({duration: 1000});
-    }, []);
+    const handlePrintPdf = () => {
+        window.print();
+    };
 
     return (
         <>
@@ -30,6 +28,10 @@ const App = () => {
                 <ProjectSection/>
                 <SkillSection/>
             </main>
+            <button className="pdf-export-button no-print" type="button" onClick={handlePrintPdf}>
+                <span aria-hidden="true">📄</span>
+                PDF 저장
+            </button>
 
             <DrawerSection />
             <FlopMenu/>

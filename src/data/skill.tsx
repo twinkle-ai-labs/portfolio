@@ -1,5 +1,5 @@
 import {ReactNode} from "react";
-import {SiJquery, SiOracle, SiSpring, SiSpringboot,} from "react-icons/si";
+import {SiJquery, SiSpring, SiSpringboot} from "react-icons/si";
 import {BiLogoTypescript} from "react-icons/bi";
 import {FaCss3Alt, FaDatabase, FaGitAlt, FaGithub, FaHtml5} from "react-icons/fa6";
 import {RiJavascriptFill} from "react-icons/ri";
@@ -191,7 +191,7 @@ const skills: ISKill[] = [
     {
         id: 'oracle',
         name: 'Oracle',
-        icon: (<SiOracle/>),
+        icon: (<FaDatabase/>),
         color: '#f70000',
         group: SkillGroup.RDBMS
     },

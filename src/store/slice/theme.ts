@@ -6,19 +6,13 @@ export const ThemeType = {
 const themeSlice = createSlice({
     name: 'theme',
     initialState: {
-        value: document.body.dataset.theme || 'light'
+        value: typeof document !== 'undefined' ? (document.body.dataset.theme || 'light') : 'light'
     },
     reducers: {
         changeTheme: (state, action: PayloadAction<string>) => {
-            switch (action.payload.toLowerCase()) {
-                case ThemeType.LIGHT:
-                    state.value = ThemeType.LIGHT
-                    document.body.dataset.theme = ThemeType.LIGHT
-                    break;
-                case ThemeType.DARK:
-                    state.value = ThemeType.DARK
-                    document.body.dataset.theme = ThemeType.DARK
-                    break;
+            const val = action.payload.toLowerCase();
+            if (val === ThemeType.LIGHT || val === ThemeType.DARK) {
+                state.value = val;
             }
         }
     }

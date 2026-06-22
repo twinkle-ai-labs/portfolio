@@ -29,10 +29,10 @@ const HomeSection = () => {
                     <BabylonComponent/>
                 </Suspense>
             </div>
-            <h1 className="section-title" data-aos="fade-up" data-aos-delay={100}>
+            <h1 className="section-title">
                 Night sky
             </h1>
-            <div className={"section-desc"} data-aos="fade-up" data-aos-delay={200}>
+            <div className={"section-desc"}>
                 I have implemented a 3D night sky scene <br className={'pc'}/>
                 with 'Twinkle' as the theme <br className={'pc'}/>
                 using the Babylon engine.<br/><br/>

@@ -52,15 +52,15 @@ const skillGroups = [
 const SkillSection = () => {
     return (
         <section id="s_skill" className="section skill-section">
-            <p className="section-eyebrow">Skills</p>
-            <h2 className="section-title">Tech Stack</h2>
+            <p className="section-eyebrow">🛠️ Skills</p>
+            <h2 className="section-title">Tech Stack ⚙️</h2>
             <p className="section-subtitle">
                 단순 목록이 아니라 실제 서비스 개발, 배포, 운영에서 사용한 맥락을 기준으로 분류했습니다.
             </p>
             <div className="section-content">
                 <div className="skill-matrix">
                     {skillGroups.map((group) => (
-                        <article className="skill-row" key={group.title} data-aos="fade-up">
+                        <article className="skill-row" key={group.title}>
                             <div className="skill-row-copy">
                                 <h3>{group.title}</h3>
                                 <p>{group.summary}</p>

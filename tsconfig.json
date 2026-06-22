@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2020",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -17,6 +17,8 @@
     "jsx": "react-jsx",
     "baseUrl": "src",
     "paths": {
+      "react": ["../node_modules/@types/react"],
+      "react/jsx-runtime": ["../node_modules/@types/react/jsx-runtime"],
       "~/*": ["~/*"],
       "@Components/*": ["components/*"],
       "@Layout/*": ["components/layout/*"],

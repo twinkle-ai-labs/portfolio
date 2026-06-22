@@ -33,13 +33,13 @@ const HomeSection = () => {
         <>
             <section id="s_home" className="section h-100">
                 <div className="section-bg"></div>
-                <h1 className="section-title" data-aos="fade-up" data-aos-delay={100}>
+                <h1 className="section-title">
                     PDF Viewer
                 </h1>
-                <div className={"section-desc"} data-aos="fade-up" data-aos-delay={200}>
+                <div className={"section-desc"}>
                     You can see the PDF files <br className={"mobile"}/> of Resume, Portfolio.
                 </div>
-                <div className={"section-content"} data-aos="fade-up" data-aos-delay={300}>
+                <div className={"section-content"}>
                     <ul>
                         <li>
                             <button onClick={e =>

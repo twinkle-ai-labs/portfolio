@@ -3,7 +3,7 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 const scrollOffsetSlice = createSlice({
     name: 'offset',
     initialState: {
-        value: document.body.offsetTop
+        value: typeof document !== 'undefined' ? document.body.offsetTop : 0
     },
     reducers: {
         changeOffset(state, action: PayloadAction<number>){

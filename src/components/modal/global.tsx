@@ -18,11 +18,15 @@ const GlobalModal = () => {
     }, [isOpen]);
 
     const render = () => {
-        if (!isOpen) {
+        if (!isOpen || !type) {
             return null;
         }
 
-        const ModalComponent = MODAL_COMPONENTS[type];
+        const ModalComponent = MODAL_COMPONENTS[type as keyof typeof MODAL_COMPONENTS];
+        if (!ModalComponent) {
+            console.warn(`Unsupported modal type: ${type}`);
+            return null;
+        }
         return <ModalComponent
                     isOpen={true}
                     onClose={() => {

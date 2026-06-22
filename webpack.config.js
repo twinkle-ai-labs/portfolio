@@ -17,8 +17,21 @@ module.exports = (env, argv) => {
         },
         output: {
             path: path.resolve(__dirname, "dist"),
-            filename: "[name].bundle.js",
+            filename: prod ? "[name].[contenthash].js" : "[name].bundle.js",
+            chunkFilename: prod ? "[name].[contenthash].chunk.js" : "[name].chunk.js",
             clean: true,
+        },
+        optimization: {
+            splitChunks: {
+                chunks: "all",
+                cacheGroups: {
+                    vendors: {
+                        test: /[\\/]node_modules[\\/]/,
+                        name: "vendors",
+                        chunks: "all",
+                    },
+                },
+            },
         },
         devServer: {
             // 포트 번호 설정
