@@ -3,8 +3,9 @@ name: Portfolio Page CI/CD
 on:
   push:
     branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -16,11 +17,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
+          cache: npm
 
       - name: Install Dependencies
         run: npm install
@@ -29,7 +31,7 @@ jobs:
         run: npm run build
 
       - name: Deploy Docs
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GH_ACTIONS_TOKEN }}
           publish_dir: ./dist
