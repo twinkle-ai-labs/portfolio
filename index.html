@@ -1,51 +1,98 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 
 <head>
     <meta charset="utf-8"/>
 
-    <title>Twinkle's Portfolio | 개발자 김희정 포토폴리오</title>
-    <meta name="title" content="Twinkle's Portfolio | 개발자 김희정 포토폴리오">
-    <meta name="description" content="Hello, this is the portfolio page of full stack developer Heejeong Kim. The main stack is based on Java, Spring. You can see more if you visit the page.">
-    <meta name="keywords" content="포트폴리오, 개발자 포트폴리오, 개발자, 풀스택 개발자, 프리랜서, Developer, Full-Stack, Portfolio">
+    <title>김희정 포트폴리오 | Product Engineer · Backend</title>
+    <meta name="title" content="김희정 포트폴리오 | Product Engineer · Backend">
+    <meta name="description" content="Product Engineer 김희정의 포트폴리오입니다. DB 설계, API 개발, 인프라, CI/CD, 운영 관측, 풀스택 프로젝트 경험을 기반으로 서비스의 시작과 끝을 함께 만들어갑니다.">
+    <meta name="keywords" content="김희정, Heejeong Kim, Product Engineer, Backend Engineer, 백엔드 개발자, Spring Boot, Kotlin, Java, AWS, GCP, CI/CD, Prometheus, Grafana, 포트폴리오">
+    <meta name="author" content="김희정, Heejeong Kim">
+    <meta name="creator" content="김희정">
+    <meta name="publisher" content="김희정">
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="theme-color" content="#101119">
+    <meta name="color-scheme" content="dark">
 
-    <meta name="apple-mobile-web-app-title" content="Twinkle's Portfolio">
-    <meta name="application-name" content="Twinkle's Portfolio">
+    <meta name="apple-mobile-web-app-title" content="Heejeong Kim Portfolio">
+    <meta name="application-name" content="Heejeong Kim Portfolio">
     <meta name="HandheldFriendly" content="true">
     <meta name="format-detection" content="telephone=no">
 
     <!-- Naver Site Check -->
     <meta name="naver-site-verification" content="c63d20bff1fe846cca0c323859ff8ba290be8ce0" />
 
-    <meta name="robots" content="all">
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+    <meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
 
     <!-- Refresh -->
     <meta http-equiv="refresh" content="6000">
     <meta http-equiv="Cache-Control" content="max-age=31536000"/>
 
+    <!-- Font -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+
     <!-- Canonical -->
-    <link rel="canonical" href="https://twinkle.xyz/">
+    <link rel="canonical" href="https://twinklekhj.xyz/">
     <link rel="alternate" href="https://hjkim1004.github.io/">
+    <link rel="manifest" href="/manifest.json">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://hjkim1004.github.io/">
-    <meta property="og:title" content="Twinkle's Portfolio | 개발자 김희정 포토폴리오">
-    <meta property="og:description" content="Hello, this is the portfolio page of full stack developer Heejeong Kim. The main stack is based on Java, Spring. You can see more if you visit the page.">
-    <meta property="og:type" content="website">
-    <meta property="og:image" content="/og.png">
-    <meta property="og:site_name" content="Twinkle's Portfolio">
+    <meta property="og:locale" content="ko_KR">
+    <meta property="og:url" content="https://twinklekhj.xyz/">
+    <meta property="og:title" content="김희정 포트폴리오 | Product Engineer · Backend">
+    <meta property="og:description" content="Product Engineer 김희정의 포트폴리오입니다. DB 설계, API 개발, 인프라, CI/CD, 운영 관측, 풀스택 프로젝트 경험을 기반으로 서비스의 시작과 끝을 함께 만들어갑니다.">
+    <meta property="og:image" content="https://twinklekhj.xyz/og.png">
+    <meta property="og:image:alt" content="김희정 Product Engineer 포트폴리오">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="Heejeong Kim Portfolio">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="Twinkle's Portfolio | 개발자 김희정 포토폴리오">
-    <meta property="twitter:url" content="https://hjkim1004.github.io/">
-    <meta property="twitter:image" content="/og.png">
-    <meta property="twitter:description" content="Hello, this is the portfolio page of full stack developer Heejeong Kim. The main stack is based on Java, Spring. You can see more if you visit the page.">
+    <meta property="twitter:title" content="김희정 포트폴리오 | Product Engineer · Backend">
+    <meta property="twitter:url" content="https://twinklekhj.xyz/">
+    <meta property="twitter:image" content="https://twinklekhj.xyz/og.png">
+    <meta property="twitter:image:alt" content="김희정 Product Engineer 포트폴리오">
+    <meta property="twitter:description" content="Product Engineer 김희정의 포트폴리오입니다. DB 설계, API 개발, 인프라, CI/CD, 운영 관측, 풀스택 프로젝트 경험을 기반으로 서비스의 시작과 끝을 함께 만들어갑니다.">
+
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "Person",
+            "name": "김희정",
+            "alternateName": "Heejeong Kim",
+            "url": "https://twinklekhj.xyz/",
+            "email": "mailto:developer.heejeong@gmail.com",
+            "jobTitle": "Product Engineer (Backend)",
+            "worksFor": {
+                "@type": "Organization",
+                "name": "아이나비시스템즈"
+            },
+            "knowsAbout": [
+                "Backend Engineering",
+                "Product Engineering",
+                "Spring Boot",
+                "Kotlin",
+                "Java",
+                "AWS",
+                "GCP",
+                "CI/CD",
+                "Prometheus",
+                "Grafana"
+            ],
+            "sameAs": [
+                "https://github.com/hjkim1004",
+                "https://velog.io/@developer_khj"
+            ]
+        }
+    </script>
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-5M8ND449DZ"></script>
@@ -54,7 +101,7 @@
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
 
-        gtag('config', 'G-5M8ND449DZ');
+        gtag('config', 'G-5M8ND449DZ', { send_page_view: false });
     </script>
 
     <!-- Start Single Page Apps for GitHub Pages -->
@@ -81,9 +128,9 @@
         }(window.location))
     </script>
     <!-- End Single Page Apps for GitHub Pages -->
-<link rel="icon" href="favicon.png"></head>
-<body data-theme="light">
+<link rel="icon" href="favicon.svg"></head>
+<body data-theme="dark">
     <div id="root"></div>
     <div id="modal"></div>
-<script defer src="main.bundle.js"></script></body>
+<script defer src="runtime.8ed5b491e762815783c6.js"></script><script defer src="854.22666cd86c9d508cb0ab.js"></script><script defer src="main.850d4a1afd54bf65208c.js"></script></body>
 </html>
