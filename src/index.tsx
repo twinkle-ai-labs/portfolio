@@ -5,12 +5,11 @@ import '@Fonts/notokr/notokr.css'
 import '@Fonts/default.css'
 import '@Style/transition.css';
 import '@Style/style.css';
-import '@Style/light.css';
 import '@Style/dark.css';
 import '@Style/mobile.css';
 import reportWebVitals from './reportWebVitals';
-import {Provider, useSelector} from "react-redux";
-import {store, RootState} from "@Store/index";
+import {Provider} from "react-redux";
+import {store} from "@Store/index";
 import {DevSupport} from "@react-buddy/ide-toolbox";
 import {ComponentPreviews, useInitial} from "./dev";
 
@@ -68,14 +67,6 @@ const AnalyticsTracker = () => {
 };
 
 const AppShell = ({children}: { children: React.ReactNode }) => {
-    const theme = useSelector((state: RootState) => state.theme.value);
-
-    React.useEffect(() => {
-        if (typeof document !== 'undefined') {
-            document.body.dataset.theme = theme;
-        }
-    }, [theme]);
-
     return (
         <React.Suspense fallback={<Root />}>
             <AnalyticsTracker/>

@@ -4,9 +4,12 @@
         gap: 2.5rem;
     }
 
-    .hero-profile-panel {
-        justify-self: start;
-        max-width: 620px;
+    .hero-visual {
+        order: -1;
+    }
+
+    .hero-visual-circle {
+        width: min(300px, 70vw);
     }
 
     .profile-capability-grid {
@@ -134,17 +137,33 @@
         line-height: 1.75;
     }
 
-    .hero-panel {
-        border-radius: 18px;
-    }
-
-    .hero-profile-card {
-        align-items: flex-start;
+    .hero-title {
+        font-size: 2.6rem;
     }
 
     .project-grid,
     .profile-capability-grid {
         grid-template-columns: 1fr;
+    }
+
+    .stats-bar {
+        margin-top: 2.5rem !important;
+        padding: 2rem 0;
+    }
+
+    .stats-bar-inner {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        row-gap: 1.5rem;
+    }
+
+    .stats-bar-item:nth-child(2n) {
+        border-right: 0;
+    }
+
+    .stats-bar-item:nth-child(1),
+    .stats-bar-item:nth-child(2) {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        padding-bottom: 1.2rem;
     }
 
     .project-card {
@@ -282,16 +301,6 @@
         width: 100%;
     }
 
-    .hero-profile-panel-body {
-        padding: 0.95rem;
-    }
-
-    .hero-profile-mark {
-        width: 3.75rem;
-        height: 3.75rem;
-        border-radius: 15px;
-    }
-
     .project-modal-header-grouped {
         flex-direction: column;
     }
@@ -310,8 +319,7 @@
         font-size: 0.8rem;
     }
 
-    .project-card,
-    .hero-profile-basics section {
+    .project-card {
         border-radius: 14px;
     }
 

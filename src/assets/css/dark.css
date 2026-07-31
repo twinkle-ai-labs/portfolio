@@ -62,7 +62,6 @@ body[data-theme="dark"] .hero-primary {
     box-shadow: 0 12px 30px rgba(129, 140, 248, 0.28) !important;
 }
 
-body[data-theme="dark"] .hero-secondary,
 body[data-theme="dark"] .profile-capability-card,
 body[data-theme="dark"] .profile-summary-card,
 body[data-theme="dark"] .career-card,

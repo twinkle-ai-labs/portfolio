@@ -6,14 +6,13 @@ import {SlMenu} from "react-icons/sl";
 import {changeOffset} from "@Store/slice/offset";
 import {menus} from "@Data/link";
 import {DrawerType, openDrawer} from "@Store/slice/drawer";
-import {BsMoonStarsFill, BsSunFill} from "react-icons/bs";
-import {changeTheme, ThemeType} from "@Store/slice/theme";
+import {changeLanguage, LanguageType} from "@Store/slice/language";
 import Logo from "@Components/section/logo";
 
 const Header = () => {
     const dispatch = useDispatch()
     const offset = useSelector((state: RootState) => state.offset.value)
-    const theme = useSelector((state: RootState) => state.theme.value)
+    const language = useSelector((state: RootState) => state.language.value)
 
     useEffect(() => {
         const onScroll = () => dispatch(changeOffset(window.scrollY));
@@ -49,20 +48,14 @@ const Header = () => {
                         )
                     })}
                 </ul>
-                <IconButton className="btn-icon" onClick={() => {
-                    if (theme === ThemeType.DARK) {
-                        dispatch(changeTheme(ThemeType.LIGHT))
-                    } else {
-                        dispatch(changeTheme(ThemeType.DARK))
-                    }
-                }}>
-                    {theme === ThemeType.DARK ? (
-                        <BsSunFill/>
-                    ) : (
-                        <BsMoonStarsFill/>
-                    )}
-
-                </IconButton>
+                <button
+                    className="lang-toggle"
+                    type="button"
+                    onClick={() => dispatch(changeLanguage(language === LanguageType.KO ? LanguageType.EN : LanguageType.KO))}
+                    aria-label="Switch language"
+                >
+                    {language === LanguageType.KO ? 'KO' : 'EN'}
+                </button>
                 <IconButton className="header-icon" onClick={() => {
                     dispatch(openDrawer(DrawerType.SIDEBAR))
                 }}>
