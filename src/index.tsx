@@ -10,8 +10,6 @@ import '@Style/mobile.css';
 import reportWebVitals from './reportWebVitals';
 import {Provider} from "react-redux";
 import {store} from "@Store/index";
-import {DevSupport} from "@react-buddy/ide-toolbox";
-import {ComponentPreviews, useInitial} from "./dev";
 
 const MainApp = React.lazy(() => import("@Pages/main"));
 const SpaceApp = React.lazy(() => import("@Pages/space"));
@@ -100,18 +98,20 @@ const router = createBrowserRouter(routes, {
         v7_fetcherPersist: true,
     },
 });
-root.render(
+const app = (
     <React.StrictMode>
         <Provider store={store}>
-            <DevSupport ComponentPreviews={ComponentPreviews}
-                        useInitialHook={useInitial}
-            >
-                <RouterProvider router={router} fallbackElement={<Root/>}/>
-            </DevSupport>
+            <RouterProvider router={router} fallbackElement={<Root/>}/>
             <GlobalModal/>
         </Provider>
     </React.StrictMode>
 );
+
+if (process.env.NODE_ENV === 'development') {
+    import('./dev/root').then(({default: DevRoot}) => root.render(<DevRoot>{app}</DevRoot>));
+} else {
+    root.render(app);
+}
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

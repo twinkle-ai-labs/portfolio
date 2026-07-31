@@ -22,15 +22,9 @@ module.exports = (env, argv) => {
             clean: true,
         },
         optimization: {
+            runtimeChunk: "single",
             splitChunks: {
                 chunks: "all",
-                cacheGroups: {
-                    vendors: {
-                        test: /[\\/]node_modules[\\/]/,
-                        name: "vendors",
-                        chunks: "all",
-                    },
-                },
             },
         },
         devServer: {
@@ -95,7 +89,7 @@ module.exports = (env, argv) => {
             }),
             new HtmlWebpackPlugin({
                 template: "./template/index.html",
-                favicon: "./src/assets/images/favicon.png",
+                favicon: "./src/assets/images/favicon.svg",
                 inject: "body",
                 minify:
                     process.env.NODE_ENV === "production"

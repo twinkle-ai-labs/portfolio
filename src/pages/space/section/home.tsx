@@ -4,29 +4,21 @@ import {RootState} from "@Store/index";
 import {mainLoaded} from "@Store/slice/loading";
 import {SyncLoader} from "react-spinners";
 
+const BabylonComponent = lazy(() => import('@Components/section/babylon'));
+
 const HomeSection = () => {
     const loading = useSelector((state: RootState) => state.loading.main);
     const dispatch = useDispatch();
-
-    const BabylonComponent = lazy(() => {
-        return import('@Components/section/babylon').then(module => ({
-            default: () => (
-                <module.default
-                    rootUrl={"models/night_sky/"}
-                    sceneFileName={"scene.gltf"}
-                    onMeshLoaded={() => {
-                        return dispatch(mainLoaded());
-                    }}
-                />
-            )
-        }));
-    });
 
     return (
         <section id="s_home" className="section h-100">
             <div className="section-bg">
                 <Suspense fallback={<canvas className="babylon-canvas"/>}>
-                    <BabylonComponent/>
+                    <BabylonComponent
+                        rootUrl={"models/night_sky/"}
+                        sceneFileName={"scene.gltf"}
+                        onMeshLoaded={() => dispatch(mainLoaded())}
+                    />
                 </Suspense>
             </div>
             <h1 className="section-title">

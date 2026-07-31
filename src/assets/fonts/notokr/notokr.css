@@ -4,47 +4,47 @@
   font-style: normal;
   font-display: swap;
   font-weight: 100;
-  src: url("notokr-thin.eot"), url("notokr-thin.eot?#iefix") format("embedded-opentype"), url("notokr-thin.woff2") format("woff2"), url("notokr-thin.woff") format("woff"), url("notokr-thin.ttf") format("truetype"), url("notokr-thin.svg#notokr-thin") format("svg");
+  src: url("notokr-thin.woff2") format("woff2");
 }
 @font-face {
   font-family: "Noto Sans KR";
   font-style: normal;
   font-display: swap;
   font-weight: 200;
-  src: url("notokr-light.eot"), url("notokr-light.eot?#iefix") format("embedded-opentype"), url("notokr-light.woff2") format("woff2"), url("notokr-light.woff") format("woff"), url("notokr-light.ttf") format("truetype"), url("notokr-light.svg#notokr-light") format("svg");
+  src: url("notokr-light.woff2") format("woff2");
 }
 @font-face {
   font-family: "Noto Sans KR";
   font-style: normal;
   font-display: swap;
   font-weight: 300;
-  src: url("notokr-demilight.eot"), url("notokr-demilight.eot?#iefix") format("embedded-opentype"), url("notokr-demilight.woff2") format("woff2"), url("notokr-demilight.woff") format("woff"), url("notokr-demilight.ttf") format("truetype"), url("notokr-demilight.svg#notokr-demilight") format("svg");
+  src: url("notokr-demilight.woff2") format("woff2");
 }
 @font-face {
   font-family: "Noto Sans KR";
   font-style: normal;
   font-display: swap;
   font-weight: 400;
-  src: url("notokr-regular.eot"), url("notokr-regular.eot?#iefix") format("embedded-opentype"), url("notokr-regular.woff2") format("woff2"), url("notokr-regular.woff") format("woff"), url("notokr-regular.ttf") format("truetype"), url("notokr-regular.svg#notokr-regular") format("svg");
+  src: url("notokr-regular.woff2") format("woff2");
 }
 @font-face {
   font-family: "Noto Sans KR";
   font-style: normal;
   font-display: swap;
   font-weight: 500;
-  src: url("notokr-medium.eot"), url("notokr-medium.eot?#iefix") format("embedded-opentype"), url("notokr-medium.woff2") format("woff2"), url("notokr-medium.woff") format("woff"), url("notokr-medium.ttf") format("truetype"), url("notokr-medium.svg#notokr-medium") format("svg");
+  src: url("notokr-medium.woff2") format("woff2");
 }
 @font-face {
   font-family: "Noto Sans KR";
   font-style: normal;
   font-display: swap;
   font-weight: 700;
-  src: url("notokr-bold.eot"), url("notokr-bold.eot?#iefix") format("embedded-opentype"), url("notokr-bold.woff2") format("woff2"), url("notokr-bold.woff") format("woff"), url("notokr-bold.ttf") format("truetype"), url("notokr-bold.svg#notokr-bold") format("svg");
+  src: url("notokr-bold.woff2") format("woff2");
 }
 @font-face {
   font-family: "Noto Sans KR";
   font-style: normal;
   font-display: swap;
   font-weight: 900;
-  src: url("notokr-black.eot"), url("notokr-black.eot?#iefix") format("embedded-opentype"), url("notokr-black.woff2") format("woff2"), url("notokr-black.woff") format("woff"), url("notokr-black.ttf") format("truetype"), url("notokr-black.svg#notokr-black") format("svg");
+  src: url("notokr-black.woff2") format("woff2");
 }
