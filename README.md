@@ -4,11 +4,11 @@
 
 백엔드 엔지니어 **김희정**의 개인 포트폴리오 사이트
 
-[**twinklekhj.xyz**](https://twinklekhj.xyz)
+[**me.twinklelabs.kr**](https://me.twinklelabs.kr)
 
 </div>
 
-![og](https://twinklekhj.xyz/og.png)
+![og](https://me.twinklelabs.kr/og.png)
 
 <br>
 
@@ -18,11 +18,11 @@
 *"언제나 빛나는 별처럼, 애써 드러내지 않아도 여전히 빛나고 있음"* 을 뜻합니다.
 
 밤하늘을 테마로 배경과 컬러, 아이콘을 잡았고,
-[/space](https://twinklekhj.xyz/space) 페이지에서 Babylon.js로 구현한 3D 밤하늘을 볼 수 있습니다.
+[/space](https://me.twinklelabs.kr/space) 페이지에서 Babylon.js로 구현한 3D 밤하늘을 볼 수 있습니다.
 
 | 로고 | Favicon |
 | :-: | :-: |
-| ![로고](https://twinklekhj.xyz/logo.png) | ![Favicon](https://twinklekhj.xyz/favicon.png) |
+| ![로고](https://me.twinklelabs.kr/logo.png) | ![Favicon](https://me.twinklelabs.kr/favicon.png) |
 
 <br>
 
@@ -169,7 +169,7 @@ template/                 index.html · manifest.json · robots.txt · sitemap.x
 
 > ⚠️ **머지 = 즉시 실서비스 반영.** `master`에 직접 push하지 말고 브랜치를 따서 PR로 올리세요.
 
-- Domain: `twinklekhj.xyz` (Gabia)
+- Domain: `me.twinklelabs.kr` (Gabia)
 - Hosting: GitHub Pages
 
 <br>
