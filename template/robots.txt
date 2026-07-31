@@ -2,4 +2,4 @@
 User-agent: *
 Disallow:
 
-Sitemap: https://twinklekhj.xyz/sitemap.xml
+Sitemap: https://me.twinklelabs.kr/sitemap.xml

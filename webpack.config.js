@@ -116,7 +116,7 @@ module.exports = (env, argv) => {
                 ],
             }),
             new CnameWebpackPlugin({
-                domain: 'twinklekhj.xyz',
+                domain: 'me.twinklelabs.kr',
             }),
         ],
     };

@@ -43,8 +43,8 @@ body {
     --header-glass-border: rgba(20, 22, 48, 0.08);
     --header-glass-shadow: 0 10px 34px rgba(28, 30, 60, 0.09);
     --content-width: 1160px;
-    --radius: 18px;
-    --radius-sm: 12px;
+    --radius: 26px;
+    --radius-sm: 18px;
     /* 어두운 면(히어로 등)에 공통으로 쓰는 격자무늬 배경 */
     --grid-dark:
             linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
