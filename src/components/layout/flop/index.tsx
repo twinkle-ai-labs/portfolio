@@ -4,20 +4,23 @@ import {IoIosArrowUp} from "react-icons/io";
 import {useSelector} from "react-redux";
 import {RootState} from "@Store/index";
 import {Button} from "@mui/material";
+import {useLocale} from "@Utils/i18n";
 
 const FlopMenu = () => {
     const offset = useSelector((state: RootState) => state.offset.value)
+    const {t} = useLocale();
+
     return (
         <div className={offset === 0 ? "flop-list hide" : "flop-list"}>
             <ul className="flop-menu">
                 {links.map(item => {
                     return (
                         <li className="flop-item" data-name={item.id} key={'flop-item-id-' + item.id}>
-                            <a href={item.link} target="_blank">
+                            <a href={item.link} target="_blank" rel="noreferrer">
                                 <div className="icon">
                                     {item.icon}
                                 </div>
-                                <div className="name">{item.name}</div>
+                                <div className="name">{t(item.name)}</div>
                             </a>
                         </li>
                     )

@@ -1,17 +1,88 @@
 import React from 'react';
-import careers, {ICareer} from "@Data/career";
+import careers, {ICareer, ICareerProject} from "@Data/career";
 import {DateUtil} from "@Utils/date";
-import {FaArrowUpRightFromSquare, FaBriefcase, FaLaptopCode} from "react-icons/fa6";
+import {FaArrowDownLong, FaArrowUpRightFromSquare, FaBriefcase, FaLaptopCode} from "react-icons/fa6";
+import translations, {ITranslations} from "@Data/i18n";
+import {useLocale} from "@Utils/i18n";
+import ProjectDefaultImg from "@Images/project_default.svg";
 
-const Career = (career: ICareer & { index: number }) => {
+/**
+ * 경력 카드의 프로젝트 한 줄.
+ * 외부 링크 · 내부 이동 · 단순 표기 세 경우 모두 동일한 포맷(썸네일 + 이름 + 아이콘)으로 그립니다.
+ */
+const CareerProjectRow = ({project, careerId, t}: {
+    project: ICareerProject;
+    careerId: string;
+    t: ITranslations['career'];
+}) => {
+    const {t: tr} = useLocale();
+    const label = tr(project.label);
+
+    const thumb = (
+        <span className="career-project-showcase-thumb">
+            {/* 로고가 없는 프로젝트는 기본 썸네일로 대체합니다. */}
+            <img src={project.image || ProjectDefaultImg} alt={`${label} ${t.logoAlt}`} loading="lazy"/>
+        </span>
+    );
+
+    const body = (
+        <>
+            {thumb}
+            <span className="career-project-showcase-label">{label}</span>
+        </>
+    );
+
+    if (project.url) {
+        return (
+            <li>
+                <a href={project.url} target="_blank" rel="noreferrer">
+                    {body}
+                    <FaArrowUpRightFromSquare className="career-project-showcase-icon" aria-hidden="true"/>
+                </a>
+            </li>
+        );
+    }
+
+    if (project.projectId) {
+        return (
+            <li>
+                <a
+                    href={"#project-" + project.projectId}
+                    aria-label={`${label} — ${t.jumpBadge}`}
+                    onClick={(event) => {
+                        event.preventDefault();
+                        const target = document.getElementById("project-" + project.projectId);
+                        target?.scrollIntoView({behavior: 'smooth', block: 'center'});
+                        target?.classList.add('project-card-highlight');
+                        setTimeout(() => target?.classList.remove('project-card-highlight'), 1600);
+                    }}
+                >
+                    {body}
+                    <FaArrowDownLong className="career-project-showcase-icon" aria-hidden="true"/>
+                </a>
+            </li>
+        );
+    }
+
+    return (
+        <li key={careerId + label}>
+            <div className="career-project-static">{body}</div>
+        </li>
+    );
+};
+
+const Career = (career: ICareer & { index: number; t: ITranslations['career'] }) => {
+    const {t: tr} = useLocale();
+    const t = career.t;
+
     const startStr = career.period?.[0] ? DateUtil.getDateToStr({date: career.period[0], returnType: 'day'}) : '';
     const isCurrent = career.isOngoing || career.id === 'inavi';
-    const endStr = career.period?.[1] && !isCurrent 
-        ? DateUtil.getDateToStr({date: career.period[1], returnType: 'day'}) 
+    const endStr = career.period?.[1] && !isCurrent
+        ? DateUtil.getDateToStr({date: career.period[1], returnType: 'day'})
         : '';
-    const startLabel = career.isFreelance ? '시작' : '입사';
-    const endLabel = career.isFreelance ? '완료' : '퇴사';
-    const currentLabel = career.isFreelance ? '유지보수중' : '재직중';
+    const startLabel = career.isFreelance ? t.start : t.joined;
+    const endLabel = career.isFreelance ? t.end : t.left;
+    const currentLabel = career.isFreelance ? t.maintaining : t.ongoing;
 
     return (
         <article className={[
@@ -24,8 +95,8 @@ const Career = (career: ICareer & { index: number }) => {
                 <div className="career-period">
                     {career.periodText ? (
                         <div className="career-period-row">
-                            <span className="career-period-label">기간</span>
-                            <span className="career-period-date">{career.periodText}</span>
+                            <span className="career-period-label">{t.period}</span>
+                            <span className="career-period-date">{tr(career.periodText)}</span>
                         </div>
                     ) : (
                         <>
@@ -50,102 +121,65 @@ const Career = (career: ICareer & { index: number }) => {
             <div className="career-main">
                 <div className="career-card-head">
                     <div>
-                        <h3 className={"career-title"}>{career.name}</h3>
-                        <div className={"career-pos"}>{career.position}</div>
+                        <h3 className={"career-title"}>{tr(career.name)}</h3>
+                        <div className={"career-pos"}>{tr(career.position)}</div>
                     </div>
                     {career.type ? (
-                        <div className="career-type">
-                            {career.type}
-                        </div>
+                        <div className="career-type">{tr(career.type)}</div>
                     ) : null}
                 </div>
                 <div className="career-summary-grid">
                     <section>
-                        <span>Features</span>
+                        <span>{t.features}</span>
                         <ul className="career-feature-list">
-                            {career.features?.map((feature) => (
-                                <li key={career.id + feature}>{feature}</li>
-                            ))}
+                            {career.features?.map((feature) => {
+                                const text = tr(feature);
+                                return <li key={career.id + text}>{text}</li>;
+                            })}
                         </ul>
                     </section>
                     <section>
-                        <span>Projects</span>
-                        {career.projects?.some((project) => typeof project !== 'string' && project.image) ? (
-                            <ul className="career-project-showcase">
-                                {career.projects?.map((project) => {
-                                    const label = typeof project === 'string' ? project : project.label;
-                                    const url = typeof project === 'string' ? undefined : project.url;
-                                    const image = typeof project === 'string' ? undefined : project.image;
-                                    return (
-                                        <li key={career.id + label}>
-                                            <a href={url} target="_blank" rel="noreferrer">
-                                                <span className="career-project-showcase-thumb">
-                                                    <img src={image} alt={label + " 로고"} loading="lazy"/>
-                                                </span>
-                                                <span className="career-project-showcase-label">{label}</span>
-                                                <FaArrowUpRightFromSquare className="career-project-showcase-icon"/>
-                                            </a>
-                                        </li>
-                                    );
-                                })}
-                            </ul>
-                        ) : (
-                            <ul className="career-project-list">
-                                {career.projects?.map((project) => {
-                                    const label = typeof project === 'string' ? project : project.label;
-                                    const projectId = typeof project === 'string' ? undefined : project.projectId;
-                                    if (projectId) {
-                                        return (
-                                            <li key={career.id + label}>
-                                                <a
-                                                    href={"#project-" + projectId}
-                                                    className="career-project-jump"
-                                                    onClick={(event) => {
-                                                        event.preventDefault();
-                                                        const target = document.getElementById("project-" + projectId);
-                                                        target?.scrollIntoView({behavior: 'smooth', block: 'center'});
-                                                        target?.classList.add('project-card-highlight');
-                                                        setTimeout(() => target?.classList.remove('project-card-highlight'), 1600);
-                                                    }}
-                                                >
-                                                    {label}
-                                                    <span className="career-project-jump-badge">Projects에서 보기 ↓</span>
-                                                </a>
-                                            </li>
-                                        );
-                                    }
-                                    return <li key={career.id + label}>{label}</li>;
-                                })}
-                            </ul>
-                        )}
+                        <span>{t.projects}</span>
+                        <ul className="career-project-showcase">
+                            {career.projects?.map((project) => (
+                                <CareerProjectRow
+                                    key={career.id + tr(project.label)}
+                                    project={project}
+                                    careerId={career.id}
+                                    t={t}
+                                />
+                            ))}
+                        </ul>
                     </section>
                 </div>
             </div>
         </article>
     );
 }
+
 const CareerSection = () => {
+    const {language} = useLocale();
+    const t = translations[language].career;
+
     const corporateCareers = careers.filter(career => career.company && !career.isFreelance);
     const freelanceCareers = careers.filter(career => career.company && career.isFreelance);
 
     return (
         <section id="s_career" className="section">
-            <p className="section-eyebrow">Career</p>
-            <h2 className="section-title">숫자보다 구조로 증명한<br className="mobile" /> 5년의 궤적</h2>
-            <p className="section-subtitle">
-                정규직과 프리랜서를 넘나들며 맡았던 회사·프로젝트별 핵심 역할을 시간순으로 정리했습니다.
-            </p>
+            <p className="section-eyebrow">{t.eyebrow}</p>
+            <h2 className="section-title">{t.title[0]}<br className="mobile"/> {t.title[1]}</h2>
+            <p className="section-subtitle">{t.subtitle}</p>
             <div className="section-content">
                 <div className="career-group">
                     <h3 className="career-group-title">
                         <span className="career-group-icon"><FaBriefcase/></span>
-                        <span className="career-group-label">Corporate Experience</span>
-                        <span className="career-group-count">{corporateCareers.length}개</span>
+                        <span className="career-group-label">{t.corporate}</span>
+                        <span className="career-group-count">{corporateCareers.length}{t.countSuffix}</span>
                         <span className="career-group-rule" aria-hidden="true"></span>
                     </h3>
                     <div className="career-list">
                         {corporateCareers.map((career, index) => (
-                            <Career key={"career-" + career.id} index={index} {...career}/>
+                            <Career key={"career-" + career.id} index={index} t={t} {...career}/>
                         ))}
                     </div>
                 </div>
@@ -154,13 +188,18 @@ const CareerSection = () => {
                     <div className="career-group career-group-spaced">
                         <h3 className="career-group-title">
                             <span className="career-group-icon"><FaLaptopCode/></span>
-                            <span className="career-group-label">Freelance &amp; Contract Projects</span>
-                            <span className="career-group-count">{freelanceCareers.length}개</span>
+                            <span className="career-group-label">{t.freelance}</span>
+                            <span className="career-group-count">{freelanceCareers.length}{t.countSuffix}</span>
                             <span className="career-group-rule" aria-hidden="true"></span>
                         </h3>
                         <div className="career-list">
                             {freelanceCareers.map((career, index) => (
-                                <Career key={"career-" + career.id} index={corporateCareers.length + index} {...career}/>
+                                <Career
+                                    key={"career-" + career.id}
+                                    index={corporateCareers.length + index}
+                                    t={t}
+                                    {...career}
+                                />
                             ))}
                         </div>
                     </div>

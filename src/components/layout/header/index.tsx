@@ -6,13 +6,12 @@ import {SlMenu} from "react-icons/sl";
 import {changeOffset} from "@Store/slice/offset";
 import {menus} from "@Data/link";
 import {DrawerType, openDrawer} from "@Store/slice/drawer";
-import {changeLanguage, LanguageType} from "@Store/slice/language";
 import Logo from "@Components/section/logo";
+import LanguageSelect from "@Components/section/language";
 
 const Header = () => {
     const dispatch = useDispatch()
     const offset = useSelector((state: RootState) => state.offset.value)
-    const language = useSelector((state: RootState) => state.language.value)
 
     useEffect(() => {
         const onScroll = () => dispatch(changeOffset(window.scrollY));
@@ -48,14 +47,7 @@ const Header = () => {
                         )
                     })}
                 </ul>
-                <button
-                    className="lang-toggle"
-                    type="button"
-                    onClick={() => dispatch(changeLanguage(language === LanguageType.KO ? LanguageType.EN : LanguageType.KO))}
-                    aria-label="Switch language"
-                >
-                    {language === LanguageType.KO ? 'KO' : 'EN'}
-                </button>
+                <LanguageSelect/>
                 <IconButton className="header-icon" onClick={() => {
                     dispatch(openDrawer(DrawerType.SIDEBAR))
                 }}>

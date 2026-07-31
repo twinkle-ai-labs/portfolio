@@ -40,7 +40,7 @@ body[data-theme="dark"] .section {
     color: var(--ink);
 }
 
-body[data-theme="dark"] #s_home,
+/* #s_home 은 .hero-dark 격자무늬 배경을 그대로 쓰므로 제외합니다. */
 body[data-theme="dark"] #s_career,
 body[data-theme="dark"] #s_skill {
     background-image:
@@ -63,13 +63,12 @@ body[data-theme="dark"] .hero-primary {
 }
 
 body[data-theme="dark"] .profile-capability-card,
-body[data-theme="dark"] .profile-summary-card,
+body[data-theme="dark"] .profile-cert-list li,
+body[data-theme="dark"] .devops-stage,
 body[data-theme="dark"] .career-card,
 body[data-theme="dark"] .career-summary-grid section,
 body[data-theme="dark"] .project-card,
-body[data-theme="dark"] .project-modal,
-body[data-theme="dark"] .project-modal-close,
-body[data-theme="dark"] .project-modal-placeholder,
+body[data-theme="dark"] .pm-dialog,
 body[data-theme="dark"] .project-highlight-list li,
 body[data-theme="dark"] .skill-row,
 body[data-theme="dark"] .skill-tags li,
@@ -81,18 +80,14 @@ body[data-theme="dark"] .flop-menu {
 }
 
 body[data-theme="dark"] .career-card-sub,
-body[data-theme="dark"] .profile-summary-card,
 body[data-theme="dark"] .career-summary-grid section {
     background: var(--surface-soft);
 }
 
-body[data-theme="dark"] .profile-summary-card:hover {
-    background: var(--surface);
-}
-
-body[data-theme="dark"] .project-modal-visual {
-    background: var(--surface-soft);
+body[data-theme="dark"] .profile-fact-list,
+body[data-theme="dark"] .devops-cycle {
     border-color: var(--line);
+    background: var(--surface-soft);
 }
 
 body[data-theme="dark"] .career-card-aside,
@@ -114,8 +109,7 @@ body[data-theme="dark"] .project-impact li {
     color: var(--ink-soft);
 }
 
-body[data-theme="dark"] .project-impact li svg,
-body[data-theme="dark"] .project-achievements-checklist-icon {
+body[data-theme="dark"] .project-impact li svg {
     border-color: var(--blue-line);
     background: rgba(165, 180, 252, 0.1);
     color: var(--blue);
@@ -152,38 +146,30 @@ body[data-theme="dark"] .app-loading-bar {
     background: rgba(129, 140, 248, 0.18);
 }
 
-body[data-theme="dark"] .project-achievements-checklist,
-body[data-theme="dark"] .modal-smart .platform-flow-item,
-body[data-theme="dark"] .modal-smart .star-card,
-body[data-theme="dark"] .modal-smart .comparison-column {
+/* Project modal — 어두운 테마 보정 */
+body[data-theme="dark"] .pm-flow-item,
+body[data-theme="dark"] .pm-star-card,
+body[data-theme="dark"] .pm-compare-side,
+body[data-theme="dark"] .dgm-tier,
+body[data-theme="dark"] .dgm-stage {
     border-color: var(--line);
     background: var(--surface-soft);
 }
 
-body[data-theme="dark"] .modal-smart .star-section-media,
-body[data-theme="dark"] .modal-smart .performance-metric-strip,
-body[data-theme="dark"] .modal-smart .performance-metric-strip span,
-body[data-theme="dark"] .modal-smart .search-mockup-panel {
+body[data-theme="dark"] .dgm-node {
     border-color: var(--line);
-    background: var(--surface-soft);
+    background: rgba(255, 255, 255, 0.03);
 }
 
-body[data-theme="dark"] .modal-smart .comparison-diagram-img,
-body[data-theme="dark"] .modal-smart .search-showcase-img {
+/* 흰 배경을 전제로 만든 도식은 어두운 테마에서도 밝은 판을 유지합니다. */
+body[data-theme="dark"] .pm-media.frame-light .pm-media-image {
     border-color: var(--line-strong);
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.92);
 }
 
-body[data-theme="dark"] .project-points.app-result-list > li > ul > li {
-    color: var(--muted);
-}
-
-body[data-theme="dark"] .smart-subtitle-block {
-    border-left-color: var(--blue);
-}
-
-body[data-theme="dark"] .smart-subtitle-block strong {
-    color: var(--ink);
+body[data-theme="dark"] .pm-media.frame-card .pm-media-image {
+    border-color: var(--line);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 body[data-theme="dark"] .footer {

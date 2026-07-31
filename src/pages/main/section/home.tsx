@@ -13,7 +13,6 @@ const HomeSection = () => {
     const t = translations[language];
 
     return (
-        <>
         <section id="s_home" className="section hero-dark">
             <div className="hero-shell">
                 <div className="hero-copy">
@@ -59,28 +58,27 @@ const HomeSection = () => {
                     <HeroConsole/>
                 </div>
             </div>
-        </section>
-        <div className="stats-bar">
-            <div className="stats-bar-inner">
-                <div className="stats-bar-item">
-                    <strong><CountUp value={5}/><span>+</span></strong>
-                    <p>{t.stats.years}</p>
-                </div>
-                <div className="stats-bar-item">
-                    <strong><CountUp value={10}/><span>+</span></strong>
-                    <p>{t.stats.projects}</p>
-                </div>
-                <div className="stats-bar-item">
-                    <strong><CountUp value={80}/><span>x</span></strong>
-                    <p>{t.stats.perf}</p>
-                </div>
-                <div className="stats-bar-item">
-                    <strong><CountUp value={70}/><span>K+</span></strong>
-                    <p>{t.stats.users}</p>
+            <div className="stats-bar">
+                <div className="stats-bar-inner">
+                    <div className="stats-bar-item">
+                        <strong><CountUp value={5}/><span>+</span></strong>
+                        <p>{t.stats.years}</p>
+                    </div>
+                    <div className="stats-bar-item">
+                        <strong><CountUp value={10}/><span>+</span></strong>
+                        <p>{t.stats.projects}</p>
+                    </div>
+                    <div className="stats-bar-item">
+                        <strong><CountUp value={80}/><span>x</span></strong>
+                        <p>{t.stats.perf}</p>
+                    </div>
+                    <div className="stats-bar-item">
+                        <strong><CountUp value={70}/><span>K+</span></strong>
+                        <p>{t.stats.users}</p>
+                    </div>
                 </div>
             </div>
-        </div>
-        </>
+        </section>
     );
 };
 

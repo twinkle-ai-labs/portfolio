@@ -1,0 +1,24 @@
+<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- 배경 (Blue Gradient) -->
+    <rect width="48" height="48" rx="12" fill="url(#batch_grad)"/>
+    
+    <!-- Batch & Integration 아이콘 -->
+    <g transform="translate(11, 14)">
+        <!-- Data Stream 1 -->
+        <rect x="0" y="0" width="12" height="4" rx="2" fill="white" fill-opacity="0.5"/>
+        <!-- Data Stream 2 -->
+        <rect x="0" y="8" width="16" height="4" rx="2" fill="white" fill-opacity="0.8"/>
+        <!-- Data Stream 3 -->
+        <rect x="0" y="16" width="10" height="4" rx="2" fill="white" fill-opacity="0.4"/>
+        
+        <!-- Processing Unit / Aggregator -->
+        <rect x="20" y="0" width="6" height="20" rx="2" fill="white"/>
+    </g>
+
+    <defs>
+        <linearGradient id="batch_grad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#3b82f6"/>
+            <stop offset="1" stop-color="#2563eb"/>
+        </linearGradient>
+    </defs>
+</svg>
