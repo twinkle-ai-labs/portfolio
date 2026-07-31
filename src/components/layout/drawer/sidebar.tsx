@@ -58,7 +58,7 @@ const SidebarDrawer = () => {
                         width: 44, height: 44, borderRadius: '14px', flexShrink: 0,
                         background: 'var(--grad-accent)',
                         display: 'grid', placeItems: 'center',
-                        fontWeight: 700, fontSize: 15, letterSpacing: '0.02em', color: '#12131c',
+                        fontWeight: 800, fontSize: 15, letterSpacing: '-0.02em', color: '#fff',
                         boxShadow: '0 6px 20px rgba(129, 140, 248, 0.32)',
                     }}>
                         HJ
