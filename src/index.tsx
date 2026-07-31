@@ -28,7 +28,17 @@ const root = ReactDOM.createRoot(
 );
 const Root = () => {
     return (
-        <div>Loading</div>
+        <div className="app-loading-screen" role="status" aria-live="polite">
+            <div className="app-loading-card">
+                <span className="app-loading-mark">HJ</span>
+                <div className="app-loading-body">
+                    <span className="app-loading-text">Loading...</span>
+                    <span className="app-loading-bar" aria-hidden="true">
+                        <i/>
+                    </span>
+                </div>
+            </div>
+        </div>
     )
 }
 

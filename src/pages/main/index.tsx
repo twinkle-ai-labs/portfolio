@@ -13,10 +13,6 @@ import CareerSection from "@Pages/main/section/career";
 import ProjectSection from "@Pages/main/section/project";
 
 const App = () => {
-    const handlePrintPdf = () => {
-        window.print();
-    };
-
     return (
         <>
             <ScrollBar/>
@@ -28,10 +24,6 @@ const App = () => {
                 <ProjectSection/>
                 <SkillSection/>
             </main>
-            <button className="pdf-export-button no-print" type="button" onClick={handlePrintPdf}>
-                <span aria-hidden="true">📄</span>
-                PDF 저장
-            </button>
 
             <DrawerSection />
             <FlopMenu/>

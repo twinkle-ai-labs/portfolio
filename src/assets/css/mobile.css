@@ -61,7 +61,11 @@
     }
 
     .career-group-title {
-        font-size: 1.18rem;
+        font-size: 1.12rem;
+    }
+
+    .career-group-rule {
+        display: none;
     }
 
     .career-summary-grid {
@@ -200,9 +204,28 @@
     .project-modal-split-grid,
     .project-modal-split-grid.grid-wide,
     .project-modal-split-grid.grid-narrow,
-    .smart-library-architecture-layout {
+    .smart-library-architecture-layout,
+    .modal-smart .search-case-layout {
         grid-template-columns: 1fr;
         gap: 1.5rem;
+    }
+
+    .modal-smart .performance-metric-strip {
+        gap: 0.45rem;
+    }
+
+    .modal-smart .performance-metric-strip span {
+        flex: 1 1 100%;
+        justify-content: center;
+    }
+
+    .modal-smart .star-summary-list li {
+        grid-template-columns: 1fr;
+        gap: 0.25rem;
+    }
+
+    .modal-smart .search-showcase-img {
+        max-height: 460px;
     }
 
     .profile-capability-card {
@@ -290,13 +313,6 @@
     .project-card,
     .hero-profile-basics section {
         border-radius: 14px;
-    }
-
-    .pdf-export-button {
-        right: 4.75rem;
-        bottom: 1.25rem;
-        padding: 0.68rem 0.82rem;
-        font-size: 0.82rem;
     }
 
     .flop-top {

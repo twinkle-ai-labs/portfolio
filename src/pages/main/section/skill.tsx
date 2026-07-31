@@ -52,8 +52,8 @@ const skillGroups = [
 const SkillSection = () => {
     return (
         <section id="s_skill" className="section skill-section">
-            <p className="section-eyebrow">🛠️ Skills</p>
-            <h2 className="section-title">Tech Stack ⚙️</h2>
+            <p className="section-eyebrow">Tech Stack</p>
+            <h2 className="section-title">나열이 아닌,<br className="mobile" /> 맥락으로 정리한 기술</h2>
             <p className="section-subtitle">
                 단순 목록이 아니라 실제 서비스 개발, 배포, 운영에서 사용한 맥락을 기준으로 분류했습니다.
             </p>

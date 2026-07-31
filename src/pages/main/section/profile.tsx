@@ -1,16 +1,15 @@
 import React from 'react';
-import config from "@Data/config";
 
 type ProfileItem = string | {
     label: string;
-    date: string;
+    date?: string;
 };
 
 const profileCards = [
     {
         title: 'Professional Journey',
         items: [
-            '5년차 백엔드 엔지니어로서 견고한 시스템 설계와 안정적인 인프라 운영을 지향합니다.',
+            '실무 만 5년을 기반으로 서비스 설계, 개발, 배포, 운영까지 책임지는 백엔드 엔지니어입니다.',
             '아이나비시스템즈(INAVI Systems)에서 클라우드 데이터 모델 설계, 고성능 API 엔지니어링, 대량의 통계 배치 파이프라인 및 CI/CD 인프라 구축 주도',
             '나이콤(Nicom)에서 10개 이상의 스마트 도서관 및 출입 통제 엔터프라이즈 솔루션 전주기 설계 및 개발',
         ],
@@ -18,6 +17,8 @@ const profileCards = [
     {
         title: 'Expertise & Standards',
         items: [
+            {label: '컴퓨터공학 학사'},
+            {label: '국비지원 개발자 교육 수료', date: '2개월'},
             {label: '리눅스마스터 2급', date: '2024.07'},
             {label: 'SQL 개발자', date: '2022.07'},
             {label: '정보처리기사', date: '2019.05'},
@@ -49,11 +50,11 @@ const ProfileSection = () => {
         <section id="s_profile" className="section profile-section">
             <div className="profile-summary-layout">
                 <div className="profile-summary-copy">
-                    <p className="section-eyebrow">🧭 Dignity in Engineering</p>
-                    <h2 className="section-title">Professional Philosophy ✨</h2>
+                    <p className="section-eyebrow">Engineering Philosophy</p>
+                    <h2 className="section-title">보이지 않는 곳의 완성도가<br className="mobile" /> 서비스의 수준을 결정합니다</h2>
                     <p className="section-subtitle">
-                        보이지 않는 백엔드 인프라의 견고함이 서비스의 가치를 결정한다고 믿습니다. 
-                        단순히 컴파일되는 코드를 넘어 비즈니스의 성장과 기술의 도전에 우아하고 유연하게 대응할 수 있는 고품격 아키텍처를 지향합니다.
+                        컴파일되는 코드를 넘어, 비즈니스의 성장 속도와 기술적 도전에 유연하게 대응할 수 있는
+                        아키텍처를 지향합니다. 아래는 그 기준을 지켜온 발자취입니다.
                     </p>
                 </div>
                 <div className="profile-summary-grid">
@@ -66,7 +67,7 @@ const ProfileSection = () => {
                                         {typeof item === 'string' ? item : (
                                             <>
                                                 <strong className="profile-item-label">{item.label}</strong>
-                                                <span className="profile-item-date">({item.date})</span>
+                                                {item.date && <span className="profile-item-date">({item.date})</span>}
                                             </>
                                         )}
                                     </li>

@@ -5,6 +5,19 @@ import NicomLogo from '@Images/company_nicom.svg'
 import KicLogo from '@Images/company_kic.png'
 import FillaDesignLogo from '@Images/company_filladesign.png'
 
+import KappledenImg from '@Images/og_kappleden.png'
+import IlegImg from '@Images/og_ileg.png'
+import BarundcImg from '@Images/og_barundc.jpg'
+import Dental100yearImg from '@Images/og_100dental.jpg'
+import SsjobgyImg from '@Images/og_ssjobgy.jpg'
+
+export interface ICareerProject {
+    label: string;
+    url?: string;
+    image?: string;
+    projectId?: string;
+}
+
 export interface ICareer {
     id: string;
     name: string;
@@ -20,7 +33,7 @@ export interface ICareer {
     isOngoing?: boolean;
     position: string;
     features?: string[];
-    projects?: string[];
+    projects?: (string | ICareerProject)[];
 }
 
 const careers: ICareer[] = [
@@ -32,16 +45,16 @@ const careers: ICareer[] = [
         period: [new Date('2024.12.16'), new Date()],
         link: 'https://www.inavisystems.com/',
         dotColor: 'info',
-        position: 'Backend Engineer · DevOps',
+        position: 'Lead Backend Engineer · DevOps',
         features: [
-            'DB 모델링 및 API 설계',
-            'AWS/GCP 클라우드 인프라 구성',
-            'Harbor, Jenkins 기반 CI/CD 자동화',
-            'Filebeat, Prometheus, Grafana 운영 관측',
+            '서버·인프라 아키텍처 단독 설계 (Owner)',
+            'AWS·CI/CD 파이프라인 단독 구축',
+            '내비게이션 서비스 운영 및 통합통계 시스템 신규 개발',
+            '실시간 관측 체계 구축 및 장애 대응 전담',
         ],
         projects: [
-            '아이나비 스탬프 오르다',
-            '내비게이션 통합통계 시스템',
+            {label: '아이나비 스탬프 오르다', projectId: 'orda'},
+            {label: '내비게이션 서비스 운영 & 통합통계 시스템', projectId: 'navigation-statistics'},
         ],
     },
     {
@@ -63,7 +76,11 @@ const careers: ICareer[] = [
             '반응형 레이아웃 및 크로스 브라우징'
         ],
         projects: [
-            '의료기관 및 기업 홈페이지 5건 퍼블리싱'
+            {label: '김포사과나무치과', url: 'http://kappleden.com', image: KappledenImg},
+            {label: '주식회사 아이레그', url: 'http://ilegcorp.com', image: IlegImg},
+            {label: '왕십리 바른치과', url: 'http://barundc.com', image: BarundcImg},
+            {label: '연세 백세치과', url: 'http://100yeardental.com', image: Dental100yearImg},
+            {label: '왕십리 산부인과', url: 'http://ssjobgy.com', image: SsjobgyImg},
         ],
     },
     {
@@ -78,9 +95,9 @@ const careers: ICareer[] = [
         position: 'Web Maintenance / Security & SEO Engineer',
         features: [
             'PHP 기반 다국어 콘텐츠 플랫폼 유지보수 (27개 언어)',
-            '보안, 인증, 권한 체계 개선 (CSRF, Session 기반 로그인, 관리자 Role 추가)',
+            '보안·인증·권한 체계 개선 (CSRF, 관리자 Role)',
             '개인정보 암호화 체계 정립 (키 교체 가능 구조)',
-            '글로벌 SEO 구조 정리 및 운영 자동화 방향 수립 (사이트맵 생성, JSON-LD 등)'
+            '글로벌 SEO 구조 정리 및 운영 자동화 방향 수립'
         ],
         projects: [
             'The New Life Mission 유지보수 및 고도화 (Full Stack)',
@@ -100,13 +117,13 @@ const careers: ICareer[] = [
         position: 'Full-Stack Engineer',
         features: [
             'SDLC 전반에 걸친 10개+ 프로젝트 주도 개발',
-            '다양한 통신 경험 (ActiveMQ 통신, Socket 통신, WebSocket 통신)',
+            'ActiveMQ·Socket·WebSocket 통신 개발 경험',
             '자사 웹 서버 구축 및 솔루션 배포',
-            '하이브리드 웹앱 개발 및 Play/App Store 런칭 有',
-            'JAVA 라이브러리 개발 및 Maven 배포 有'
+            '하이브리드 웹앱 개발 및 Play/App Store 런칭',
+            'JAVA 라이브러리 개발 및 Maven 배포'
         ],
         projects: [
-            '스마트도서관 시스템',
+            {label: '스마트도서관 시스템', projectId: 'smart-library'},
             '도서 위치 추적 시스템',
             '얼굴인식 출입통제 시스템',
         ],

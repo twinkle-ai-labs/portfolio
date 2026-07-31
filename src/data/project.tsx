@@ -44,9 +44,10 @@ const projects: IProject[] = [
         summary: '크로스 도메인 협업 속에서 클라우드 네이티브 서버 아키텍처 및 전용 인프라의 전주기를 단독 설계하고 구축했습니다.',
         impact: [
             '서버 아키텍처 단독 설계 및 핵심 비즈니스 도메인 수립 완료',
-            '안정적이고 확장 가능한 AWS 클라우드 인프라 토폴로지 설계',
+            'EC2, RDS, S3, ALB, Route53, Lambda 등 AWS 클라우드 인프라 토폴로지 설계',
             'Jenkins, Harbor 기반의 빌드/배포 파이프라인 자동화 구현',
-            'Filebeat 및 Prometheus/Grafana 기반 실시간 장애 선제 관측 체계 구축'
+            'Filebeat 및 Prometheus/Grafana 기반 실시간 장애 선제 관측 체계 구축',
+            '회원 약 7만 명 규모 서비스 운영 · 공공기관/지자체 투어 및 화성시 "쓰리 Go" 챌린지 운영'
         ],
         features: [
             'AWS Cloud 및 인프라 아키텍처링 단독 전담',
@@ -72,17 +73,19 @@ const projects: IProject[] = [
     },
     {
         id: 'navigation-statistics',
-        title: '내비게이션 통합통계 대시보드 시스템',
-        period: '2025.11 - 2026.05',
-        role: 'Data & Server Architect',
-        summary: '다수의 내비게이션 서비스에서 인입되는 방대한 사용자 로그를 수집·정제하여 대시보드에 안정적으로 통계 지표를 공급하는 고성능 데이터 파이프라인입니다.',
+        title: '내비게이션 서비스 운영 & 통합통계 시스템',
+        period: '2025.03 - 현재',
+        role: 'Lead Backend Engineer (Owner)',
+        summary: '아이나비 에어·토요타 하이브리드 등 내비게이션 서비스의 서버 운영·유지보수를 전담하는 동시에, 다수 서비스에서 인입되는 방대한 사용자 로그를 수집·정제해 대시보드에 공급하는 통합통계 시스템을 신규로 설계·개발했습니다.',
         impact: [
-            '도메인 수집·정기 배치·사용자 조회 맥락 격리 (DDD 설계)',
+            '아이나비 에어, 토요타 하이브리드 등 내비게이션 서비스 서버 운영 및 유지보수 전담',
+            '도메인 수집·정기 배치·사용자 조회 맥락 격리 (DDD 설계)로 통합통계 시스템 신규 개발',
             'BigQuery 일 단위 파티션 설계 및 Quartz 기반 정기 배치 자동화',
             'MySQL 통계 적재 엔진 및 Grafana 실시간 분석 대시보드 시각화 연동'
         ],
         features: [
-            'GCP BigQuery 기반 일 단위 대량 로그 수집 파이프라인',
+            '내비게이션 서비스(아이나비 에어, 토요타 하이브리드 등) 서버 운영·유지보수',
+            'GCP BigQuery 기반 일 단위 대량 로그 수집 파이프라인 신규 구축',
             'Spring Batch / Quartz 기반 통계 배치 정밀 자동화',
             'MySQL 통계 적재 엔진 및 Grafana 실시간 분석 대시보드'
         ],

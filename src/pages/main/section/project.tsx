@@ -222,10 +222,10 @@ const ProjectSection = () => {
 
     return (
         <section id="s_project" className="section">
-            <p className="section-eyebrow">🚀 Projects</p>
-            <h2 className="section-title">Featured Work 🧱</h2>
+            <p className="section-eyebrow">Projects</p>
+            <h2 className="section-title">직접 설계하고<br className="mobile" /> 끝까지 책임진 프로젝트</h2>
             <p className="section-subtitle">
-                서버 1인 개발, 통계 파이프라인, 스마트도서관 시스템 고도화처럼 제품 흐름에 깊게 관여한 경험을 모았습니다.
+                서버 1인 개발, 통계 파이프라인 구축, 스마트도서관 시스템 고도화까지 — 제품 흐름에 깊게 관여한 경험만 골랐습니다.
             </p>
             <div className="section-content">
                 <ul className="project-highlight-list">
@@ -238,7 +238,7 @@ const ProjectSection = () => {
                 </ul>
                 <div className="project-grid">
                     {projects.map((project, index) => (
-                        <button className="project-card" key={project.id}
+                        <button className="project-card" id={"project-" + project.id} key={project.id}
                                 onClick={() => setSelectedProject(project)}>
                             <div className="project-card-top">
                                 <div className="project-icon">{project.icon}</div>

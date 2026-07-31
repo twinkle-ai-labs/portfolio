@@ -1,9 +1,8 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {PdfModalProps} from "@Components/modal/pdfviewer";
 
 export interface ModalProps {
     type: string;
-    props: PdfModalProps | {};
+    props: Record<string, unknown>;
 }
 const modalSlice = createSlice({
     name: "modal",
