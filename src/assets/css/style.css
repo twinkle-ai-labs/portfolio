@@ -38,6 +38,10 @@ body {
 
     --header-height: 88px;
     --header-height-scrolled: 68px;
+    /* 스크롤 이후에만 깔리는 헤더 유리판 */
+    --header-glass: rgba(255, 255, 255, 0.6);
+    --header-glass-border: rgba(20, 22, 48, 0.08);
+    --header-glass-shadow: 0 10px 34px rgba(28, 30, 60, 0.09);
     --content-width: 1160px;
     --radius: 18px;
     --radius-sm: 12px;
@@ -195,7 +199,11 @@ span.pc {
     background: var(--grad-accent);
 }
 
-/* Header */
+/*
+ * Header
+ * 첫 진입(스크롤 0)에는 아무 판도 깔지 않고 히어로 위에 그대로 얹힙니다.
+ * 스크롤이 시작되면 .scrolled 가 붙으면서 유리판(반투명 + 블러 + 윗면 하이라이트)이 나타납니다.
+ */
 .header {
     position: fixed;
     top: 0;
@@ -205,26 +213,77 @@ span.pc {
     height: var(--header-height);
     display: flex;
     align-items: center;
-    background: rgba(255, 255, 255, 0.72);
+    background: transparent;
     border-bottom: 1px solid transparent;
-    backdrop-filter: blur(18px) saturate(170%);
-    -webkit-backdrop-filter: blur(18px) saturate(170%);
-    transition: height var(--transition-base), border-color var(--transition-base), background var(--transition-base), box-shadow var(--transition-base);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    transition: height var(--transition-base), border-color var(--transition-base), background var(--transition-base), box-shadow var(--transition-base), backdrop-filter var(--transition-base);
+}
+
+/* 유리의 윗면에 닿는 빛 — 판이 깔릴 때만 서서히 켭니다. */
+.header::before {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, var(--glass-highlight), transparent 62%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-base);
+    content: '';
 }
 
 .header.scrolled {
     height: var(--header-height-scrolled);
-    background: rgba(255, 255, 255, 0.82);
-    border-bottom-color: var(--line);
-    box-shadow: 0 8px 30px rgba(28, 30, 60, 0.05);
+    background: var(--header-glass);
+    border-bottom-color: var(--header-glass-border);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    box-shadow: var(--header-glass-shadow);
+}
+
+.header.scrolled::before {
+    opacity: 1;
 }
 
 .header .inner {
-    width: min(var(--content-width), 90%);
+    position: relative;
+    z-index: 1;
+    width: min(var(--content-width), 100% - clamp(2rem, 5vw, 8rem));
     margin: 0 auto;
     display: flex;
     align-items: center;
     gap: 1.5rem;
+}
+
+/*
+ * 판이 없는 동안에는 어두운 히어로 위에 글자가 놓이므로,
+ * 헤더 요소 전체를 밝은 톤으로 뒤집습니다(라이트 테마 포함).
+ */
+.header:not(.scrolled) .logo .title {
+    color: #fff;
+}
+
+.header:not(.scrolled) .header-nav li {
+    color: rgba(255, 255, 255, 0.72);
+}
+
+.header:not(.scrolled) .header-nav a:hover {
+    color: #fff;
+}
+
+.header:not(.scrolled) .lang-select-trigger {
+    border-color: rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.header:not(.scrolled) .lang-select-trigger:hover {
+    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.16);
+    color: #fff;
+}
+
+.header:not(.scrolled) .lang-select-arrow {
+    color: rgba(255, 255, 255, 0.6);
 }
 
 .logo a {
@@ -239,7 +298,7 @@ span.pc {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 13px;
+    border-radius: 15px;
     background: var(--grad-accent);
     color: white;
     font-size: 0.88rem;
@@ -313,10 +372,9 @@ span.pc {
     border-radius: 999px;
     background: var(--surface);
     color: var(--ink-soft);
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
+    font-size: 0.82rem;
     font-weight: 700;
-    letter-spacing: 0.03em;
+    letter-spacing: -0.01em;
     cursor: pointer;
     transition: border-color var(--transition-fast), background var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
 }
@@ -338,6 +396,10 @@ span.pc {
     font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
     font-size: 0.95rem;
     line-height: 1;
+}
+
+.lang-select-name {
+    white-space: nowrap;
 }
 
 .lang-select-arrow {
@@ -363,7 +425,7 @@ span.pc {
     gap: 0.15rem;
     list-style: none;
     border: 1px solid var(--line);
-    border-radius: 14px;
+    border-radius: 18px;
     background: var(--surface);
     box-shadow: var(--glass-shadow);
     animation: lang-select-in 160ms cubic-bezier(0.22, 1, 0.36, 1);
@@ -385,7 +447,7 @@ span.pc {
     align-items: center;
     gap: 0.55rem;
     padding: 0.5rem 0.6rem;
-    border-radius: 10px;
+    border-radius: 13px;
     color: var(--ink-soft);
     font-size: 0.85rem;
     font-weight: 600;
@@ -422,6 +484,17 @@ span.pc {
     transform: translateY(-1px);
 }
 
+.header:not(.scrolled) .btn-icon,
+.header:not(.scrolled) .header-icon {
+    color: #fff !important;
+}
+
+.header:not(.scrolled) .btn-icon:hover,
+.header:not(.scrolled) .header-icon:hover {
+    border-color: rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.1);
+}
+
 .header .header-icon {
     display: none !important;
 }
@@ -435,14 +508,16 @@ span.pc {
     position: relative;
     width: 100%;
     min-height: auto;
-    padding: 7rem 0;
+    /* 화면 폭에 따라 위아래 여백이 끊기지 않고 이어지도록 clamp 로 둡니다. */
+    padding: clamp(3.75rem, 8vw, 7rem) 0;
     background: var(--surface);
     text-align: center;
     scroll-margin-top: var(--header-height-scrolled);
 }
 
+/* 좌우 여백도 폭에 비례해 줄어듭니다(모바일 1rem ↔ 데스크톱 최대 4rem). */
 .section > * {
-    width: min(var(--content-width), 90%);
+    width: min(var(--content-width), 100% - clamp(2rem, 5vw, 8rem));
     margin-left: auto;
     margin-right: auto;
 }
@@ -453,7 +528,7 @@ span.pc {
     flex-direction: column;
     justify-content: center;
     background-color: var(--home-bg);
-    padding: 9rem 0 4.5rem;
+    padding: clamp(6.5rem, 12vw, 9rem) 0 clamp(3rem, 6vw, 4.5rem);
 }
 
 #s_profile {
@@ -489,6 +564,14 @@ span.pc {
     max-width: 100%;
 }
 
+/*
+ * 섹션 머리글 묶음.
+ * 아래 콘텐츠(경력 카드 · 프로젝트 · 기술)가 모두 좌측 정렬이라 머리글도 왼쪽에 맞춥니다.
+ */
+.section-head {
+    text-align: left;
+}
+
 .section-eyebrow {
     display: inline-flex;
     align-items: center;
@@ -508,11 +591,21 @@ span.pc {
 .section-title {
     max-width: 860px;
     color: var(--ink);
-    font-size: clamp(2.1rem, 3.4vw, 3.1rem);
+    font-size: clamp(1.95rem, 1.35rem + 2.6vw, 3.1rem);
     line-height: 1.18;
     font-weight: 800;
     letter-spacing: -0.03em;
     word-break: keep-all;
+}
+
+/* 제목의 뒷 구절만 강조색으로 받아 히어로 타이틀과 톤을 맞춥니다. */
+.section-title em {
+    background: var(--grad-accent);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    font-style: normal;
 }
 
 .section-desc,
@@ -520,14 +613,14 @@ span.pc {
     max-width: 680px;
     margin-top: 1.15rem;
     color: var(--muted);
-    font-size: 1.06rem;
+    font-size: clamp(0.97rem, 0.88rem + 0.4vw, 1.06rem);
     font-weight: 400;
-    line-height: 1.8;
+    line-height: 1.75;
     word-break: keep-all;
 }
 
 .section-content {
-    margin-top: 3.25rem;
+    margin-top: clamp(2rem, 4.5vw, 3.25rem);
 }
 
 .section {
@@ -591,7 +684,7 @@ span.pc {
     gap: 0.75rem;
     padding: 0.9rem 1.05rem;
     border: 1px solid var(--line);
-    border-radius: 16px;
+    border-radius: 20px;
     background: var(--surface);
     box-shadow: var(--shadow-soft);
 }
@@ -607,7 +700,7 @@ span.pc {
     place-items: center;
     width: 38px;
     height: 38px;
-    border-radius: 12px;
+    border-radius: 16px;
     background: var(--grad-accent);
     color: white;
     font-size: 0.82rem;
@@ -665,7 +758,7 @@ span.pc {
     display: grid;
     grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
     align-items: center;
-    gap: 4rem;
+    gap: clamp(2.25rem, 4.5vw, 4rem);
     text-align: left;
 }
 
@@ -721,7 +814,7 @@ span.pc {
 
 .hero-title {
     color: white;
-    font-size: clamp(3rem, 6vw, 5.2rem);
+    font-size: clamp(2.4rem, 1.4rem + 4.6vw, 5.2rem);
     line-height: 1.12;
     font-weight: 800;
     letter-spacing: -0.035em;
@@ -740,11 +833,11 @@ span.pc {
 
 .hero-desc {
     max-width: 600px;
-    margin-top: 1.6rem;
+    margin-top: clamp(1.1rem, 2.6vw, 1.6rem);
     color: rgba(255, 255, 255, 0.62);
-    font-size: 1.12rem;
+    font-size: clamp(1rem, 0.92rem + 0.35vw, 1.12rem);
     font-weight: 400;
-    line-height: 1.85;
+    line-height: 1.8;
     word-break: keep-all;
 }
 
@@ -771,7 +864,7 @@ span.pc {
     display: grid;
     overflow: hidden;
     border: 1px solid rgba(165, 180, 252, 0.18);
-    border-radius: 18px;
+    border-radius: 24px;
     background: rgba(10, 11, 18, 0.82);
     box-shadow:
             0 0 0 1px rgba(0, 0, 0, 0.4),
@@ -886,7 +979,8 @@ span.pc {
 
 .log-text {
     color: rgba(255, 255, 255, 0.78);
-    word-break: break-all;
+    /* 좁은 화면에서도 단어 중간이 아니라 공백에서 먼저 접히게 합니다. */
+    overflow-wrap: anywhere;
 }
 
 .hero-console-cursor {
@@ -988,8 +1082,8 @@ span.pc {
 .hero-ready-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.55rem;
-    margin-top: 1.4rem;
+    gap: 0.5rem;
+    margin-top: clamp(1rem, 2.4vw, 1.4rem);
 }
 
 .hero-ready-list li {
@@ -1018,8 +1112,8 @@ span.pc {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.85rem;
-    margin-top: 2rem;
+    gap: 0.75rem;
+    margin-top: clamp(1.4rem, 3.2vw, 2rem);
 }
 
 .hero-primary,
@@ -1119,8 +1213,8 @@ span.pc {
 /* Stats bar (hero footer row) */
 .stats-bar {
     position: relative;
-    margin-top: 4.5rem;
-    padding-top: 2.6rem;
+    margin-top: clamp(2.5rem, 6vw, 4.5rem);
+    padding-top: clamp(1.75rem, 4vw, 2.6rem);
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     opacity: 0;
     animation: hero-rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.7s forwards;
@@ -1184,43 +1278,46 @@ span.pc {
 }
 
 /* Profile */
-.profile-summary-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-    gap: 4rem;
-    align-items: start;
-    text-align: left;
+/*
+ * Profile 섹션은 위에서 아래로 읽히는 세 덩어리입니다.
+ *   머리글(철학 + 태그) → 내가 누구인가(팩트 · 자격증) → 어떻게 일하는가(∞ · 역할)
+ * 예전에는 머리글이 2열 격자 안에 갇혀 팩트표와 나란히 놓여
+ * 각 영역이 서로 관계 없이 나열된 것처럼 보였습니다.
+ */
+.profile-section {
+    --profile-gap: clamp(2.25rem, 5vw, 4rem);
 }
 
-.profile-summary-copy {
-    position: sticky;
-    top: 7rem;
+/* 머리글 아래 역할·기술 태그 */
+.profile-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-top: 1.35rem;
 }
 
-.profile-summary-copy .section-title {
-    max-width: 560px;
-    font-size: clamp(1.9rem, 3vw, 2.7rem);
-    line-height: 1.22;
-}
-
-.profile-summary-copy .section-subtitle {
-    max-width: 640px;
-    margin-top: 1.15rem;
-    color: var(--muted);
-    font-size: 1.05rem;
-    line-height: 1.85;
-    word-break: keep-all;
+.profile-tags li {
+    padding: 0.42rem 0.85rem;
+    border: 1px solid var(--blue-line);
+    border-radius: 999px;
+    background: var(--blue-soft);
+    color: var(--blue-deep);
+    font-size: 0.84rem;
+    font-weight: 650;
+    letter-spacing: -0.01em;
 }
 
 /* 요약 팩트 — 문장 대신 라벨/값으로 훑어 읽히도록 합니다. */
 .profile-facts {
     display: grid;
-    gap: 1.5rem;
+    gap: 1.25rem;
     text-align: left;
 }
 
+/* 네 항목을 한 줄에 늘어놓아 표가 아니라 한눈에 훑는 띠로 읽히게 합니다. */
 .profile-fact-list {
     display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 0;
     margin: 0;
     border: 1px solid var(--line);
@@ -1231,14 +1328,13 @@ span.pc {
 
 .profile-fact {
     display: grid;
-    grid-template-columns: 5.5rem minmax(0, 1fr);
-    align-items: baseline;
-    gap: 1rem;
-    padding: 1.1rem 1.4rem;
+    align-content: start;
+    gap: 0.5rem;
+    padding: 1.15rem 1.3rem;
 }
 
 .profile-fact + .profile-fact {
-    border-top: 1px solid var(--line);
+    border-left: 1px solid var(--line);
 }
 
 .profile-fact dt {
@@ -1298,11 +1394,67 @@ span.pc {
     font-weight: 600;
 }
 
+/*
+ * 섹션 안의 하위 블록 (무엇을 믿는가 · 어떻게 일하는가).
+ * 각자 소제목을 달아, 아래 내용이 왜 거기 있는지 스스로 설명하게 합니다.
+ */
+.profile-block {
+    margin-top: var(--profile-gap);
+    padding-top: var(--profile-gap);
+    border-top: 1px solid var(--line);
+    text-align: left;
+}
+
+.profile-block-eyebrow {
+    color: var(--blue-deep);
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.profile-block-title {
+    max-width: 720px;
+    margin-top: 0.55rem;
+    color: var(--ink);
+    font-size: clamp(1.3rem, 0.95rem + 1.25vw, 1.85rem);
+    font-weight: 800;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+    word-break: keep-all;
+}
+
+.profile-block-title em {
+    background: var(--grad-accent);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    font-style: normal;
+}
+
+.profile-block-desc {
+    max-width: 640px;
+    margin-top: 0.85rem;
+    color: var(--muted);
+    font-size: clamp(0.97rem, 0.88rem + 0.4vw, 1.06rem);
+    line-height: 1.75;
+    word-break: keep-all;
+}
+
+/* 왼쪽에 흐름(∞), 오른쪽에 그 흐름에서 맡는 일. */
+.profile-flow {
+    display: grid;
+    grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
+    align-items: center;
+    gap: clamp(1.25rem, 3vw, 2.5rem);
+    margin-top: 1.75rem;
+}
+
 .profile-capability-grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 1rem;
-    margin-top: 4rem;
+    gap: 0.7rem;
 }
 
 .profile-capability-card {
@@ -1333,7 +1485,7 @@ span.pc {
     text-transform: uppercase;
 }
 
-.profile-capability-card h3 {
+.profile-capability-card h4 {
     margin-top: 0.5rem;
     color: var(--ink);
     font-size: 1.08rem;
@@ -1351,134 +1503,164 @@ span.pc {
 }
 
 /* DevOps 순환 흐름 다이어그램 */
+/* DevOps 인피니티 리본 */
 .devops-cycle {
-    /* margin 단축 속성을 쓰면 .section > * 의 좌우 auto 정렬이 덮여 full-bleed 가 됩니다. */
-    margin-top: 1rem;
-    padding: 1.75rem;
+    margin: 0;
+    padding: 1.25rem 1.35rem 1rem;
     border: 1px solid var(--line);
     border-radius: var(--radius);
     background: var(--surface-soft);
     text-align: left;
+
+    --dvi-dev-from: #6366f1;
+    --dvi-dev-to: #818cf8;
+    --dvi-ops-from: #a78bfa;
+    --dvi-ops-to: #c4b5fd;
 }
 
-.devops-track {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 2.25rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
+.dvi-frame {
+    width: 100%;
 }
 
-.devops-stage {
-    position: relative;
-    padding: 1.1rem 1.2rem;
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    background: var(--surface);
-    transition: border-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
-}
-
-.devops-stage:hover,
-.devops-stage.is-active {
-    transform: translateY(-3px);
-    border-color: var(--blue-line);
-    box-shadow: var(--shadow-soft);
-}
-
-/* 단계 사이를 잇는 화살표 */
-.devops-stage:not(:last-child)::after {
-    position: absolute;
-    top: 50%;
-    right: -1.55rem;
-    color: var(--muted-2);
-    font-size: 0.9rem;
-    line-height: 1;
-    transform: translateY(-50%);
-    content: '→';
-}
-
-.devops-stage-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 0.8rem;
-}
-
-.devops-stage-icon {
-    display: inline-grid;
-    place-items: center;
-    width: 2.15rem;
-    height: 2.15rem;
-    border-radius: 10px;
-    background: var(--blue-soft);
-    color: var(--blue);
-    font-size: 1.05rem;
-    transition: background var(--transition-fast), color var(--transition-fast);
-}
-
-.devops-stage.is-active .devops-stage-icon {
-    background: var(--blue);
-    color: #fff;
-}
-
-.devops-stage-step {
-    color: var(--muted-2);
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-}
-
-.devops-stage-title {
+.dvi-svg {
     display: block;
-    color: var(--ink);
-    font-size: 1.02rem;
+    width: 100%;
+    max-width: 500px;
+    height: auto;
+    margin: 0 auto;
+    overflow: visible;
+}
+
+/* 리본 뒤로 은은하게 번지는 빛 */
+.dvi-halo path {
+    fill: none;
+    stroke-width: 46;
+    opacity: 0.16;
+    filter: blur(18px);
+}
+
+/* 리본 본체 — 두 정원이 교차 밴드로 이어져 ∞ 를 이룹니다. */
+.dvi-ribbon {
+    fill: none;
+    stroke-width: 46;
+    stroke-linecap: round;
+    transition: opacity var(--transition-base);
+}
+
+/* 리본의 모든 끝은 둥근 캡 — 교차 밴드와 같은 곡률로 만나 부드럽게 이어집니다. */
+.dvi-ribbon-arc {
+    stroke-linecap: round;
+}
+
+/*
+ * 교차 밴드는 둘 다 불투명하게 두고 그리는 순서로만 위아래를 만듭니다.
+ * 아래 밴드를 반투명하게 두면 겹치는 자리에 배경이 비쳐 얼룩처럼 보입니다.
+ */
+.dvi-cross-under {
+    opacity: 1;
+}
+
+/*
+ * 리본을 따라 도는 빛 — 흐름의 방향을 보여 줍니다.
+ * 1900 은 전체 순환 경로(FULL_LOOP)의 길이입니다.
+ */
+.dvi-spark {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.85);
+    stroke-width: 6;
+    stroke-linecap: round;
+    stroke-dasharray: 30 1870;
+    animation: dvi-spark 9s linear infinite;
+}
+
+.dvi-spark-late {
+    animation-delay: -4.5s;
+    opacity: 0.6;
+}
+
+@keyframes dvi-spark {
+    from {
+        stroke-dashoffset: 1900;
+    }
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dvi-spark {
+        display: none;
+    }
+}
+
+/* 고리 한가운데의 이름 — 약칭이 크고, 풀네임이 그 아래 작게 깔립니다. */
+.dvi-lobes text {
+    text-anchor: middle;
+    dominant-baseline: central;
+}
+
+.dvi-lobes .dvi-lobe-short {
+    fill: var(--ink);
+    font-size: 48px;
     font-weight: 800;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
 }
 
-.devops-stage-label {
-    display: block;
-    margin-top: 0.1rem;
-    color: var(--blue-deep);
-    font-family: var(--font-mono);
-    font-size: 0.68rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
+.dvi-lobes .dvi-lobe-full {
+    fill: var(--muted);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
 }
 
-.devops-stage-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.3rem;
-    margin-top: 0.85rem;
+/* 리본 위에 얹히는 단계명 */
+.dvi-node text {
+    fill: #fff;
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    text-anchor: middle;
+    dominant-baseline: central;
 }
 
-.devops-stage-tags li {
-    padding: 0.22rem 0.55rem;
-    border-radius: 999px;
-    background: var(--blue-soft);
-    color: var(--ink-soft);
-    font-size: 0.72rem;
-    font-weight: 600;
+.dvi-node {
+    cursor: default;
+    transition: opacity var(--transition-fast);
+}
+
+/* 한 곳을 지목하면 나머지는 물러납니다. */
+.devops-cycle.is-focused .dvi-node {
+    opacity: 0.45;
+}
+
+.devops-cycle.is-focused .dvi-node.is-active {
+    opacity: 1;
+}
+
+.devops-cycle.is-focused .dvi-ribbon {
+    opacity: 0.55;
 }
 
 .devops-loop {
-    display: flex;
-    align-items: center;
-    gap: 0.55rem;
-    margin-top: 1.25rem;
-    padding-top: 1.1rem;
+    position: relative;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    padding-left: 1.35rem;
     border-top: 1px dashed var(--line-strong);
     color: var(--muted);
     font-size: 0.82rem;
     font-weight: 500;
 }
 
-.devops-loop svg {
+/* 되돌아오는 화살표를 문장 앞에 둡니다. */
+.devops-loop::before {
+    position: absolute;
+    top: 1rem;
+    left: 0;
     color: var(--blue);
+    font-weight: 700;
+    content: '↺';
 }
 
 /* Career */
@@ -1566,7 +1748,7 @@ span.pc {
     align-items: center;
     justify-content: center;
     flex: 0 0 auto;
-    border-radius: 14px;
+    border-radius: 18px;
     background: var(--grad-accent);
     color: white;
     font-size: 1.05rem;
@@ -1605,7 +1787,7 @@ span.pc {
     gap: 1.4rem;
     padding: 1.6rem;
     border: 1px solid var(--line);
-    border-radius: 20px;
+    border-radius: 26px;
     background: var(--surface);
     box-shadow: 0 4px 18px rgba(28, 30, 60, 0.04);
     transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
@@ -1744,7 +1926,7 @@ span.pc {
 .career-summary-grid section {
     padding: 1rem 1.05rem;
     border: 1px solid var(--line);
-    border-radius: 14px;
+    border-radius: 18px;
     background: var(--surface-soft);
 }
 
@@ -1810,7 +1992,7 @@ span.pc {
     min-height: 3.1rem;
     padding: 0.5rem 0.8rem 0.5rem 0.5rem;
     border: 1px solid var(--line);
-    border-radius: 14px;
+    border-radius: 18px;
     background: var(--surface);
     transition: border-color var(--transition-fast), background var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
 }
@@ -1845,7 +2027,7 @@ span.pc {
     height: 2.1rem;
     overflow: hidden;
     /* 로고가 정사각형 아이콘이라 원형보다 라운드 사각형이 잘 맞습니다. */
-    border-radius: 9px;
+    border-radius: 12px;
     background: white;
     border: 1px solid var(--line);
     margin: 0!important;
@@ -1886,10 +2068,9 @@ span.pc {
 /* Projects */
 .project-highlight-list {
     display: flex;
-    justify-content: center;
     flex-wrap: wrap;
     gap: 0.65rem;
-    margin-bottom: 2.25rem;
+    margin-bottom: clamp(1.5rem, 3.5vw, 2.25rem);
 }
 
 .project-highlight-list li {
@@ -1930,7 +2111,7 @@ span.pc {
     min-height: 100%;
     padding: 1.6rem;
     border: 1px solid var(--line);
-    border-radius: 20px;
+    border-radius: 26px;
     background: var(--surface);
     box-shadow: 0 4px 18px rgba(28, 30, 60, 0.04);
     text-align: left;
@@ -2018,7 +2199,7 @@ span.pc {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 16px;
+    border-radius: 20px;
     background: var(--grad-accent);
     color: white;
     font-size: 1.5rem;
@@ -2064,7 +2245,7 @@ span.pc {
     gap: 0.75rem;
     margin-top: 0;
     padding: 1.2rem 1.25rem;
-    border-radius: 16px;
+    border-radius: 20px;
     background: var(--blue-soft);
     border: 1px solid var(--blue-line);
     color: var(--ink);
@@ -2319,7 +2500,7 @@ span.pc {
     display: grid;
     overflow: hidden;
     border: 1px solid var(--line);
-    border-radius: 18px;
+    border-radius: 24px;
     background: var(--surface);
     box-shadow: var(--shadow-soft);
 }
@@ -2498,7 +2679,7 @@ span.pc {
     flex-direction: column;
     overflow: hidden;
     border: 1px solid var(--line);
-    border-radius: 26px;
+    border-radius: 30px;
     background: var(--surface);
     box-shadow: 0 40px 120px rgba(6, 7, 14, 0.5);
     text-align: left;
@@ -2628,7 +2809,7 @@ span.pc {
     gap: 0.15rem;
     padding: 0.75rem 0.9rem;
     border: 1px solid rgba(255, 255, 255, 0.09);
-    border-radius: 14px;
+    border-radius: 18px;
     background: rgba(255, 255, 255, 0.04);
 }
 
@@ -2978,7 +3159,7 @@ span.pc {
     padding: 0.85rem 1rem;
     border: 1px solid var(--line);
     border-left: 3px solid var(--blue-line);
-    border-radius: 12px;
+    border-radius: 16px;
     background: var(--surface-soft);
     transition: border-left-color var(--transition-fast);
 }
@@ -3016,7 +3197,7 @@ span.pc {
     padding: 1.1rem 1.2rem;
     border: 1px solid var(--line);
     border-left: 3px solid var(--blue);
-    border-radius: 14px;
+    border-radius: 18px;
     background: var(--surface-soft);
 }
 
@@ -3035,7 +3216,7 @@ span.pc {
     place-items: center;
     width: 1.6rem;
     height: 1.6rem;
-    border-radius: 8px;
+    border-radius: 11px;
     background: var(--blue);
     color: #fff;
     font-family: var(--font-mono);
@@ -3068,7 +3249,7 @@ span.pc {
     gap: 0.12rem;
     padding: 0.85rem 0.95rem;
     border: 1px solid var(--blue-line);
-    border-radius: 14px;
+    border-radius: 18px;
     background: var(--blue-soft);
 }
 
@@ -3101,7 +3282,7 @@ span.pc {
     gap: 0.7rem;
     padding: 1rem 1.1rem;
     border: 1px solid var(--blue-line);
-    border-radius: 14px;
+    border-radius: 18px;
     background: var(--blue-soft);
 }
 
@@ -3147,7 +3328,7 @@ span.pc {
     gap: 0.7rem;
     padding: 1rem;
     border: 1px solid var(--line);
-    border-radius: 14px;
+    border-radius: 18px;
     background: var(--surface-soft);
 }
 
@@ -3190,7 +3371,7 @@ span.pc {
     position: relative;
     padding: 0.75rem 1rem 0.75rem 2.2rem;
     border: 1px solid var(--blue-line);
-    border-radius: 12px;
+    border-radius: 16px;
     background: var(--blue-soft);
     color: var(--ink-soft);
     font-size: 0.88rem;
@@ -3226,7 +3407,7 @@ span.pc {
     width: 100%;
     /* 지연 로딩 중 프레임이 한 줄로 찌그러지지 않도록 최소 높이를 확보합니다. */
     min-height: 80px;
-    border-radius: 12px;
+    border-radius: 16px;
     object-fit: contain;
 }
 
@@ -3285,7 +3466,7 @@ span.pc {
 .dgm-tier {
     padding: 0.9rem 1rem;
     border: 1px solid var(--line);
-    border-radius: 14px;
+    border-radius: 18px;
     background: var(--surface-soft);
 }
 
@@ -3324,7 +3505,7 @@ span.pc {
     flex: 1 1 150px;
     padding: 0.6rem 0.75rem;
     border: 1px solid var(--line);
-    border-radius: 11px;
+    border-radius: 14px;
     background: var(--surface);
 }
 
@@ -3334,7 +3515,7 @@ span.pc {
     flex-shrink: 0;
     width: 1.9rem;
     height: 1.9rem;
-    border-radius: 9px;
+    border-radius: 12px;
     background: var(--blue-soft);
     color: var(--blue);
     font-size: 1rem;
@@ -3393,7 +3574,7 @@ span.pc {
     padding: 0.85rem 0.9rem;
     border: 1px solid var(--line);
     border-top: 2px solid var(--blue-line);
-    border-radius: 12px;
+    border-radius: 16px;
     background: var(--surface-soft);
 }
 
@@ -3521,7 +3702,8 @@ span.pc {
     }
 
     .hero-shell,
-    .profile-summary-layout,
+    .profile-flow,
+    .profile-fact-list,
     .profile-capability-grid,
     .career-summary-grid,
     .project-grid,
@@ -3549,7 +3731,6 @@ span.pc {
     .project-card,
     .skill-row,
     .profile-fact,
-    .devops-stage,
     .profile-capability-card {
         break-inside: avoid;
         page-break-inside: avoid;

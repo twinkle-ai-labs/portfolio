@@ -14,9 +14,11 @@ const ProjectSection = () => {
 
     return (
         <section id="s_project" className="section">
-            <p className="section-eyebrow">{t.eyebrow}</p>
-            <h2 className="section-title">{t.title[0]}<br className="mobile"/> {t.title[1]}</h2>
-            <p className="section-subtitle">{t.subtitle}</p>
+            <div className="section-head">
+                <p className="section-eyebrow">{t.eyebrow}</p>
+                <h2 className="section-title">{t.title[0]}<br className="mobile"/> <em>{t.title[1]}</em></h2>
+                <p className="section-subtitle">{t.subtitle}</p>
+            </div>
             <div className="section-content">
                 <ul className="project-highlight-list">
                     {projectHighlights.map((item) => (

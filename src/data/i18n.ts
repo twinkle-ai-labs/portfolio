@@ -54,8 +54,18 @@ export interface ITranslations {
         scopeNote: string;
         certLabel: string;
         certificates: string[];
+        /** 머리글 바로 아래에 붙는 역할·기술 태그 */
+        tags: string[];
+        /** 섹션 안의 하위 블록 — 무엇을 믿는가 */
+        philosophyEyebrow: string;
+        philosophyTitle: string[];
+        philosophyDesc: string;
+        /** 섹션 안의 하위 블록 — 어떻게 일하는가 (DevOps 도식이 왜 있는지 알려 줍니다) */
+        howEyebrow: string;
+        howTitle: string;
         capabilities: { title: string; desc: string }[];
-        devopsStages: { title: string; tags: string[] }[];
+        /** DevOps 인피니티 다이어그램의 단계명 — Dev 루프 4개, Ops 루프 4개. */
+        devopsFlow: { dev: string[]; ops: string[] };
         devopsCaption: string;
         devopsLoop: string;
     };
@@ -137,9 +147,10 @@ const translations: Record<'ko' | 'en', ITranslations> = {
             current: '현재 언어',
         },
         profile: {
-            eyebrow: 'Engineering Philosophy',
-            title: ['보이지 않는 곳의 완성도가', '서비스의 수준을 결정합니다'],
-            subtitle: '돌아가는 코드를 넘어, 비즈니스가 커져도 흔들리지 않는 구조를 만듭니다.',
+            eyebrow: 'Profile',
+            /* [0] 은 역할, 강조되는 이름은 config 의 프로필에서 가져옵니다. */
+            title: ['백엔드 엔지니어'],
+            subtitle: '설계부터 운영까지 서버의 전 구간을 맡아 온 5년차 백엔드 엔지니어입니다.',
             factCareer: '경력',
             factEducation: '학력',
             factCurrent: '현재',
@@ -154,18 +165,22 @@ const translations: Record<'ko' | 'en', ITranslations> = {
             scopeNote: '전 구간 단독 수행',
             certLabel: 'Certifications',
             certificates: ['리눅스마스터 2급', 'SQL 개발자', '정보처리기사'],
+            tags: ['Backend Engineer', 'DevOps', '아키텍처 설계', 'Spring', 'Kotlin', 'AWS'],
+            philosophyEyebrow: 'Engineering Philosophy',
+            philosophyTitle: ['보이지 않는 곳의 완성도가', '서비스의 수준을 결정합니다'],
+            philosophyDesc: '돌아가는 코드를 넘어, 비즈니스가 커져도 흔들리지 않는 구조를 만듭니다.',
+            howEyebrow: 'How I Work',
+            howTitle: '설계부터 개선까지, 전 구간을 직접 맡습니다',
             capabilities: [
+                {title: '전체를 보는 시야', desc: '전체 흐름을 구조화해 복잡도를 낮춥니다.'},
                 {title: '견고한 백엔드', desc: '도메인 책임을 나누고 데이터 계층을 분리합니다.'},
                 {title: '배포 자동화', desc: '빌드부터 릴리즈까지 손댈 일을 없앱니다.'},
                 {title: '운영 관측', desc: '시스템과 비즈니스 지표를 항상 지켜봅니다.'},
-                {title: '전체를 보는 시야', desc: '전체 흐름을 구조화해 복잡도를 낮춥니다.'},
             ],
-            devopsStages: [
-                {title: '설계', tags: ['도메인 분리', '데이터 모델', 'API 계약']},
-                {title: '배포', tags: ['Docker', 'Jenkins', 'Harbor']},
-                {title: '관측', tags: ['Prometheus', 'Grafana', 'Filebeat']},
-                {title: '개선', tags: ['병목 제거', '구조 단순화', '복잡도 감소']},
-            ],
+            devopsFlow: {
+                dev: ['설계', '개발', '빌드', '테스트'],
+                ops: ['배포', '운영', '관측', '개선'],
+            },
             devopsCaption: '설계에서 개선으로 순환하는 DevOps 흐름',
             devopsLoop: '관측에서 얻은 지표를 다시 설계로 되돌리는 지속 개선 루프',
         },
@@ -251,9 +266,10 @@ const translations: Record<'ko' | 'en', ITranslations> = {
             current: 'Current language',
         },
         profile: {
-            eyebrow: 'Engineering Philosophy',
-            title: ['The quality of what you cannot see', 'defines the quality of the service'],
-            subtitle: 'Beyond code that merely runs, I build structures that hold steady as the business grows.',
+            eyebrow: 'Profile',
+            /* [0] 은 역할, 강조되는 이름은 config 의 프로필에서 가져옵니다. */
+            title: ['Backend Engineer'],
+            subtitle: 'A backend engineer of five years, owning servers end to end — from design through operation.',
             factCareer: 'Experience',
             factEducation: 'Education',
             factCurrent: 'Current',
@@ -268,18 +284,22 @@ const translations: Record<'ko' | 'en', ITranslations> = {
             scopeNote: 'Owned end to end',
             certLabel: 'Certifications',
             certificates: ['Linux Master Level 2', 'SQL Developer (SQLD)', 'Engineer Information Processing'],
+            tags: ['Backend Engineer', 'DevOps', 'Architecture', 'Spring', 'Kotlin', 'AWS'],
+            philosophyEyebrow: 'Engineering Philosophy',
+            philosophyTitle: ['The quality of what you cannot see', 'defines the quality of the service'],
+            philosophyDesc: 'Beyond code that merely runs, I build structures that hold steady as the business grows.',
+            howEyebrow: 'How I Work',
+            howTitle: 'From design to improvement — I own every stage',
             capabilities: [
+                {title: 'Holistic View', desc: 'I structure the whole flow to reduce complexity.'},
                 {title: 'Reliable Backend', desc: 'I separate domain responsibilities and isolate the data layer.'},
                 {title: 'Automated Delivery', desc: 'I remove manual work from build through release.'},
                 {title: 'Observability', desc: 'I keep system and business metrics always in view.'},
-                {title: 'Holistic View', desc: 'I structure the whole flow to reduce complexity.'},
             ],
-            devopsStages: [
-                {title: 'Design', tags: ['Domain split', 'Data model', 'API contract']},
-                {title: 'Deliver', tags: ['Docker', 'Jenkins', 'Harbor']},
-                {title: 'Observe', tags: ['Prometheus', 'Grafana', 'Filebeat']},
-                {title: 'Improve', tags: ['Remove bottlenecks', 'Simplify structure', 'Cut complexity']},
-            ],
+            devopsFlow: {
+                dev: ['Design', 'Code', 'Build', 'Test'],
+                ops: ['Deploy', 'Operate', 'Monitor', 'Improve'],
+            },
             devopsCaption: 'The DevOps loop running from design through improvement',
             devopsLoop: 'A continuous improvement loop that feeds observed metrics back into design',
         },

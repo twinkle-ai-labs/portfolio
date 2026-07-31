@@ -27,6 +27,9 @@ body[data-theme="dark"] {
     --footer-bg: #0a0b11;
     --shadow-soft: 0 14px 40px rgba(0, 0, 0, 0.32);
     --glass-shadow: 0 18px 55px rgba(0, 0, 0, 0.4);
+    --header-glass: rgba(16, 17, 25, 0.62);
+    --header-glass-border: rgba(255, 255, 255, 0.1);
+    --header-glass-shadow: 0 12px 38px rgba(0, 0, 0, 0.45);
 }
 
 body[data-theme="dark"] {
@@ -48,23 +51,12 @@ body[data-theme="dark"] #s_skill {
             radial-gradient(circle at 88% 2%, rgba(167, 139, 250, 0.05), transparent 30%);
 }
 
-body[data-theme="dark"] .header {
-    background: rgba(16, 17, 25, 0.72);
-    border-bottom-color: transparent;
-}
-
-body[data-theme="dark"] .header.scrolled {
-    background: rgba(16, 17, 25, 0.88);
-    border-bottom-color: var(--line);
-}
-
 body[data-theme="dark"] .hero-primary {
     box-shadow: 0 12px 30px rgba(129, 140, 248, 0.28) !important;
 }
 
 body[data-theme="dark"] .profile-capability-card,
 body[data-theme="dark"] .profile-cert-list li,
-body[data-theme="dark"] .devops-stage,
 body[data-theme="dark"] .career-card,
 body[data-theme="dark"] .career-summary-grid section,
 body[data-theme="dark"] .project-card,
@@ -88,6 +80,14 @@ body[data-theme="dark"] .profile-fact-list,
 body[data-theme="dark"] .devops-cycle {
     border-color: var(--line);
     background: var(--surface-soft);
+}
+
+/* 어두운 판 위에서는 리본을 한 단계 밝게 올립니다. */
+body[data-theme="dark"] .devops-cycle {
+    --dvi-dev-from: #6366f1;
+    --dvi-dev-to: #818cf8;
+    --dvi-ops-from: #8b5cf6;
+    --dvi-ops-to: #a78bfa;
 }
 
 body[data-theme="dark"] .career-card-aside,

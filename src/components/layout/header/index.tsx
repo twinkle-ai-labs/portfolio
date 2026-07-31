@@ -16,7 +16,8 @@ const Header = () => {
     useEffect(() => {
         const onScroll = () => dispatch(changeOffset(window.scrollY));
 
-        window.removeEventListener('scroll', onScroll);
+        // 새로고침으로 중간 지점에 복원된 경우에도 유리판이 바로 깔리도록 초기값을 맞춥니다.
+        onScroll();
         window.addEventListener('scroll', onScroll, {passive: true});
         return () => window.removeEventListener('scroll', onScroll);
     }, []);

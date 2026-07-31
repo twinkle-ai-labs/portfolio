@@ -9,12 +9,13 @@ interface ILanguageOption {
     value: Language;
     /** 국기 이모지 — 국기 폰트가 없는 환경에서는 국가 코드 문자로 대체 표시됩니다. */
     flag: string;
-    code: string;
+    /** 화면에 노출하는 이름은 항상 그 언어 자신의 표기(자칭)로 둡니다. */
+    label: string;
 }
 
 const options: ILanguageOption[] = [
-    {value: LanguageType.KO, flag: '🇰🇷', code: 'KO'},
-    {value: LanguageType.EN, flag: '🇺🇸', code: 'EN'},
+    {value: LanguageType.KO, flag: '🇰🇷', label: '한국어'},
+    {value: LanguageType.EN, flag: '🇺🇸', label: 'English'},
 ];
 
 /**
@@ -115,7 +116,7 @@ const LanguageSelect = () => {
                 }}
             >
                 <span className="lang-select-flag" aria-hidden="true">{selected.flag}</span>
-                <span className="lang-select-code">{selected.code}</span>
+                <span className="lang-select-name">{selected.label}</span>
                 <FaChevronDown className="lang-select-arrow" aria-hidden="true"/>
             </button>
 
@@ -140,7 +141,7 @@ const LanguageSelect = () => {
                             onClick={() => select(option)}
                         >
                             <span className="lang-select-flag" aria-hidden="true">{option.flag}</span>
-                            <span className="lang-select-label">{labelOf(option.value)}</span>
+                            <span className="lang-select-label">{option.label}</span>
                             {option.value === language ? <FaCheck className="lang-select-check" aria-hidden="true"/> : null}
                         </li>
                     ))}

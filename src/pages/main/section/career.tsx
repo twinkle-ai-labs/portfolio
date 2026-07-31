@@ -166,9 +166,11 @@ const CareerSection = () => {
 
     return (
         <section id="s_career" className="section">
-            <p className="section-eyebrow">{t.eyebrow}</p>
-            <h2 className="section-title">{t.title[0]}<br className="mobile"/> {t.title[1]}</h2>
-            <p className="section-subtitle">{t.subtitle}</p>
+            <div className="section-head">
+                <p className="section-eyebrow">{t.eyebrow}</p>
+                <h2 className="section-title">{t.title[0]}<br className="mobile"/> <em>{t.title[1]}</em></h2>
+                <p className="section-subtitle">{t.subtitle}</p>
+            </div>
             <div className="section-content">
                 <div className="career-group">
                     <h3 className="career-group-title">
