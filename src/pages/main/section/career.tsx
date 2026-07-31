@@ -13,7 +13,7 @@ import ProjectDefaultImg from "@Images/project_default.svg";
 const CareerProjectRow = ({project, careerId, t}: {
     project: ICareerProject;
     careerId: string;
-    t: ITranslations['career'];
+    t: ITranslations['experience'];
 }) => {
     const {t: tr} = useLocale();
     const label = tr(project.label);
@@ -71,7 +71,7 @@ const CareerProjectRow = ({project, careerId, t}: {
     );
 };
 
-const Career = (career: ICareer & { index: number; t: ITranslations['career'] }) => {
+const Career = (career: ICareer & { index: number; t: ITranslations['experience'] }) => {
     const {t: tr} = useLocale();
     const t = career.t;
 
@@ -159,7 +159,7 @@ const Career = (career: ICareer & { index: number; t: ITranslations['career'] })
 
 const CareerSection = () => {
     const {language} = useLocale();
-    const t = translations[language].career;
+    const t = translations[language].experience;
 
     const corporateCareers = careers.filter(career => career.company && !career.isFreelance);
     const freelanceCareers = careers.filter(career => career.company && career.isFreelance);

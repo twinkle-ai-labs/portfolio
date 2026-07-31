@@ -166,7 +166,10 @@ const projects: IProject[] = [
             {ko: 'AWS Cloud 및 인프라 아키텍처링 단독 전담', en: 'Sole owner of AWS cloud and infrastructure architecture'},
             {ko: 'Kotlin / Spring Boot 기반 고성능 서버 구축', en: 'High-performance server built on Kotlin / Spring Boot'},
             {ko: 'Docker, Harbor, Jenkins CI/CD 자동화 수립', en: 'CI/CD automation with Docker, Harbor and Jenkins'},
-            {ko: 'Filebeat / Prometheus / Grafana 실시간 장애 관측', en: 'Real-time incident observability via Filebeat / Prometheus / Grafana'},
+            {
+                ko: 'Filebeat / Prometheus / Grafana 실시간 장애 관측',
+                en: 'Real-time incident observability via Filebeat / Prometheus / Grafana'
+            },
         ],
         stacks: ['Kotlin', 'Spring Boot', 'AWS', 'Jenkins', 'Filebeat', 'Slack', 'Prometheus', 'Grafana'],
         icon: <SiKotlin/>,
@@ -185,7 +188,10 @@ const projects: IProject[] = [
                         kind: 'bullets',
                         items: [
                             {
-                                text: {ko: '스탬프 투어 서비스의 서버 도메인 단독 설계', en: 'Solo design of the stamp tour service domain'},
+                                text: {
+                                    ko: '스탬프 투어 서비스의 서버 도메인 단독 설계',
+                                    en: 'Solo design of the stamp tour service domain'
+                                },
                                 children: [
                                     {
                                         ko: '스탬프 적립·인증·리워드 등 핵심 비즈니스 도메인 모델링',
@@ -200,8 +206,14 @@ const projects: IProject[] = [
                             {
                                 text: {ko: '인프라 전주기 소유 (Owner)', en: 'Owned the full infrastructure lifecycle'},
                                 children: [
-                                    {ko: '계정·네트워크 설계부터 배포·모니터링까지 단독 구축', en: 'Built everything from account and network design through deployment and monitoring'},
-                                    {ko: '초기 MVP 구성에서 성능 안정화 단계까지 단계적으로 확장', en: 'Scaled progressively from the initial MVP to performance stabilization'},
+                                    {
+                                        ko: '계정·네트워크 설계부터 배포·모니터링까지 단독 구축',
+                                        en: 'Built everything from account and network design through deployment and monitoring'
+                                    },
+                                    {
+                                        ko: '초기 MVP 구성에서 성능 안정화 단계까지 단계적으로 확장',
+                                        en: 'Scaled progressively from the initial MVP to performance stabilization'
+                                    },
                                 ],
                             },
                             {
@@ -211,7 +223,10 @@ const projects: IProject[] = [
                                         ko: 'Scrum 기반으로 기획·디자인·모바일·어드민 요구사항을 API 계약으로 정리',
                                         en: 'Turned requirements from planning, design, mobile and admin into API contracts under Scrum',
                                     },
-                                    {ko: '릴리즈 일정에 맞춘 서버 스펙 확정 및 연동 이슈 조율', en: 'Locked server specs to the release schedule and resolved integration issues'},
+                                    {
+                                        ko: '릴리즈 일정에 맞춘 서버 스펙 확정 및 연동 이슈 조율',
+                                        en: 'Locked server specs to the release schedule and resolved integration issues'
+                                    },
                                 ],
                             },
                         ],
@@ -223,7 +238,10 @@ const projects: IProject[] = [
                         label: {ko: '운영 지표', en: 'Operating figures'},
                         items: [
                             {value: '70K+', label: {ko: '누적 회원', en: 'Cumulative members'}},
-                            {value: {ko: '2024.12~', en: 'Since 2024.12'}, label: {ko: '운영 지속', en: 'Still in operation'}},
+                            {
+                                value: {ko: '2024.12~', en: 'Since 2024.12'},
+                                label: {ko: '운영 지속', en: 'Still in operation'}
+                            },
                         ],
                     },
                     {
@@ -250,7 +268,10 @@ const projects: IProject[] = [
                         kind: 'media',
                         media: {
                             node: <AwsTopologyDiagram/>,
-                            alt: {ko: 'AWS 기반 오르다 인프라 토폴로지 다이어그램', en: 'Diagram of the ORDA infrastructure topology on AWS'},
+                            alt: {
+                                ko: 'AWS 기반 오르다 인프라 토폴로지 다이어그램',
+                                en: 'Diagram of the ORDA infrastructure topology on AWS'
+                            },
                             frame: 'plain',
                             size: 'full',
                         },
@@ -261,22 +282,46 @@ const projects: IProject[] = [
                             {
                                 text: {ko: 'Edge — 도메인과 트래픽 진입 정리', en: 'Edge — organizing domains and traffic entry'},
                                 children: [
-                                    {ko: 'Route 53으로 서비스 도메인과 환경별 레코드 관리', en: 'Managed service domains and per-environment records in Route 53'},
-                                    {ko: 'ALB에서 HTTPS 종단 처리 및 헬스체크 기반 라우팅', en: 'Terminated HTTPS at the ALB and routed on health checks'},
+                                    {
+                                        ko: 'Route 53으로 서비스 도메인과 환경별 레코드 관리',
+                                        en: 'Managed service domains and per-environment records in Route 53'
+                                    },
+                                    {
+                                        ko: 'ALB에서 HTTPS 종단 처리 및 헬스체크 기반 라우팅',
+                                        en: 'Terminated HTTPS at the ALB and routed on health checks'
+                                    },
                                 ],
                             },
                             {
-                                text: {ko: 'Application — 컨테이너 기반 API 계층', en: 'Application — a container-based API layer'},
+                                text: {
+                                    ko: 'Application — 컨테이너 기반 API 계층',
+                                    en: 'Application — a container-based API layer'
+                                },
                                 children: [
-                                    {ko: 'EC2 위 Docker 런타임으로 Kotlin/Spring Boot API 구동', en: 'Ran the Kotlin/Spring Boot API on a Docker runtime on EC2'},
-                                    {ko: '이미지 리사이징 등 비동기 후처리는 Lambda로 분리', en: 'Split async post-processing such as image resizing into Lambda'},
+                                    {
+                                        ko: 'EC2 위 Docker 런타임으로 Kotlin/Spring Boot API 구동',
+                                        en: 'Ran the Kotlin/Spring Boot API on a Docker runtime on EC2'
+                                    },
+                                    {
+                                        ko: '이미지 리사이징 등 비동기 후처리는 Lambda로 분리',
+                                        en: 'Split async post-processing such as image resizing into Lambda'
+                                    },
                                 ],
                             },
                             {
-                                text: {ko: 'Data — 영속 계층과 정적 자산 분리', en: 'Data — separating persistence from static assets'},
+                                text: {
+                                    ko: 'Data — 영속 계층과 정적 자산 분리',
+                                    en: 'Data — separating persistence from static assets'
+                                },
                                 children: [
-                                    {ko: 'RDS에 트랜잭션 데이터, S3에 스탬프·이미지 자산 적재', en: 'Transactional data in RDS, stamp and image assets in S3'},
-                                    {ko: '백업·스냅샷 주기를 운영 기준에 맞춰 정의', en: 'Set backup and snapshot cadence against operational requirements'},
+                                    {
+                                        ko: 'RDS에 트랜잭션 데이터, S3에 스탬프·이미지 자산 적재',
+                                        en: 'Transactional data in RDS, stamp and image assets in S3'
+                                    },
+                                    {
+                                        ko: '백업·스냅샷 주기를 운영 기준에 맞춰 정의',
+                                        en: 'Set backup and snapshot cadence against operational requirements'
+                                    },
                                 ],
                             },
                         ],
@@ -297,7 +342,10 @@ const projects: IProject[] = [
                         kind: 'media',
                         media: {
                             node: <CicdPipelineDiagram/>,
-                            alt: {ko: 'Jenkins와 Harbor 기반 배포 파이프라인 다이어그램', en: 'Diagram of the Jenkins and Harbor deployment pipeline'},
+                            alt: {
+                                ko: 'Jenkins와 Harbor 기반 배포 파이프라인 다이어그램',
+                                en: 'Diagram of the Jenkins and Harbor deployment pipeline'
+                            },
                             frame: 'plain',
                             size: 'full',
                         },
@@ -308,22 +356,40 @@ const projects: IProject[] = [
                             {
                                 text: {ko: 'Jenkins 기반 빌드 자동화', en: 'Build automation on Jenkins'},
                                 children: [
-                                    {ko: '브랜치 전략에 맞춘 자동 빌드·테스트 트리거 구성', en: 'Wired automatic build and test triggers to the branch strategy'},
-                                    {ko: '환경별(dev/prod) 파라미터 분리로 잘못된 배포 차단', en: 'Separated dev/prod parameters to block mistaken deployments'},
+                                    {
+                                        ko: '브랜치 전략에 맞춘 자동 빌드·테스트 트리거 구성',
+                                        en: 'Wired automatic build and test triggers to the branch strategy'
+                                    },
+                                    {
+                                        ko: '환경별(dev/prod) 파라미터 분리로 잘못된 배포 차단',
+                                        en: 'Separated dev/prod parameters to block mistaken deployments'
+                                    },
                                 ],
                             },
                             {
                                 text: {ko: 'Harbor 사설 레지스트리 운영', en: 'Running a private Harbor registry'},
                                 children: [
-                                    {ko: '이미지 태깅 규칙을 정해 롤백 지점을 명확히 확보', en: 'Defined image tagging rules so rollback points stay unambiguous'},
-                                    {ko: '외부 레지스트리 의존 없이 내부에서 이미지 수명 관리', en: 'Managed image lifecycle in-house without external registry dependencies'},
+                                    {
+                                        ko: '이미지 태깅 규칙을 정해 롤백 지점을 명확히 확보',
+                                        en: 'Defined image tagging rules so rollback points stay unambiguous'
+                                    },
+                                    {
+                                        ko: '외부 레지스트리 의존 없이 내부에서 이미지 수명 관리',
+                                        en: 'Managed image lifecycle in-house without external registry dependencies'
+                                    },
                                 ],
                             },
                             {
                                 text: {ko: '배포 리스크 축소', en: 'Reducing deployment risk'},
                                 children: [
-                                    {ko: '헬스체크 통과 후 트래픽을 넘기는 무중단 롤아웃 적용', en: 'Adopted zero-downtime rollout that shifts traffic only after health checks pass'},
-                                    {ko: '배포 결과를 Slack으로 통보해 실패를 즉시 인지', en: 'Reported deployment results to Slack so failures surface immediately'},
+                                    {
+                                        ko: '헬스체크 통과 후 트래픽을 넘기는 무중단 롤아웃 적용',
+                                        en: 'Adopted zero-downtime rollout that shifts traffic only after health checks pass'
+                                    },
+                                    {
+                                        ko: '배포 결과를 Slack으로 통보해 실패를 즉시 인지',
+                                        en: 'Reported deployment results to Slack so failures surface immediately'
+                                    },
                                 ],
                             },
                         ],
@@ -358,22 +424,40 @@ const projects: IProject[] = [
                             {
                                 text: {ko: '로그와 메트릭을 분리해 수집', en: 'Collecting logs and metrics separately'},
                                 children: [
-                                    {ko: 'Filebeat로 애플리케이션 로그를 수집해 장애 원인 추적 경로 확보', en: 'Shipped application logs with Filebeat to keep a root-cause trail'},
-                                    {ko: 'Exporter로 CPU·메모리·디스크 등 시스템 자원 메트릭 수집', en: 'Collected CPU, memory and disk metrics through exporters'},
+                                    {
+                                        ko: 'Filebeat로 애플리케이션 로그를 수집해 장애 원인 추적 경로 확보',
+                                        en: 'Shipped application logs with Filebeat to keep a root-cause trail'
+                                    },
+                                    {
+                                        ko: 'Exporter로 CPU·메모리·디스크 등 시스템 자원 메트릭 수집',
+                                        en: 'Collected CPU, memory and disk metrics through exporters'
+                                    },
                                 ],
                             },
                             {
                                 text: {ko: '임계치 기반 선제 알림', en: 'Threshold-based proactive alerting'},
                                 children: [
-                                    {ko: 'Prometheus 알림 룰로 위험 구간을 사전에 정의', en: 'Defined danger zones up front as Prometheus alert rules'},
-                                    {ko: 'Slack 채널 연동으로 담당자가 즉시 인지하도록 구성', en: 'Routed alerts to Slack so the on-call engineer knows right away'},
+                                    {
+                                        ko: 'Prometheus 알림 룰로 위험 구간을 사전에 정의',
+                                        en: 'Defined danger zones up front as Prometheus alert rules'
+                                    },
+                                    {
+                                        ko: 'Slack 채널 연동으로 담당자가 즉시 인지하도록 구성',
+                                        en: 'Routed alerts to Slack so the on-call engineer knows right away'
+                                    },
                                 ],
                             },
                             {
                                 text: {ko: 'Grafana 대시보드 상시 운영', en: 'Always-on Grafana dashboards'},
                                 children: [
-                                    {ko: '서비스 지표와 자원 지표를 한 화면에서 확인', en: 'Service and resource metrics visible on one screen'},
-                                    {ko: '릴리즈 전후 비교가 가능한 패널 구성으로 회귀 감지', en: 'Panels that compare before and after a release to catch regressions'},
+                                    {
+                                        ko: '서비스 지표와 자원 지표를 한 화면에서 확인',
+                                        en: 'Service and resource metrics visible on one screen'
+                                    },
+                                    {
+                                        ko: '릴리즈 전후 비교가 가능한 패널 구성으로 회귀 감지',
+                                        en: 'Panels that compare before and after a release to catch regressions'
+                                    },
                                 ],
                             },
                         ],
@@ -405,23 +489,50 @@ const projects: IProject[] = [
                             {
                                 text: {ko: '지자체 · 공공기관 투어', en: 'Municipal and public agency tours'},
                                 children: [
-                                    {ko: '경기관광공사 평화누리길·평화누리 자전거길, 경기둘레길 스탬프투어', en: 'Gyeonggi Tourism Organization: Peace Nuri trail, Peace Nuri bike route and Gyeonggi Dulle-gil stamp tours'},
-                                    {ko: '경기도 이천시 도자기 축제, 쌀문화축제, 설봉 둘레길 등 다수 운영', en: 'Icheon: ceramics festival, rice culture festival and Seolbong trail challenges'},
-                                    {ko: '경상남도 양산시 낙동강 자전거길·힐링걷기, 국립세종수목원 정원 투어', en: 'Yangsan Nakdong River routes and the Sejong National Arboretum garden tour'},
+                                    {
+                                        ko: '경기관광공사 평화누리길·평화누리 자전거길, 경기둘레길 스탬프투어',
+                                        en: 'Gyeonggi Tourism Organization: Peace Nuri trail, Peace Nuri bike route and Gyeonggi Dulle-gil stamp tours'
+                                    },
+                                    {
+                                        ko: '경기도 이천시 도자기 축제, 쌀문화축제, 설봉 둘레길 등 다수 운영',
+                                        en: 'Icheon: ceramics festival, rice culture festival and Seolbong trail challenges'
+                                    },
+                                    {
+                                        ko: '경상남도 양산시 낙동강 자전거길·힐링걷기, 국립세종수목원 정원 투어',
+                                        en: 'Yangsan Nakdong River routes and the Sejong National Arboretum garden tour'
+                                    },
                                 ],
                             },
                             {
-                                text: {ko: '화성시 "쓰리 Go" 챌린지 정기 운영', en: 'Recurring "Three GO" challenge for Hwaseong City'},
+                                text: {
+                                    ko: '화성시 "쓰리 Go" 챌린지 정기 운영',
+                                    en: 'Recurring "Three GO" challenge for Hwaseong City'
+                                },
                                 children: [
-                                    {ko: '화성시 체육회와 월 단위 스포츠DAY 미션을 연속 개설', en: 'Ran monthly Sports DAY missions with the Hwaseong City Sports Council'},
-                                    {ko: '만보기·자전거·등산 세 가지 운동 유형과 지역화폐 리워드 연동', en: 'Supported pedometer, cycling and hiking modes tied to local-currency rewards'},
+                                    {
+                                        ko: '화성시 체육회와 월 단위 스포츠DAY 미션을 연속 개설',
+                                        en: 'Ran monthly Sports DAY missions with the Hwaseong City Sports Council'
+                                    },
+                                    {
+                                        ko: '만보기·자전거·등산 세 가지 운동 유형과 지역화폐 리워드 연동',
+                                        en: 'Supported pedometer, cycling and hiking modes tied to local-currency rewards'
+                                    },
                                 ],
                             },
                             {
-                                text: {ko: '상시 · 단기 투어를 같은 구조로 수용', en: 'One structure for both always-on and short-run tours'},
+                                text: {
+                                    ko: '상시 · 단기 투어를 같은 구조로 수용',
+                                    en: 'One structure for both always-on and short-run tours'
+                                },
                                 children: [
-                                    {ko: '하루짜리 축제 투어부터 2030년까지 열리는 상시 투어까지 동일 스키마로 운영', en: 'From single-day festival tours to always-on tours scheduled through 2030, all on one schema'},
-                                    {ko: '주최 기관별 참여 조건과 안내 문구를 데이터로 분리해 서버 배포 없이 개설', en: 'Kept per-organizer rules and copy as data so new tours open without a server release'},
+                                    {
+                                        ko: '하루짜리 축제 투어부터 2030년까지 열리는 상시 투어까지 동일 스키마로 운영',
+                                        en: 'From single-day festival tours to always-on tours scheduled through 2030, all on one schema'
+                                    },
+                                    {
+                                        ko: '주최 기관별 참여 조건과 안내 문구를 데이터로 분리해 서버 배포 없이 개설',
+                                        en: 'Kept per-organizer rules and copy as data so new tours open without a server release'
+                                    },
                                 ],
                             },
                         ],
@@ -450,14 +561,26 @@ const projects: IProject[] = [
                             {
                                 text: {ko: '성장 속도에 맞춰 구조를 단순하게 유지', en: 'Kept the structure simple as it grew'},
                                 children: [
-                                    {ko: '과한 선반영 대신 필요한 시점에 계층을 확장하는 방식 선택', en: 'Chose to add layers when needed instead of over-engineering upfront'},
-                                    {ko: '운영 인력이 적어도 이해 가능한 토폴로지 유지', en: 'Kept a topology a small ops team can still reason about'},
+                                    {
+                                        ko: '과한 선반영 대신 필요한 시점에 계층을 확장하는 방식 선택',
+                                        en: 'Chose to add layers when needed instead of over-engineering upfront'
+                                    },
+                                    {
+                                        ko: '운영 인력이 적어도 이해 가능한 토폴로지 유지',
+                                        en: 'Kept a topology a small ops team can still reason about'
+                                    },
                                 ],
                             },
                             {
-                                text: {ko: '릴리즈 이후 리스크 관리 가능한 상태로 인계 가능', en: 'Left it in a state where risk stays manageable post-release'},
+                                text: {
+                                    ko: '릴리즈 이후 리스크 관리 가능한 상태로 인계 가능',
+                                    en: 'Left it in a state where risk stays manageable post-release'
+                                },
                                 children: [
-                                    {ko: '배포·모니터링·알림이 문서 없이도 동작하도록 자동화', en: 'Automated deployment, monitoring and alerting so they run without a runbook'},
+                                    {
+                                        ko: '배포·모니터링·알림이 문서 없이도 동작하도록 자동화',
+                                        en: 'Automated deployment, monitoring and alerting so they run without a runbook'
+                                    },
                                 ],
                             },
                         ],
@@ -505,8 +628,14 @@ const projects: IProject[] = [
                 en: 'Server operations for navigation services (INAVI AIR, Toyota hybrid and more)',
             },
             {ko: 'GCP BigQuery 기반 일 단위 대량 로그 수집 파이프라인 신규 구축', en: 'New daily bulk log pipeline on GCP BigQuery'},
-            {ko: 'Spring Batch / Quartz 기반 통계 배치 정밀 자동화', en: 'Precise statistics batch automation with Spring Batch / Quartz'},
-            {ko: 'MySQL 통계 적재 엔진 및 Grafana 실시간 분석 대시보드', en: 'MySQL statistics engine and real-time Grafana dashboards'},
+            {
+                ko: 'Spring Batch / Quartz 기반 통계 배치 정밀 자동화',
+                en: 'Precise statistics batch automation with Spring Batch / Quartz'
+            },
+            {
+                ko: 'MySQL 통계 적재 엔진 및 Grafana 실시간 분석 대시보드',
+                en: 'MySQL statistics engine and real-time Grafana dashboards'
+            },
         ],
         stacks: ['Java/Kotlin', 'Spring Boot', 'BigQuery', 'Batch', 'Quartz', 'Grafana', 'GCP'],
         icon: <FaChartLine/>,
@@ -525,7 +654,10 @@ const projects: IProject[] = [
                         kind: 'media',
                         media: {
                             node: <OperationScopeDiagram/>,
-                            alt: {ko: '운영 및 유지보수 전담 서비스 범위 다이어그램', en: 'Diagram of the services under my operations ownership'},
+                            alt: {
+                                ko: '운영 및 유지보수 전담 서비스 범위 다이어그램',
+                                en: 'Diagram of the services under my operations ownership'
+                            },
                             frame: 'plain',
                             size: 'full',
                         },
@@ -534,20 +666,35 @@ const projects: IProject[] = [
                         kind: 'bullets',
                         items: [
                             {
-                                text: {ko: '운영 — 다원화된 내비게이션 서비스 전담', en: 'Operations — owning a diverse set of navigation services'},
+                                text: {
+                                    ko: '운영 — 다원화된 내비게이션 서비스 전담',
+                                    en: 'Operations — owning a diverse set of navigation services'
+                                },
                                 children: [
                                     {
                                         ko: '아이나비 에어, 토요타 하이브리드 등 서버 운영·배포·릴리즈 관리',
                                         en: 'Server operations, deployment and release management for INAVI AIR, Toyota hybrid and others',
                                     },
-                                    {ko: '장애 발생 시 원인 추적과 핫픽스까지 단독 대응', en: 'Handled root cause analysis through hotfix alone during incidents'},
+                                    {
+                                        ko: '장애 발생 시 원인 추적과 핫픽스까지 대응',
+                                        en: 'Handled root cause analysis through hotfix during incidents'
+                                    },
                                 ],
                             },
                             {
-                                text: {ko: '신규 — 통합통계 시스템 설계·개발', en: 'New build — designing the unified statistics system'},
+                                text: {
+                                    ko: '신규 — 통합통계 시스템 설계·개발',
+                                    en: 'New build — designing the unified statistics system'
+                                },
                                 children: [
-                                    {ko: '여러 서비스에서 인입되는 로그를 하나의 분석 기반으로 통합', en: 'Unified logs arriving from several services into a single analytics base'},
-                                    {ko: '원시 로그부터 경영 지표 표출까지 전 구간 직접 구현', en: 'Implemented every stage from raw logs to business metric reporting'},
+                                    {
+                                        ko: '여러 서비스에서 인입되는 로그를 하나의 분석 기반으로 통합',
+                                        en: 'Unified logs arriving from several services into a single analytics base'
+                                    },
+                                    {
+                                        ko: '원시 로그부터 경영 지표 표출까지 전 구간 직접 구현',
+                                        en: 'Implemented every stage from raw logs to business metric reporting'
+                                    },
                                 ],
                             },
                         ],
@@ -578,7 +725,10 @@ const projects: IProject[] = [
                         kind: 'media',
                         media: {
                             node: <DomainContextDiagram/>,
-                            alt: {ko: '수집, 배치, 조회 컨텍스트 분리 구조 다이어그램', en: 'Diagram of the separated collection, batch and query contexts'},
+                            alt: {
+                                ko: '수집, 배치, 조회 컨텍스트 분리 구조 다이어그램',
+                                en: 'Diagram of the separated collection, batch and query contexts'
+                            },
                             frame: 'plain',
                             size: 'full',
                         },
@@ -587,24 +737,51 @@ const projects: IProject[] = [
                         kind: 'bullets',
                         items: [
                             {
-                                text: {ko: 'Collection Context — 인입 책임만 담당', en: 'Collection context — responsible only for ingestion'},
+                                text: {
+                                    ko: 'Collection Context — 인입 책임만 담당',
+                                    en: 'Collection context — responsible only for ingestion'
+                                },
                                 children: [
-                                    {ko: '서비스별 로그 스키마 검증 후 원본 그대로 적재', en: 'Validates per-service log schemas and stores the raw payload as is'},
-                                    {ko: '수집 실패가 집계 로직에 전파되지 않도록 경계 설정', en: 'Draws a boundary so ingestion failures never reach aggregation logic'},
+                                    {
+                                        ko: '서비스별 로그 스키마 검증 후 원본 그대로 적재',
+                                        en: 'Validates per-service log schemas and stores the raw payload as is'
+                                    },
+                                    {
+                                        ko: '수집 실패가 집계 로직에 전파되지 않도록 경계 설정',
+                                        en: 'Draws a boundary so ingestion failures never reach aggregation logic'
+                                    },
                                 ],
                             },
                             {
-                                text: {ko: 'Batch Context — 집계 규칙의 단일 소유', en: 'Batch context — single owner of aggregation rules'},
+                                text: {
+                                    ko: 'Batch Context — 집계 규칙의 단일 소유',
+                                    en: 'Batch context — single owner of aggregation rules'
+                                },
                                 children: [
-                                    {ko: '일·월 단위 집계 정의를 한 곳에서 관리', en: 'Keeps daily and monthly aggregation definitions in one place'},
-                                    {ko: '재집계가 필요할 때 특정 기간만 안전하게 재실행', en: 'Re-runs only the affected period safely when a recount is needed'},
+                                    {
+                                        ko: '일·월 단위 집계 정의를 한 곳에서 관리',
+                                        en: 'Keeps daily and monthly aggregation definitions in one place'
+                                    },
+                                    {
+                                        ko: '재집계가 필요할 때 특정 기간만 안전하게 재실행',
+                                        en: 'Re-runs only the affected period safely when a recount is needed'
+                                    },
                                 ],
                             },
                             {
-                                text: {ko: 'Query Context — 조회 성능에 최적화', en: 'Query context — optimized for read performance'},
+                                text: {
+                                    ko: 'Query Context — 조회 성능에 최적화',
+                                    en: 'Query context — optimized for read performance'
+                                },
                                 children: [
-                                    {ko: '집계 결과만 별도 저장소에 두어 조회 부하를 분리', en: 'Keeps only aggregated results in a separate store to isolate read load'},
-                                    {ko: '대시보드 요구가 바뀌어도 수집·배치에 영향 없음', en: 'Dashboard changes leave collection and batch untouched'},
+                                    {
+                                        ko: '집계 결과만 별도 저장소에 두어 조회 부하를 분리',
+                                        en: 'Keeps only aggregated results in a separate store to isolate read load'
+                                    },
+                                    {
+                                        ko: '대시보드 요구가 바뀌어도 수집·배치에 영향 없음',
+                                        en: 'Dashboard changes leave collection and batch untouched'
+                                    },
                                 ],
                             },
                         ],
@@ -696,21 +873,36 @@ const projects: IProject[] = [
                             {
                                 text: {ko: '수작업 집계 제거', en: 'Manual aggregation eliminated'},
                                 children: [
-                                    {ko: '서비스별로 흩어져 있던 로그를 단일 파이프라인으로 통합', en: 'Logs scattered across services now flow through one pipeline'},
-                                    {ko: '지표 요청이 올 때마다 반복하던 추출 작업을 자동화로 대체', en: 'The extraction repeated on every metric request is now automated'},
+                                    {
+                                        ko: '서비스별로 흩어져 있던 로그를 단일 파이프라인으로 통합',
+                                        en: 'Logs scattered across services now flow through one pipeline'
+                                    },
+                                    {
+                                        ko: '지표 요청이 올 때마다 반복하던 추출 작업을 자동화로 대체',
+                                        en: 'The extraction repeated on every metric request is now automated'
+                                    },
                                 ],
                             },
                             {
                                 text: {ko: '유지보수 비용 절감', en: 'Lower maintenance cost'},
                                 children: [
-                                    {ko: '컨텍스트 분리로 변경 영향 범위를 예측 가능하게 만듦', en: 'Context separation makes the blast radius of a change predictable'},
-                                    {ko: '집계 로직 수정 시 수집·조회 계층 배포 불필요', en: 'Changing aggregation logic no longer requires deploying collection or query layers'},
+                                    {
+                                        ko: '컨텍스트 분리로 변경 영향 범위를 예측 가능하게 만듦',
+                                        en: 'Context separation makes the blast radius of a change predictable'
+                                    },
+                                    {
+                                        ko: '집계 로직 수정 시 수집·조회 계층 배포 불필요',
+                                        en: 'Changing aggregation logic no longer requires deploying collection or query layers'
+                                    },
                                 ],
                             },
                             {
                                 text: {ko: '의사결정 속도 개선', en: 'Faster decision-making'},
                                 children: [
-                                    {ko: '경영 지표를 대시보드에서 상시 확인 가능한 상태로 전환', en: 'Business metrics became continuously visible on a dashboard'},
+                                    {
+                                        ko: '경영 지표를 대시보드에서 상시 확인 가능한 상태로 전환',
+                                        en: 'Business metrics became continuously visible on a dashboard'
+                                    },
                                 ],
                             },
                         ],
@@ -750,8 +942,14 @@ const projects: IProject[] = [
         ],
         features: [
             {ko: '무인 도서 대출·반납 서비스 운영 플랫폼 통합', en: 'Unified the self-service loan and return operating platform'},
-            {ko: '기기 데이터 동기화 및 외부 도서 정보 연계 구조 고도화', en: 'Modernized device data sync and external book data integration'},
-            {ko: '관리자 프로그램과 모바일 앱 중심의 운영·사용자 경험 개선', en: 'Improved operations and user experience across the admin program and mobile app'},
+            {
+                ko: '기기 데이터 동기화 및 외부 도서 정보 연계 구조 고도화',
+                en: 'Modernized device data sync and external book data integration'
+            },
+            {
+                ko: '관리자 프로그램과 모바일 앱 중심의 운영·사용자 경험 개선',
+                en: 'Improved operations and user experience across the admin program and mobile app'
+            },
         ],
         stacks: ['Java', 'Spring MVC/Boot', 'MyBatis/JPA', 'MS-SQL', 'Android', 'iOS'],
         icon: <FaMobileScreenButton/>,
@@ -777,22 +975,40 @@ const projects: IProject[] = [
                             {
                                 text: {ko: '플랫폼 통합', en: 'Platform unification'},
                                 children: [
-                                    {ko: '무인 대출·반납 기기와 중앙 서버를 표준 연동 규격으로 연결', en: 'Connected kiosks to the central server through a standard integration spec'},
-                                    {ko: '관리자 프로그램에서 현장 상태를 일괄 확인 가능하도록 개선', en: 'Made field status visible in one place from the admin program'},
+                                    {
+                                        ko: '무인 대출·반납 기기와 중앙 서버를 표준 연동 규격으로 연결',
+                                        en: 'Connected kiosks to the central server through a standard integration spec'
+                                    },
+                                    {
+                                        ko: '관리자 프로그램에서 현장 상태를 일괄 확인 가능하도록 개선',
+                                        en: 'Made field status visible in one place from the admin program'
+                                    },
                                 ],
                             },
                             {
                                 text: {ko: '레거시 스택 정리', en: 'Cleaning up the legacy stack'},
                                 children: [
-                                    {ko: 'Node.js, Angular, Go 등 파편화된 스택을 Java/Spring 기반으로 통합', en: 'Consolidated a fragmented Node.js/Angular/Go stack onto Java/Spring'},
-                                    {ko: '기술 스택 단일화로 인수인계와 유지보수 난이도 완화', en: 'A single stack made handover and maintenance markedly easier'},
+                                    {
+                                        ko: 'Node.js, Angular, Go 등 파편화된 스택을 Java/Spring 기반으로 통합',
+                                        en: 'Consolidated a fragmented Node.js/Angular/Go stack onto Java/Spring'
+                                    },
+                                    {
+                                        ko: '기술 스택 단일화로 인수인계와 유지보수 난이도 완화',
+                                        en: 'A single stack made handover and maintenance markedly easier'
+                                    },
                                 ],
                             },
                             {
                                 text: {ko: '이용자 접점 강화', en: 'Strengthening user touchpoints'},
                                 children: [
-                                    {ko: '자체 하이브리드 앱을 Play Store · App Store에 정식 출시', en: 'Released our own hybrid app on the Play Store and App Store'},
-                                    {ko: '외부 도서 API를 연계해 검색 결과의 정보량 확대', en: 'Enriched search results by integrating external book APIs'},
+                                    {
+                                        ko: '자체 하이브리드 앱을 Play Store · App Store에 정식 출시',
+                                        en: 'Released our own hybrid app on the Play Store and App Store'
+                                    },
+                                    {
+                                        ko: '외부 도서 API를 연계해 검색 결과의 정보량 확대',
+                                        en: 'Enriched search results by integrating external book APIs'
+                                    },
                                 ],
                             },
                         ],
@@ -803,7 +1019,11 @@ const projects: IProject[] = [
                         kind: 'metrics',
                         label: {ko: '핵심 개선 지표', en: 'Headline improvements'},
                         items: [
-                            {value: '80x', label: {ko: '검색 응답 속도', en: 'Search response speed'}, delta: 'p99 7.5s → 93ms'},
+                            {
+                                value: '80x',
+                                label: {ko: '검색 응답 속도', en: 'Search response speed'},
+                                delta: 'p99 7.5s → 93ms'
+                            },
                             {value: '50%', label: {ko: '도서 조회 동선 단축', en: 'Shorter path to browse books'}},
                         ],
                     },
@@ -894,8 +1114,14 @@ const projects: IProject[] = [
                             {
                                 text: {ko: '자체 하이브리드 앱 정식 출시', en: 'Official release of our own hybrid app'},
                                 children: [
-                                    {ko: 'Google Play Store 및 Apple App Store 런칭', en: 'Launched on the Google Play Store and Apple App Store'},
-                                    {ko: '모바일 서비스 운영·배포 체계 구축', en: 'Established a mobile release and operations process'},
+                                    {
+                                        ko: 'Google Play Store 및 Apple App Store 런칭',
+                                        en: 'Launched on the Google Play Store and Apple App Store'
+                                    },
+                                    {
+                                        ko: '모바일 서비스 운영·배포 체계 구축',
+                                        en: 'Established a mobile release and operations process'
+                                    },
                                 ],
                             },
                             {
@@ -908,21 +1134,36 @@ const projects: IProject[] = [
                             {
                                 text: {ko: '검색 기반 추천 경험 강화', en: 'Stronger search-driven recommendations'},
                                 children: [
-                                    {ko: '파편화된 인기도서 메뉴를 인기·연관 도서 추천 엔진으로 결합', en: 'Merged scattered popular-book menus into a popularity and relatedness engine'},
-                                    {ko: '검색 컨텍스트 안에서 추천 도서 접근성 개선', en: 'Made recommendations reachable within the search context'},
+                                    {
+                                        ko: '파편화된 인기도서 메뉴를 인기·연관 도서 추천 엔진으로 결합',
+                                        en: 'Merged scattered popular-book menus into a popularity and relatedness engine'
+                                    },
+                                    {
+                                        ko: '검색 컨텍스트 안에서 추천 도서 접근성 개선',
+                                        en: 'Made recommendations reachable within the search context'
+                                    },
                                 ],
                             },
                             {
                                 text: {ko: '모바일 앱 사용성 최적화', en: 'Mobile usability tuning'},
                                 children: [
-                                    {ko: '웹뷰 로딩 중 흰 화면 깜빡임을 스플래시 동기화로 개선', en: 'Removed the white flash during WebView load by syncing the splash screen'},
-                                    {ko: '하이브리드 제스처 브릿지로 네이티브 수준의 인터랙션 제공', en: 'Delivered native-level interaction through a hybrid gesture bridge'},
+                                    {
+                                        ko: '웹뷰 로딩 중 흰 화면 깜빡임을 스플래시 동기화로 개선',
+                                        en: 'Removed the white flash during WebView load by syncing the splash screen'
+                                    },
+                                    {
+                                        ko: '하이브리드 제스처 브릿지로 네이티브 수준의 인터랙션 제공',
+                                        en: 'Delivered native-level interaction through a hybrid gesture bridge'
+                                    },
                                 ],
                             },
                             {
                                 text: {ko: 'iOS 환경 대응 강화', en: 'Better iOS support'},
                                 children: [
-                                    {ko: '아이폰 노치 영역 대응 풀스크린 최적화', en: 'Full-screen optimization around the iPhone notch'},
+                                    {
+                                        ko: '아이폰 노치 영역 대응 풀스크린 최적화',
+                                        en: 'Full-screen optimization around the iPhone notch'
+                                    },
                                     {ko: '뒤로가기 스와이프 제스처 브릿지 연동', en: 'Bridged the back-swipe gesture'},
                                 ],
                             },
@@ -959,10 +1200,19 @@ const projects: IProject[] = [
                                 label: 'Situation',
                                 items: [
                                     {
-                                        text: {ko: '분산 기기 도서 목록 통합 조회 필요', en: 'A unified view over books spread across kiosks was needed'},
+                                        text: {
+                                            ko: '분산 기기 도서 목록 통합 조회 필요',
+                                            en: 'A unified view over books spread across kiosks was needed'
+                                        },
                                         children: [
-                                            {ko: '관할지별로 물리 분산된 스마트도서관 기기 DB 조회', en: 'Kiosk databases were physically distributed by jurisdiction'},
-                                            {ko: '이용자는 하나의 검색 화면에서 전체 도서 목록 확인 필요', en: 'Users expected the full catalog on one search screen'},
+                                            {
+                                                ko: '관할지별로 물리 분산된 스마트도서관 기기 DB 조회',
+                                                en: 'Kiosk databases were physically distributed by jurisdiction'
+                                            },
+                                            {
+                                                ko: '이용자는 하나의 검색 화면에서 전체 도서 목록 확인 필요',
+                                                en: 'Users expected the full catalog on one search screen'
+                                            },
                                         ],
                                     },
                                 ],
@@ -972,16 +1222,31 @@ const projects: IProject[] = [
                                 label: 'Task & Problem',
                                 media: {
                                     src: SmartLibrarySearchBeforeImg,
-                                    alt: {ko: '기존 3-Tier 소켓 미들웨어 구조도', en: 'Diagram of the legacy three-tier socket middleware'},
-                                    caption: {ko: '기존 3-Tier 소켓 미들웨어 구조 (Gandalf / Frodo)', en: 'Legacy three-tier socket middleware (Gandalf / Frodo)'},
+                                    alt: {
+                                        ko: '기존 3-Tier 소켓 미들웨어 구조도',
+                                        en: 'Diagram of the legacy three-tier socket middleware'
+                                    },
+                                    caption: {
+                                        ko: '기존 3-Tier 소켓 미들웨어 구조 (Gandalf / Frodo)',
+                                        en: 'Legacy three-tier socket middleware (Gandalf / Frodo)'
+                                    },
                                     frame: 'light',
                                 },
                                 items: [
                                     {
-                                        text: {ko: '3-Tier 소켓 미들웨어 병목 발생', en: 'The three-tier socket middleware was the bottleneck'},
+                                        text: {
+                                            ko: '3-Tier 소켓 미들웨어 병목 발생',
+                                            en: 'The three-tier socket middleware was the bottleneck'
+                                        },
                                         children: [
-                                            {ko: '서버(Gandalf) - 장비(Frodo) 간 양방향 통신 의존', en: 'Everything depended on bidirectional server (Gandalf) to device (Frodo) traffic'},
-                                            {ko: '연결 유실, 스레드 락킹, 검색 지연이 반복 발생', en: 'Dropped connections, thread locking and search latency recurred'},
+                                            {
+                                                ko: '서버(Gandalf) - 장비(Frodo) 간 양방향 통신 의존',
+                                                en: 'Everything depended on bidirectional server (Gandalf) to device (Frodo) traffic'
+                                            },
+                                            {
+                                                ko: '연결 유실, 스레드 락킹, 검색 지연이 반복 발생',
+                                                en: 'Dropped connections, thread locking and search latency recurred'
+                                            },
                                         ],
                                     },
                                 ],
@@ -1002,8 +1267,14 @@ const projects: IProject[] = [
                                     {
                                         text: {ko: '기기 DB 직접 라우팅 적용', en: 'Routed straight to the kiosk databases'},
                                         children: [
-                                            {ko: 'Spring RoutingDataSource 기반 동적 DB 라우팅 구현', en: 'Implemented dynamic DB routing with Spring RoutingDataSource'},
-                                            {ko: '미들웨어를 거치지 않고 서버에서 각 기기 DB로 직접 연결', en: 'The server connects to each kiosk DB directly, bypassing middleware'},
+                                            {
+                                                ko: 'Spring RoutingDataSource 기반 동적 DB 라우팅 구현',
+                                                en: 'Implemented dynamic DB routing with Spring RoutingDataSource'
+                                            },
+                                            {
+                                                ko: '미들웨어를 거치지 않고 서버에서 각 기기 DB로 직접 연결',
+                                                en: 'The server connects to each kiosk DB directly, bypassing middleware'
+                                            },
                                         ],
                                     },
                                 ],
@@ -1015,15 +1286,27 @@ const projects: IProject[] = [
                                     {
                                         text: {ko: '운영 · 배포 구조 단순화', en: 'Simpler operations and deployment'},
                                         children: [
-                                            {ko: 'Gandalf/Frodo 양방향 미들웨어 레이어 제거', en: 'Removed the bidirectional Gandalf/Frodo middleware layer'},
-                                            {ko: '유지보수 단위를 3개에서 1개로 단일화', en: 'Consolidated three maintenance units into one'},
+                                            {
+                                                ko: 'Gandalf/Frodo 양방향 미들웨어 레이어 제거',
+                                                en: 'Removed the bidirectional Gandalf/Frodo middleware layer'
+                                            },
+                                            {
+                                                ko: '유지보수 단위를 3개에서 1개로 단일화',
+                                                en: 'Consolidated three maintenance units into one'
+                                            },
                                         ],
                                     },
                                     {
                                         text: {ko: '검색 응답 성능 80배 개선', en: 'Search response improved ~80x'},
                                         children: [
-                                            {ko: 'p99 응답시간을 7.5초에서 93ms로 단축', en: 'p99 latency dropped from 7.5s to 93ms'},
-                                            {ko: '부하 조건을 5 vu/s에서 100 vu/s까지 확대 검증', en: 'Verified under load from 5 vu/s up to 100 vu/s'},
+                                            {
+                                                ko: 'p99 응답시간을 7.5초에서 93ms로 단축',
+                                                en: 'p99 latency dropped from 7.5s to 93ms'
+                                            },
+                                            {
+                                                ko: '부하 조건을 5 vu/s에서 100 vu/s까지 확대 검증',
+                                                en: 'Verified under load from 5 vu/s up to 100 vu/s'
+                                            },
                                         ],
                                     },
                                 ],
@@ -1037,7 +1320,10 @@ const projects: IProject[] = [
                             label: 'Before',
                             media: {
                                 src: SmartLibraryArtilleryBeforeImg,
-                                alt: {ko: 'Artillery 부하 테스트 개선 전 결과', en: 'Artillery load test result before the change'},
+                                alt: {
+                                    ko: 'Artillery 부하 테스트 개선 전 결과',
+                                    en: 'Artillery load test result before the change'
+                                },
                                 caption: {ko: '최대 7.5s 지연 (동시성 5 vu/s)', en: 'Up to 7.5s latency at 5 vu/s'},
                                 frame: 'light',
                             },
@@ -1046,8 +1332,14 @@ const projects: IProject[] = [
                             label: 'After',
                             media: {
                                 src: SmartLibraryArtilleryAfterImg,
-                                alt: {ko: 'Artillery 부하 테스트 개선 후 결과', en: 'Artillery load test result after the change'},
-                                caption: {ko: 'p99 93ms로 안정 수렴 (동시성 100 vu/s)', en: 'Settles at p99 93ms under 100 vu/s'},
+                                alt: {
+                                    ko: 'Artillery 부하 테스트 개선 후 결과',
+                                    en: 'Artillery load test result after the change'
+                                },
+                                caption: {
+                                    ko: 'p99 93ms로 안정 수렴 (동시성 100 vu/s)',
+                                    en: 'Settles at p99 93ms under 100 vu/s'
+                                },
                                 frame: 'light',
                             },
                         },
@@ -1057,7 +1349,11 @@ const projects: IProject[] = [
                         label: {ko: '성능 테스트 지표', en: 'Load test results'},
                         items: [
                             {value: '93ms', label: {ko: 'p99 응답시간', en: 'p99 latency'}, delta: '7.5s → 93ms'},
-                            {value: '100 vu/s', label: {ko: '검증 동시성', en: 'Verified concurrency'}, delta: '5 vu/s → 100 vu/s'},
+                            {
+                                value: '100 vu/s',
+                                label: {ko: '검증 동시성', en: 'Verified concurrency'},
+                                delta: '5 vu/s → 100 vu/s'
+                            },
                             {value: {ko: '약 80배', en: '~80x'}, label: {ko: '검색 응답 개선', en: 'Search response gain'}},
                         ],
                     },
@@ -1068,7 +1364,10 @@ const projects: IProject[] = [
                         media: {
                             src: SmartLibrarySearchImg,
                             alt: {ko: '도서 검색 페이지 UI', en: 'Book search page UI'},
-                            caption: {ko: '다중 기기 DB 연동 도서 검색 웹앱', en: 'Search web app querying multiple kiosk databases'},
+                            caption: {
+                                ko: '다중 기기 DB 연동 도서 검색 웹앱',
+                                en: 'Search web app querying multiple kiosk databases'
+                            },
                             frame: 'card',
                         },
                     },

@@ -44,3 +44,5 @@ declare module '*.glb' {
 }
 
 declare module '*.css';
+
+declare module 'three';

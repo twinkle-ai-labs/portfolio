@@ -27,7 +27,7 @@ body {
     --blue-soft: rgba(91, 91, 214, 0.07);
     --blue-line: rgba(91, 91, 214, 0.18);
     --green: #10b981;
-    --grad-accent: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    --grad-accent: linear-gradient(135deg, #818cf8 0%, #a78bfa 100%);
 
     --home-bg: #f7f7fc;
     --profile-bg: #ffffff;
@@ -47,12 +47,18 @@ body {
     --radius-sm: 18px;
     /* 어두운 면(히어로 등)에 공통으로 쓰는 격자무늬 배경 */
     --grid-dark:
-            linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-            radial-gradient(circle at 15% 20%, rgba(129, 140, 248, 0.16), transparent 45%),
-            radial-gradient(circle at 85% 80%, rgba(167, 139, 250, 0.13), transparent 45%),
-            #14151f;
-    --grid-dark-size: 34px 34px, 34px 34px, auto, auto, auto;
+            radial-gradient(1px 1px at 20% 30%, #ffffff, rgba(0, 0, 0, 0)),
+            radial-gradient(1px 1px at 40% 70%, #ffffff, rgba(0, 0, 0, 0)),
+            radial-gradient(1px 1px at 50% 20%, #ffffff, rgba(0, 0, 0, 0)),
+            radial-gradient(1.5px 1.5px at 80% 40%, #ffffff, rgba(0, 0, 0, 0)),
+            radial-gradient(1px 1px at 90% 90%, #ffffff, rgba(0, 0, 0, 0)),
+            radial-gradient(1.5px 1.5px at 10% 85%, #ffffff, rgba(0, 0, 0, 0)),
+            linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+            radial-gradient(circle at 15% 20%, rgba(129, 140, 248, 0.1), transparent 45%),
+            radial-gradient(circle at 85% 80%, rgba(167, 139, 250, 0.08), transparent 45%),
+            #05060a;
+    --grid-dark-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 34px 34px, 34px 34px, auto, auto, auto;
 
     --shadow-soft: 0 10px 34px rgba(28, 30, 60, 0.07);
     --glass-shadow: 0 16px 50px rgba(28, 30, 60, 0.08);
@@ -610,7 +616,6 @@ span.pc {
 
 .section-desc,
 .section-subtitle {
-    max-width: 680px;
     margin-top: 1.15rem;
     color: var(--muted);
     font-size: clamp(0.97rem, 0.88rem + 0.4vw, 1.06rem);
@@ -750,8 +755,37 @@ span.pc {
 
 /* Hero */
 #s_home.hero-dark {
+    position: relative;
     background: var(--grid-dark);
     background-size: var(--grid-dark-size);
+    overflow: hidden;
+}
+
+#s_home.hero-dark::before {
+    display: none !important;
+}
+
+.hero-stars {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.6;
+}
+
+.hero-star {
+    position: absolute;
+    background: #fff;
+    border-radius: 50%;
+    opacity: 0;
+    filter: blur(0.4px);
+    box-shadow: 0 0 4px 1px rgba(255, 255, 255, 0.3);
+    animation: twinkle 5s infinite ease-in-out;
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0; transform: scale(0.4) rotate(0deg); }
+    50% { opacity: 0.8; transform: scale(1.1) rotate(180deg); }
 }
 
 .hero-shell {
@@ -823,7 +857,7 @@ span.pc {
 
 .hero-title em,
 .text-gradient {
-    background: linear-gradient(135deg, #818cf8 0%, #c4b5fd 100%);
+    background: linear-gradient(135deg, #a5b4fc 0%, #c4b5fd 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -1989,8 +2023,8 @@ span.pc {
     align-items: center;
     gap: 0.7rem;
     /* 이름이 길면 두 줄이 되므로 알약 대신 모서리가 둥근 카드로 둡니다. */
-    min-height: 3.1rem;
-    padding: 0.5rem 0.8rem 0.5rem 0.5rem;
+    min-height: 2.4rem;
+    padding: 0.3rem 0.6rem 0.3rem 0.4rem;
     border: 1px solid var(--line);
     border-radius: 18px;
     background: var(--surface);
@@ -2625,6 +2659,7 @@ span.pc {
     width: 100%;
     height: 100%;
     display: block;
+    outline: none;
 }
 
 .loading {

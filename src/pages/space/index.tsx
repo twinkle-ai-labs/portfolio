@@ -3,6 +3,7 @@ import React from 'react';
 import HomeSection from "@Pages/space/section/home";
 import Header from "@Layout/header";
 import DrawerSection from "@Layout/drawer";
+import TwinkleBadge from "@Components/badge/TwinkleBadge";
 
 const App = () => {
     return (
@@ -12,6 +13,7 @@ const App = () => {
                 <HomeSection />
             </main>
             <DrawerSection />
+            <TwinkleBadge/>
         </>
     );
 };

@@ -69,7 +69,7 @@ export interface ITranslations {
         devopsCaption: string;
         devopsLoop: string;
     };
-    career: {
+    experience: {
         eyebrow: string;
         title: string[];
         subtitle: string;
@@ -104,6 +104,17 @@ export interface ITranslations {
         title: string[];
         subtitle: string;
         groups: { title: string; summary: string }[];
+    };
+    badge: {
+        twinkle: string;
+        modalTitle: string;
+        modalDesc: string[];
+    };
+    space: {
+        title: string;
+        desc: string[];
+        openModal: string;
+        loading: string;
     };
 }
 
@@ -141,8 +152,8 @@ const translations: Record<'ko' | 'en', ITranslations> = {
             users: 'USERS SERVED · 서비스 이용자',
         },
         language: {
-            ko: '한국어',
-            en: '영어',
+            ko: 'Korean',
+            en: 'English',
             select: '언어 선택',
             current: '현재 언어',
         },
@@ -184,8 +195,8 @@ const translations: Record<'ko' | 'en', ITranslations> = {
             devopsCaption: '설계에서 개선으로 순환하는 DevOps 흐름',
             devopsLoop: '관측에서 얻은 지표를 다시 설계로 되돌리는 지속 개선 루프',
         },
-        career: {
-            eyebrow: 'Career',
+        experience: {
+            eyebrow: 'Experience',
             title: ['숫자보다 구조로 증명한', '5년의 궤적'],
             subtitle: '정규직과 프리랜서를 넘나들며 맡았던 회사·프로젝트별 핵심 역할을 시간순으로 정리했습니다.',
             corporate: 'Corporate Experience',
@@ -215,7 +226,7 @@ const translations: Record<'ko' | 'en', ITranslations> = {
             tableOfContents: '프로젝트 상세 목차',
         },
         skill: {
-            eyebrow: 'Tech Stack',
+            eyebrow: 'Skills',
             title: ['나열이 아닌,', '맥락으로 정리한 기술'],
             subtitle: '단순 목록이 아니라 실제 서비스 개발, 배포, 운영에서 사용한 맥락을 기준으로 분류했습니다.',
             groups: [
@@ -226,7 +237,26 @@ const translations: Record<'ko' | 'en', ITranslations> = {
                 {title: 'Collaboration', summary: 'Scrum 기반 협업에서 PM, 기획, 디자인, 앱, 어드민과 서버 개발을 조율합니다.'},
             ],
         },
-    },
+            badge: {
+                twinkle: 'Twinkle Night Sky',
+                modalTitle: 'Twinkle Night Sky',
+                modalDesc: [
+                    'Twinkle Night Sky는 사용자의 시선이 머무는 곳마다 별이 반짝이는 신비로운 밤하늘을 테마로 합니다.',
+                    'Three.js를 활용하여 구현된 3D 우주 공간과 사용자의 포인터를 따라 걷는 캐릭터는 정적인 포트폴리오에 생동감을 불어넣습니다.',
+                    '어두운 밤하늘(Deep Navy & Night Black) 색감은 콘텐츠에 대한 집중도를 높이며, 반짝이는 별 효과는 미래지향적이고 감각적인 사용자 경험을 선사합니다.'
+                ],
+            },
+            space: {
+                title: 'Twinkle Night Sky',
+                desc: [
+                    'Three.js 엔진을 활용하여 구현한 3D 밤하늘 공간입니다.',
+                    '마우스나 터치로 화면 위 위치를 가리키면 캐릭터가 그 방향으로 걸어갑니다.',
+                    '우주 공간 위에서 캐릭터를 직접 움직이며 탐험해보세요.'
+                ],
+                openModal: '공간 소개 보기',
+                loading: '3D 공간을 불러오는 중...',
+            },
+        },
     en: {
         nav: {
             home: 'Home',
@@ -303,7 +333,7 @@ const translations: Record<'ko' | 'en', ITranslations> = {
             devopsCaption: 'The DevOps loop running from design through improvement',
             devopsLoop: 'A continuous improvement loop that feeds observed metrics back into design',
         },
-        career: {
+        experience: {
             eyebrow: 'Career',
             title: ['Five years proven by structure,', 'not by numbers'],
             subtitle: 'The core roles I held at each company and project, across full-time and freelance work, in chronological order.',
@@ -345,7 +375,26 @@ const translations: Record<'ko' | 'en', ITranslations> = {
                 {title: 'Collaboration', summary: 'I coordinate server development with PM, planning, design, app and admin teams in Scrum.'},
             ],
         },
-    },
+            badge: {
+                twinkle: 'Twinkle Night Sky',
+                modalTitle: 'Twinkle Night Sky',
+                modalDesc: [
+                    'Twinkle Night Sky is themed around a mysterious night sky where stars twinkle wherever your gaze lingers.',
+                    'The 3D outer space implemented using Three.js and the character walking toward your pointer bring life to the static portfolio.',
+                    'The deep navy and night black colors enhance focus on content, while the sparkling star effects provide a futuristic and sensory user experience.'
+                ],
+            },
+            space: {
+                title: 'Twinkle Night Sky',
+                desc: [
+                    'This is a 3D night sky space implemented using the Three.js engine.',
+                    'Move your mouse or touch the screen to guide the character across the space.',
+                    'Explore the universe by directly steering the character.'
+                ],
+                openModal: 'View space intro',
+                loading: 'Loading 3D Space...',
+            },
+        },
 };
 
 export default translations;

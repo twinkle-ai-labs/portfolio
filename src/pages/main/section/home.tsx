@@ -14,6 +14,22 @@ const HomeSection = () => {
 
     return (
         <section id="s_home" className="section hero-dark">
+            <div className="hero-stars">
+                {[...Array(40)].map((_, i) => (
+                    <div
+                        key={i}
+                        className="hero-star"
+                        style={{
+                            left: `${Math.random() * 100}%`,
+                            top: `${Math.random() * 100}%`,
+                            width: `${Math.random() * 2 + 0.5}px`,
+                            height: `${Math.random() * 2 + 0.5}px`,
+                            animationDelay: `${Math.random() * 5}s`,
+                            animationDuration: `${Math.random() * 4 + 3}s`
+                        }}
+                    />
+                ))}
+            </div>
             <div className="hero-shell">
                 <div className="hero-copy">
                     <div className="hero-status">

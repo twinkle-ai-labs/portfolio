@@ -19,12 +19,12 @@ body[data-theme="dark"] {
     --blue-line: rgba(165, 180, 252, 0.22);
     --green: #6ee7b7;
     --grad-accent: linear-gradient(135deg, #818cf8 0%, #a78bfa 100%);
-    --home-bg: #101119;
-    --profile-bg: #14151e;
-    --career-bg: #101119;
-    --project-bg: #14151e;
-    --skill-bg: #101119;
-    --footer-bg: #0a0b11;
+    --home-bg: #05060a;
+    --profile-bg: #0a0b14;
+    --career-bg: #05060a;
+    --project-bg: #0a0b14;
+    --skill-bg: #05060a;
+    --footer-bg: #020205;
     --shadow-soft: 0 14px 40px rgba(0, 0, 0, 0.32);
     --glass-shadow: 0 18px 55px rgba(0, 0, 0, 0.4);
     --header-glass: rgba(16, 17, 25, 0.62);
@@ -34,13 +34,32 @@ body[data-theme="dark"] {
 
 body[data-theme="dark"] {
     background:
-            radial-gradient(circle at 10% 0%, rgba(129, 140, 248, 0.09), transparent 34%),
-            radial-gradient(circle at 90% 6%, rgba(167, 139, 250, 0.07), transparent 30%),
+            radial-gradient(circle at 10% 0%, rgba(99, 102, 241, 0.08), transparent 35%),
+            radial-gradient(circle at 90% 10%, rgba(139, 92, 246, 0.06), transparent 30%),
             var(--home-bg);
+}
+
+.wallpaper body[data-theme="dark"] {
+    background: var(--home-bg);
 }
 
 body[data-theme="dark"] .section {
     color: var(--ink);
+    position: relative;
+}
+
+body[data-theme="dark"] .section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: 
+        radial-gradient(1px 1px at 10% 20%, rgba(255, 255, 255, 0.12), transparent),
+        radial-gradient(1px 1px at 85% 45%, rgba(255, 255, 255, 0.1), transparent),
+        radial-gradient(1px 1px at 30% 75%, rgba(255, 255, 255, 0.08), transparent),
+        radial-gradient(1.5px 1.5px at 70% 85%, rgba(255, 255, 255, 0.06), transparent);
+    background-size: 100% 100%;
+    pointer-events: none;
+    z-index: 0;
 }
 
 /* #s_home 은 .hero-dark 격자무늬 배경을 그대로 쓰므로 제외합니다. */
