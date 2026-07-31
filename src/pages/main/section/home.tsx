@@ -6,7 +6,7 @@ import translations from "@Data/i18n";
 import {FaArrowDown, FaGithub} from "react-icons/fa6";
 import {Button} from "@mui/material";
 import CountUp from "@Components/section/countup";
-import OrbitGraphic from "@Components/section/orbit";
+import HeroConsole from "@Components/section/console";
 
 const HomeSection = () => {
     const language = useSelector((state: RootState) => state.language.value) as 'ko' | 'en';
@@ -56,9 +56,7 @@ const HomeSection = () => {
                     </div>
                 </div>
                 <div className="hero-visual">
-                    <div className="hero-visual-circle">
-                        <OrbitGraphic/>
-                    </div>
+                    <HeroConsole/>
                 </div>
             </div>
         </section>

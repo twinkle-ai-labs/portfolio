@@ -5,6 +5,7 @@ import SmartLibraryDeviceImg from '@Images/smart_library.png';
 
 const ProjectModal = ({project, onClose}: { project: IProject; onClose: () => void }) => {
     const visualType = project.visualType || 'side-wide';
+    const hasImages = Boolean(project.images && project.images.length > 0);
 
     // Resolve the details sections data dynamically, supporting multiple chapters!
     const detailSections = project.detailSections || [
@@ -17,7 +18,7 @@ const ProjectModal = ({project, onClose}: { project: IProject; onClose: () => vo
     return (
         <div className="project-modal-backdrop" role="presentation" onClick={onClose}>
             <article 
-                className={`project-modal ${visualType === 'title-left' || visualType === 'top-wide' ? 'layout-single-column' : ''}`}
+                className={`project-modal ${visualType === 'title-left' || visualType === 'top-wide' || !hasImages ? 'layout-single-column' : ''}`}
                 role="dialog" 
                 aria-modal="true" 
                 aria-labelledby="project-modal-title"
@@ -127,26 +128,29 @@ const ProjectModal = ({project, onClose}: { project: IProject; onClose: () => vo
                 ) : (
                     /* Type B: Standard 2-column layout (side-wide) */
                     <>
-                        <div className="project-modal-visual">
-                            {project.images && project.images.length > 0 ? (
-                                project.images.map((image) => (
+                        {hasImages && (
+                            <div className="project-modal-visual">
+                                {project.images!.map((image) => (
                                     <img key={image} src={image} alt={`${project.title} 화면`}/>
-                                ))
-                            ) : (
-                                <div className="project-modal-placeholder">
-                                    <span>Image Area</span>
-                                    <p>프로젝트 이미지가 들어갈 영역입니다.</p>
-                                </div>
-                            )}
-                        </div>
+                                ))}
+                            </div>
+                        )}
                         <div className="project-modal-content">
                             <div className="project-meta">{project.period} · {project.role}</div>
                             <h3 id="project-modal-title">{project.title}</h3>
                             <p>{project.summary}</p>
-                            
-                            {/* Flat Checkmarked Key Achievements Summary Box (Light/Dark Theme Compliant) */}
+
+                            <div className="project-modal-stack-row">
+                                <span className="project-modal-label">Tech Stack</span>
+                                <ul className="project-stack">
+                                    {project.stacks.map((stack) => (
+                                        <li key={project.id + 'modal' + stack}>{stack}</li>
+                                    ))}
+                                </ul>
+                            </div>
+
                             <div className="project-achievements-checklist">
-                                <span className="project-achievements-checklist-title">🏆 Key Achievements Summary</span>
+                                <span className="project-achievements-checklist-title">Key Achievements</span>
                                 <ul className="project-achievements-checklist-list">
                                     {project.impact.map((item, idx) => (
                                         <li key={idx} className="project-achievements-checklist-item">
@@ -157,12 +161,6 @@ const ProjectModal = ({project, onClose}: { project: IProject; onClose: () => vo
                                 </ul>
                             </div>
 
-                            <ul className="project-stack">
-                                {project.stacks.map((stack) => (
-                                    <li key={project.id + 'modal' + stack}>{stack}</li>
-                                ))}
-                            </ul>
-                            
                             {/* Custom Component Content or Default Data-driven array loop */}
                             {project.content ? (
                                 project.content

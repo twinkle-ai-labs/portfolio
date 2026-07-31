@@ -5,11 +5,11 @@
     }
 
     .hero-visual {
-        order: -1;
+        order: 1;
     }
 
-    .hero-visual-circle {
-        width: min(300px, 70vw);
+    .hero-console {
+        width: 100%;
     }
 
     .profile-capability-grid {
