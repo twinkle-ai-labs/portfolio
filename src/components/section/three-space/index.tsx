@@ -8,6 +8,116 @@ interface IThreeSpaceProps {
 
 const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
     const containerRef = useRef<HTMLDivElement | null>(null);
+    const keysRef = useRef({ w: false, a: false, s: false, d: false, shift: false });
+    const joystickBaseRef = useRef<HTMLDivElement | null>(null);
+    const joystickHandleRef = useRef<HTMLDivElement | null>(null);
+
+    // Track active joystick dragging state
+    const joystickDragState = useRef({
+        active: false,
+        startX: 0,
+        startY: 0
+    });
+
+    const handleJoystickStart = (e: React.PointerEvent<HTMLDivElement>) => {
+        const base = joystickBaseRef.current;
+        if (!base) return;
+
+        // Start tracking
+        const rect = base.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        joystickDragState.current = {
+            active: true,
+            startX: centerX,
+            startY: centerY
+        };
+
+        // Disable snap back transition during drag
+        const handle = joystickHandleRef.current;
+        if (handle) {
+            handle.style.transition = 'none';
+            handle.setPointerCapture(e.pointerId);
+        }
+    };
+
+    const handleJoystickMove = (e: React.PointerEvent<HTMLDivElement>) => {
+        if (!joystickDragState.current.active) return;
+
+        const base = joystickBaseRef.current;
+        const handle = joystickHandleRef.current;
+        if (!base || !handle) return;
+
+        // Distance from start center
+        let dx = e.clientX - joystickDragState.current.startX;
+        let dy = e.clientY - joystickDragState.current.startY;
+
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const maxRadius = 40; // max drag radius in pixels
+
+        // Clamp distance to circular bounds
+        if (distance > maxRadius) {
+            dx = (dx / distance) * maxRadius;
+            dy = (dy / distance) * maxRadius;
+        }
+
+        // Apply visual transform to the knob immediately in the DOM (buttery smooth 60fps!)
+        handle.style.transform = `translate(${dx}px, ${dy}px)`;
+
+        // Convert coordinates to key states
+        const keys = keysRef.current;
+        const deadzone = 8; // deadzone to prevent accidental movement
+
+        if (distance > deadzone) {
+            // Normalize direction
+            const nx = dx / distance;
+            const ny = dy / distance;
+
+            // Thresholds for diagonal movement
+            const angleThreshold = 0.38; // cos(approx 67 deg), allows nice diagonal combos
+
+            // Vertical movement (Y is inverted in screens: up is negative, down is positive)
+            keys.w = ny < -angleThreshold;
+            keys.s = ny > angleThreshold;
+
+            // Horizontal movement
+            keys.a = nx < -angleThreshold;
+            keys.d = nx > angleThreshold;
+
+            // Run mode if dragged nearly to the maximum limit (e.g. distance > 32px)
+            keys.shift = distance > 32;
+        } else {
+            // Inside deadzone -> stand still
+            keys.w = false;
+            keys.s = false;
+            keys.a = false;
+            keys.d = false;
+            keys.shift = false;
+        }
+    };
+
+    const handleJoystickEnd = (e: React.PointerEvent<HTMLDivElement>) => {
+        if (!joystickDragState.current.active) return;
+
+        joystickDragState.current.active = false;
+
+        // Reset visual handle knob position back to center with smooth snap-back transition
+        const handle = joystickHandleRef.current;
+        if (handle) {
+            handle.style.transition = 'transform 0.15s ease-out';
+            handle.style.transform = 'translate(0px, 0px)';
+            handle.releasePointerCapture(e.pointerId);
+        }
+
+        // Reset key states
+        const keys = keysRef.current;
+        keys.w = false;
+        keys.s = false;
+        keys.a = false;
+        keys.d = false;
+        keys.shift = false;
+    };
 
     useEffect(() => {
         const container = containerRef.current;
@@ -589,7 +699,7 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
         }, 600);
 
         // Keyboard inputs (robust mapping using e.code to bypass Korean IME / '한영 키' lock)
-        const keys = { w: false, a: false, s: false, d: false, shift: false };
+        const keys = keysRef.current;
         const handleKeyDown = (e: KeyboardEvent) => {
             const key = e.key.toLowerCase();
             const code = e.code;
@@ -1034,6 +1144,8 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
     return (
         <>
             <div ref={containerRef} className="babylon-canvas" style={{ touchAction: 'none' }} />
+            
+            {/* Walk Controls Overlay Instruction */}
             <div style={{
                 position: 'absolute',
                 bottom: '20px',
@@ -1052,7 +1164,60 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
                 boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
                 border: '1px solid rgba(129, 140, 248, 0.2)'
             }}>
-                Use <b>W A S D</b> to walk &nbsp;•&nbsp; Hold <b>Shift</b> to run
+                Use <b>W A S D</b> or <b>Joystick</b> to walk &nbsp;•&nbsp; Hold <b>Shift</b> or <b>Drag Far</b> to run
+            </div>
+
+            {/* Virtual Joystick on the bottom right (highly responsive for desktop & mobile) */}
+            <div 
+                ref={joystickBaseRef}
+                style={{
+                    position: 'absolute',
+                    bottom: '40px',
+                    right: '40px',
+                    width: '96px',
+                    height: '96px',
+                    borderRadius: '50%',
+                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                    border: '1px solid rgba(255, 255, 255, 0.12)',
+                    backdropFilter: 'blur(8px)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 100,
+                    touchAction: 'none', // Prevent scrolling/zooming gestures while dragging!
+                    boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.3)',
+                    userSelect: 'none'
+                }}
+            >
+                {/* Joystick Knob Handle */}
+                <div 
+                    ref={joystickHandleRef}
+                    onPointerDown={handleJoystickStart}
+                    onPointerMove={handleJoystickMove}
+                    onPointerUp={handleJoystickEnd}
+                    onPointerCancel={handleJoystickEnd}
+                    style={{
+                        width: '44px',
+                        height: '44px',
+                        borderRadius: '50%',
+                        background: 'radial-gradient(circle, #a5b4fc 0%, #4f46e5 100%)',
+                        boxShadow: '0 0 16px rgba(99, 102, 241, 0.5), inset 0 2px 4px rgba(255,255,255,0.4)',
+                        cursor: 'grab',
+                        touchAction: 'none',
+                        transition: 'transform 0.15s ease-out', // smooth snap back
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }}
+                >
+                    {/* Tiny center ring detail */}
+                    <div style={{
+                        width: '16px',
+                        height: '16px',
+                        borderRadius: '50%',
+                        border: '2px solid rgba(255,255,255,0.25)'
+                    }} />
+                </div>
             </div>
         </>
     );
