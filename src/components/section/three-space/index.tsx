@@ -359,45 +359,12 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
                     child.castShadow = true;
                     child.receiveShadow = true;
                     if (child.material) {
-                        child.material.roughness = Math.min(child.material.roughness, 0.6);
-                        
-                        // Dynamic styling fallback in case the GLB model lacks embedded textures (appears flat grey)
-                        if (!child.material.map) {
-                            const name = child.name.toLowerCase();
-                            if (name.includes('hair')) {
-                                child.material.color.setHex(0xfeb2b2); // stylish pastel pink hair
-                                if (child.material.emissive) {
-                                    child.material.emissive.setHex(0xfeb2b2);
-                                    child.material.emissiveIntensity = 0.25;
-                                }
-                            } else if (name.includes('head') || name.includes('face') || name.includes('skin') || name.includes('body_m')) {
-                                child.material.color.setHex(0xffe4e6); // soft peach skin tone
-                                child.material.roughness = 0.85;
-                            } else if (name.includes('eye')) {
-                                child.material.color.setHex(0x00f0ff); // glowing cyan cyber eyes
-                                if (child.material.emissive) {
-                                    child.material.emissive.setHex(0x00f0ff);
-                                    child.material.emissiveIntensity = 2.5;
-                                }
-                            } else if (name.includes('suit') || name.includes('body') || name.includes('cloth') || name.includes('armor') || name.includes('leg') || name.includes('arm')) {
-                                child.material.color.setHex(0x1e1b4b); // dark obsidian cosmic suit
-                                child.material.metalness = 0.85;
-                                child.material.roughness = 0.15;
-                                if (child.material.emissive) {
-                                    child.material.emissive.setHex(0x6366f1); // glowing blue-indigo circuit lines
-                                    child.material.emissiveIntensity = 1.8;
-                                }
-                            } else {
-                                // Stylish rose-gold / cyan dual accents
-                                if (child.id % 2 === 0) {
-                                    child.material.color.setHex(0xf43f5e); // hot rose-pink accents
-                                    child.material.metalness = 0.5;
-                                } else {
-                                    child.material.color.setHex(0x06b6d4); // electric cyan accents
-                                    child.material.metalness = 0.8;
-                                }
+                        const materials = Array.isArray(child.material) ? child.material : [child.material];
+                        materials.forEach((material: any) => {
+                            if (material) {
+                                material.roughness = Math.min(material.roughness, 0.7);
                             }
-                        }
+                        });
                     }
                 }
             });
