@@ -324,6 +324,8 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
         let currentAction: InstanceType<typeof THREE.AnimationAction> | null = null;
         let isProcedural = false;
         let astronautParts: any = null;
+        let characterBaseY = 0;
+        let bones: any = null;
 
         // Load the custom Nova GLB character with robust automatic scaling & procedural fallback
         loader.load('/models/character/nova.glb', (gltf: any) => {
@@ -340,7 +342,9 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
             character.scale.setScalar(scaleFactor);
             
             // Align feet to the ground (y = 0)
-            character.position.y = -box.min.y * scaleFactor;
+            const bY = -box.min.y * scaleFactor;
+            character.position.y = bY;
+            characterBaseY = bY;
             character.position.x = 0;
             character.position.z = 0;
             
@@ -355,6 +359,29 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
             });
 
             scene.add(character);
+
+            // Bind skeletal bones for procedural animation (since nova.glb doesn't have baked clips)
+            const findBone = (keyword: string) => {
+                let found: any = null;
+                character.traverse((child: any) => {
+                    if (child.isBone && child.name.includes(keyword)) {
+                        found = child;
+                    }
+                });
+                return found;
+            };
+
+            bones = {
+                leftUpperArm: findBone('L-UpperArm'),
+                leftForearm: findBone('L-Forearm'),
+                rightUpperArm: findBone('R-UpperArm'),
+                rightForearm: findBone('R-Forearm'),
+                leftThigh: findBone('L-Thigh'),
+                leftCalf: findBone('L-Calf'),
+                rightThigh: findBone('R-Thigh'),
+                rightCalf: findBone('R-Calf'),
+                spine: findBone('Spine2') || findBone('Spine1') || findBone('Spine')
+            };
 
             // Smart animation mapping by checking names for keywords (highly robust for custom GLBs)
             if (gltf.animations && gltf.animations.length > 0) {
@@ -387,6 +414,7 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
             characterGroup = astronaut.mesh;
             astronautParts = astronaut;
             isProcedural = true;
+            characterBaseY = 0;
             scene.add(characterGroup);
         });
 
@@ -488,12 +516,12 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
         const rotationSpeed = 3.5;
 
         // Interactive Mouse Orbit & Zoom Camera States
-        let orbitTheta = 0;           // Horizontal orbital angle (rad) around the character (0 = behind character)
-        let orbitPhi = 0.403;         // Vertical pitch angle (rad) above ground
+        let orbitTheta = Math.PI;     // Horizontal orbital angle (rad) (Math.PI starts exactly at the front)
+        let orbitPhi = 0.35;          // Vertical pitch angle (rad) above ground
         let zoomFactor = 1.0;         // Camera distance scaling factor
 
-        let targetOrbitTheta = 0;
-        let targetOrbitPhi = 0.403;
+        let targetOrbitTheta = Math.PI; // Start looking directly at the front of the character!
+        let targetOrbitPhi = 0.35;
         let targetZoomFactor = 1.0;
 
         let isPointerDown = false;
@@ -594,6 +622,34 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
 
                         // Slight hip bobbing up and down while walking
                         astronautParts.torso.position.y = 0.95 + Math.abs(Math.sin(swingFreq * 2)) * 0.06;
+                    } else if (bones) {
+                        // Procedural skeletal walk animation for Nova's bones
+                        const swingFreq = time * (keys.shift ? 14 : 9.0);
+                        const swingAngle = 0.45;
+
+                        // Upper arms hang down naturally (Z angle) and swing forward/backward on Y and X
+                        bones.leftUpperArm.rotation.z = -1.25;
+                        bones.leftUpperArm.rotation.y = Math.sin(swingFreq) * swingAngle * 0.5;
+                        bones.leftUpperArm.rotation.x = 0.15 + Math.sin(swingFreq) * swingAngle * 0.25;
+
+                        bones.rightUpperArm.rotation.z = 1.25;
+                        bones.rightUpperArm.rotation.y = -Math.sin(swingFreq) * swingAngle * 0.5;
+                        bones.rightUpperArm.rotation.x = -0.15 - Math.sin(swingFreq) * swingAngle * 0.25;
+
+                        // BEND ELBOWS: Bip001 elbows are bent forward on Y-axis
+                        bones.leftForearm.rotation.y = 1.1; 
+                        bones.rightForearm.rotation.y = -1.1;
+
+                        // Hips (Thighs) swing back and forth
+                        bones.leftThigh.rotation.x = Math.sin(swingFreq) * swingAngle;
+                        bones.rightThigh.rotation.x = -Math.sin(swingFreq) * swingAngle;
+
+                        // Knees (Calves) bend naturally during back swing
+                        bones.leftCalf.rotation.x = (Math.sin(swingFreq - Math.PI / 2) + 1.0) * 0.35;
+                        bones.rightCalf.rotation.x = (Math.sin(swingFreq + Math.PI / 2) + 1.0) * 0.35;
+
+                        // Upper body spine bobbing up and down slightly
+                        characterGroup.position.y = characterBaseY + Math.abs(Math.sin(swingFreq * 2)) * 0.07;
                     } else if (walkAction) {
                         // Play walk/run GLTF animation
                         const targetAction = walkAction;
@@ -615,6 +671,31 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
                         astronautParts.rightLeg.rotation.x = THREE.MathUtils.lerp(astronautParts.rightLeg.rotation.x, 0, 5 * delta);
 
                         astronautParts.torso.position.y = 0.95 + Math.sin(breathFreq) * 0.025;
+                    } else if (bones) {
+                        // Procedural skeletal standing/idle breathing pose for Nova's bones
+                        const breathFreq = time * 2.2;
+
+                        // Upper arms relaxed, hanging down slightly
+                        bones.leftUpperArm.rotation.z = THREE.MathUtils.lerp(bones.leftUpperArm.rotation.z, -1.25, 4 * delta);
+                        bones.leftUpperArm.rotation.y = THREE.MathUtils.lerp(bones.leftUpperArm.rotation.y, 0.1, 4 * delta);
+                        bones.leftUpperArm.rotation.x = THREE.MathUtils.lerp(bones.leftUpperArm.rotation.x, 0.1 + Math.sin(breathFreq) * 0.04, 4 * delta);
+
+                        bones.rightUpperArm.rotation.z = THREE.MathUtils.lerp(bones.rightUpperArm.rotation.z, 1.25, 4 * delta);
+                        bones.rightUpperArm.rotation.y = THREE.MathUtils.lerp(bones.rightUpperArm.rotation.y, -0.1, 4 * delta);
+                        bones.rightUpperArm.rotation.x = THREE.MathUtils.lerp(bones.rightUpperArm.rotation.x, -0.1 - Math.sin(breathFreq) * 0.04, 4 * delta);
+
+                        // BEND ELBOWS (Bones forearm) relaxed bent stance
+                        bones.leftForearm.rotation.y = THREE.MathUtils.lerp(bones.leftForearm.rotation.y, 1.0 + Math.sin(breathFreq) * 0.03, 4 * delta);
+                        bones.rightForearm.rotation.y = THREE.MathUtils.lerp(bones.rightForearm.rotation.y, -1.0 - Math.sin(breathFreq) * 0.03, 4 * delta);
+
+                        // Legs returned to perfect rest positions
+                        bones.leftThigh.rotation.x = THREE.MathUtils.lerp(bones.leftThigh.rotation.x, 0, 4 * delta);
+                        bones.rightThigh.rotation.x = THREE.MathUtils.lerp(bones.rightThigh.rotation.x, 0, 4 * delta);
+                        bones.leftCalf.rotation.x = THREE.MathUtils.lerp(bones.leftCalf.rotation.x, 0, 4 * delta);
+                        bones.rightCalf.rotation.x = THREE.MathUtils.lerp(bones.rightCalf.rotation.x, 0, 4 * delta);
+
+                        // Body breathing bobbing
+                        characterGroup.position.y = THREE.MathUtils.lerp(characterGroup.position.y, characterBaseY + Math.sin(breathFreq) * 0.015, 4 * delta);
                     } else if (idleAction) {
                         // Play idle/stand GLTF animation
                         const targetAction = idleAction;
