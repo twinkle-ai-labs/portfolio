@@ -486,10 +486,59 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
         const walkSpeed = 5;
         const runSpeed = 9;
         const rotationSpeed = 3.5;
-        
-        // Follow camera offset configuration
-        const cameraOffset = new THREE.Vector3(0, 3.2, -7.5); 
-        
+
+        // Interactive Mouse Orbit & Zoom Camera States
+        let orbitTheta = 0;           // Horizontal orbital angle (rad) around the character (0 = behind character)
+        let orbitPhi = 0.403;         // Vertical pitch angle (rad) above ground
+        let zoomFactor = 1.0;         // Camera distance scaling factor
+
+        let targetOrbitTheta = 0;
+        let targetOrbitPhi = 0.403;
+        let targetZoomFactor = 1.0;
+
+        let isPointerDown = false;
+        let prevPointerX = 0;
+        let prevPointerY = 0;
+
+        const handlePointerDown = (e: PointerEvent) => {
+            isPointerDown = true;
+            prevPointerX = e.clientX;
+            prevPointerY = e.clientY;
+        };
+
+        const handlePointerMove = (e: PointerEvent) => {
+            if (!isPointerDown) return;
+            const deltaX = e.clientX - prevPointerX;
+            const deltaY = e.clientY - prevPointerY;
+
+            prevPointerX = e.clientX;
+            prevPointerY = e.clientY;
+
+            // Horizontal rotation sensitivity
+            const horizontalSensitivity = 0.007;
+            targetOrbitTheta -= deltaX * horizontalSensitivity;
+
+            // Vertical pitch sensitivity, clamped to prevent going underground or fully top-down
+            const verticalSensitivity = 0.006;
+            targetOrbitPhi = Math.max(0.05, Math.min(targetOrbitPhi + deltaY * verticalSensitivity, Math.PI / 2.15));
+        };
+
+        const handlePointerUp = () => {
+            isPointerDown = false;
+        };
+
+        const handleWheel = (e: WheelEvent) => {
+            // Prevent scrolling the browser window when zooming
+            e.preventDefault();
+            const wheelSensitivity = 0.001;
+            targetZoomFactor = Math.max(0.35, Math.min(targetZoomFactor + e.deltaY * wheelSensitivity, 3.0));
+        };
+
+        container.addEventListener('pointerdown', handlePointerDown);
+        container.addEventListener('pointermove', handlePointerMove);
+        window.addEventListener('pointerup', handlePointerUp);
+        container.addEventListener('wheel', handleWheel, { passive: false });
+
         const render = () => {
             const delta = clock.getDelta();
             const time = clock.getElapsedTime();
@@ -582,19 +631,35 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
                     mixer.update(delta * speedMultiplier);
                 }
 
-                // 4. Smooth Follow Camera
+                // 4. Smooth Follow & Orbit Zoom Camera
+                // Interpolate current angles and zoom factors towards target values for smooth inertia feel
+                orbitTheta = THREE.MathUtils.lerp(orbitTheta, targetOrbitTheta, 8 * delta);
+                orbitPhi = THREE.MathUtils.lerp(orbitPhi, targetOrbitPhi, 8 * delta);
+                zoomFactor = THREE.MathUtils.lerp(zoomFactor, targetZoomFactor, 8 * delta);
+
+                if (isWalking) {
+                    // Smoothly auto-align camera back behind the character when they start walking (standard game mechanics)
+                    targetOrbitTheta = THREE.MathUtils.lerp(targetOrbitTheta, 0, 3 * delta);
+                    targetOrbitPhi = THREE.MathUtils.lerp(targetOrbitPhi, 0.403, 3 * delta);
+                }
+
                 const idealCameraPos = characterGroup.position.clone();
                 const charRot = characterGroup.rotation.y;
                 
-                // Camera offsets relative to character's local coordinate system
-                idealCameraPos.x += Math.sin(charRot) * cameraOffset.z;
-                idealCameraPos.z += Math.cos(charRot) * cameraOffset.z;
-                idealCameraPos.y += cameraOffset.y;
+                // Camera radial distance (base is 8.15 units)
+                const r = 8.15 * zoomFactor;
+                const hAngle = charRot + Math.PI + orbitTheta; // add PI so we start behind the character
+                const vAngle = orbitPhi;
 
-                camera.position.lerp(idealCameraPos, 5 * delta);
+                // Spherical to Cartesian coordinate transformation (relative to character)
+                idealCameraPos.x += r * Math.cos(vAngle) * Math.sin(hAngle);
+                idealCameraPos.z += r * Math.cos(vAngle) * Math.cos(hAngle);
+                idealCameraPos.y += r * Math.sin(vAngle);
+
+                camera.position.lerp(idealCameraPos, 10 * delta);
                 
                 const lookAtPos = characterGroup.position.clone();
-                lookAtPos.y += 1.4; // look straight at helmet/chest plate
+                lookAtPos.y += 1.3; // focus exactly at torso/face level
                 camera.lookAt(lookAtPos);
             }
 
@@ -610,6 +675,10 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
             resizeObserver.disconnect();
             window.removeEventListener('keydown', handleKeyDown);
             window.removeEventListener('keyup', handleKeyUp);
+            container.removeEventListener('pointerdown', handlePointerDown);
+            container.removeEventListener('pointermove', handlePointerMove);
+            window.removeEventListener('pointerup', handlePointerUp);
+            container.removeEventListener('wheel', handleWheel);
             container.removeChild(renderer.domElement);
             
             scene.traverse((object: any) => {
