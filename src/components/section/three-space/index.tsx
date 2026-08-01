@@ -8,7 +8,16 @@ interface IThreeSpaceProps {
 
 const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
     const containerRef = useRef<HTMLDivElement | null>(null);
-    const keysRef = useRef({ w: false, a: false, s: false, d: false, shift: false, space: false });
+    const keysRef = useRef({ 
+        w: false, 
+        a: false, 
+        s: false, 
+        d: false, 
+        shift: false, 
+        space: false,
+        joystickX: 0,
+        joystickY: 0
+    });
     const joystickBaseRef = useRef<HTMLDivElement | null>(null);
     const joystickHandleRef = useRef<HTMLDivElement | null>(null);
 
@@ -77,9 +86,13 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
         const deadzone = 8; // deadzone to prevent accidental movement
 
         if (distance > deadzone) {
-            // Normalize direction
+            const amt = Math.min(distance / maxRadius, 1.0);
             const nx = dx / distance;
             const ny = dy / distance;
+
+            // Set the analog inputs!
+            keys.joystickX = nx * amt;
+            keys.joystickY = ny * amt;
 
             // Thresholds for diagonal movement
             const angleThreshold = 0.38; // cos(approx 67 deg), allows nice diagonal combos
@@ -96,6 +109,8 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
             keys.shift = distance > 32;
         } else {
             // Inside deadzone -> stand still
+            keys.joystickX = 0;
+            keys.joystickY = 0;
             keys.w = false;
             keys.s = false;
             keys.a = false;
@@ -119,6 +134,8 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
 
         // Reset key states
         const keys = keysRef.current;
+        keys.joystickX = 0;
+        keys.joystickY = 0;
         keys.w = false;
         keys.s = false;
         keys.a = false;
@@ -928,21 +945,27 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
                     }
                 }
 
-                if (keys.w || keys.s || keys.a || keys.d) {
+                const joystickActive = Math.abs(keys.joystickX) > 0.05 || Math.abs(keys.joystickY) > 0.05;
+
+                if (keys.w || keys.s || keys.a || keys.d || joystickActive) {
                     isWalking = true;
                     const speed = keys.shift ? runSpeed : walkSpeed;
                     speedMultiplier = keys.shift ? 1.7 : 1;
                     
-                    // 1. Calculate rotation first (rotation is always allowed and safe)
+                    // 1. Calculate rotation first
                     if (keys.a) {
                         characterGroup.rotation.y += rotationSpeed * delta;
-                    }
-                    if (keys.d) {
+                    } else if (keys.d) {
                         characterGroup.rotation.y -= rotationSpeed * delta;
+                    } else if (Math.abs(keys.joystickX) > 0.05) {
+                        // Smooth, analog-scaled rotation speed!
+                        // Scaled down (by 0.4) for beautiful, cinematic precision instead of rapid spinning!
+                        const smoothRotSpeed = rotationSpeed * 0.4;
+                        characterGroup.rotation.y -= keys.joystickX * smoothRotSpeed * delta;
                     }
 
                     // 2. Prepare predicted translation
-                    const moveDistance = speed * delta;
+                    let moveDistance = speed * delta;
                     const moveDir = new THREE.Vector3();
                     let hasTranslation = false;
 
@@ -952,6 +975,14 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
                     } else if (keys.s) {
                         characterGroup.getWorldDirection(moveDir);
                         moveDir.negate(); // backward vector
+                        hasTranslation = true;
+                    } else if (Math.abs(keys.joystickY) > 0.05) {
+                        characterGroup.getWorldDirection(moveDir);
+                        if (keys.joystickY > 0) {
+                            moveDir.negate(); // backward vector
+                        }
+                        // Scale moveDistance by the analog drag amount!
+                        moveDistance = moveDistance * Math.abs(keys.joystickY);
                         hasTranslation = true;
                     }
 
@@ -985,10 +1016,10 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
                     }
 
                     if (canTranslate && hasTranslation) {
-                        if (keys.w) {
+                        // Standard translation in local coordinate space (translateZ works beautifully on local axis)
+                        if (keys.w || (Math.abs(keys.joystickY) > 0.05 && keys.joystickY <= 0)) {
                             characterGroup.translateZ(moveDistance);
-                        }
-                        if (keys.s) {
+                        } else if (keys.s || (Math.abs(keys.joystickY) > 0.05 && keys.joystickY > 0)) {
                             characterGroup.translateZ(-moveDistance);
                         }
                     }
