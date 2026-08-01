@@ -7,9 +7,6 @@
     "node": ">=24.0.0"
   },
   "dependencies": {
-    "@babylonjs/core": "^6.44.0",
-    "@babylonjs/gui": "^6.44.0",
-    "@babylonjs/loaders": "^6.44.0",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.15.10",

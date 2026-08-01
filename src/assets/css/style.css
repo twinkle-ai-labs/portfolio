@@ -1477,13 +1477,16 @@ span.pc {
     word-break: keep-all;
 }
 
-/* 왼쪽에 흐름(∞), 오른쪽에 그 흐름에서 맡는 일. */
+/* 왼쪽에 머리글 + 흐름(∞), 오른쪽에 그 흐름에서 맡는 일. */
 .profile-flow {
     display: grid;
     grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
     align-items: center;
     gap: clamp(1.25rem, 3vw, 2.5rem);
-    margin-top: 1.75rem;
+}
+
+.profile-flow-lead .devops-cycle {
+    margin-top: 1.5rem;
 }
 
 .profile-capability-grid {
@@ -1957,6 +1960,11 @@ span.pc {
     margin-top: 1.15rem;
 }
 
+/* 프로젝트 패널이 없는 경력 카드 — Features 단독 배치 */
+.career-summary-grid.career-summary-solo {
+    grid-template-columns: 1fr;
+}
+
 .career-summary-grid section {
     padding: 1rem 1.05rem;
     border: 1px solid var(--line);
@@ -2220,10 +2228,13 @@ span.pc {
     min-width: 0;
 }
 
+/* 우측 패널이 카드 높이를 꽉 채워 좌우 균형을 맞춥니다. */
 .project-card-detail {
     grid-area: detail;
-    display: grid;
+    display: flex;
+    flex-direction: column;
     gap: 0.9rem;
+    align-self: stretch;
     min-width: 0;
 }
 
@@ -2241,17 +2252,29 @@ span.pc {
 }
 
 .project-index {
-    color: var(--line-strong);
+    background: var(--grad-accent);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
     font-size: 1.7rem;
     font-weight: 800;
     line-height: 1;
     letter-spacing: -0.03em;
+    opacity: 0.55;
+    transition: opacity var(--transition-fast);
+}
+
+.project-card:hover .project-index {
+    opacity: 1;
 }
 
 .project-meta {
     color: var(--muted);
-    font-size: 0.86rem;
-    font-weight: 500;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
 }
 
 .project-card h3 {
@@ -2277,6 +2300,7 @@ span.pc {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+    flex: 1;
     margin-top: 0;
     padding: 1.2rem 1.25rem;
     border-radius: 20px;
@@ -2344,9 +2368,10 @@ span.pc {
 
 .project-stack li {
     padding: 0.36rem 0.62rem;
+    border: 1px solid var(--blue-line);
     border-radius: 999px;
-    background: #eef0fe;
-    color: #4f46e5;
+    background: var(--blue-soft);
+    color: var(--blue-deep);
     font-size: 0.79rem;
     font-weight: 600;
     transition: background var(--transition-fast), transform var(--transition-fast);
@@ -2354,7 +2379,7 @@ span.pc {
 
 .project-stack li:hover {
     transform: translateY(-1px);
-    background: #e2e5fd;
+    background: var(--blue-line);
 }
 
 /* Skills */
@@ -3036,31 +3061,48 @@ span.pc {
 
 .pm-chapter + .pm-chapter {
     padding-top: 2.5rem;
-    border-top: 1px solid var(--line);
+    border-top: 1px solid var(--line-strong);
 }
 
 .pm-chapter-head {
     display: flex;
     align-items: flex-start;
-    gap: 0.9rem;
+    gap: 1rem;
     margin-bottom: 1.5rem;
 }
 
+/* 번호를 칩으로 만들어 챕터 시작점이 스캔 중에도 잡히게 합니다. */
 .pm-chapter-index {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0;
-    min-width: 2rem;
-    padding-top: 0.1rem;
-    color: var(--blue);
+    width: 2.35rem;
+    height: 2.35rem;
+    border: 1px solid var(--blue-line);
+    border-radius: 12px;
+    background: var(--blue-soft);
+    color: var(--blue-deep);
     font-family: var(--font-mono);
     font-size: 0.86rem;
     font-weight: 700;
     letter-spacing: 0.04em;
 }
 
+.pm-chapter-eyebrow {
+    margin: 0 0 0.3rem;
+    color: var(--blue-deep);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
 .pm-chapter-title {
     margin: 0;
     color: var(--ink);
-    font-size: 1.16rem;
+    font-size: clamp(1.16rem, 1.05rem + 0.4vw, 1.34rem);
     font-weight: 800;
     letter-spacing: -0.02em;
     word-break: keep-all;

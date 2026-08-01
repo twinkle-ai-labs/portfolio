@@ -46,3 +46,5 @@ declare module '*.glb' {
 declare module '*.css';
 
 declare module 'three';
+
+declare module 'three/examples/jsm/loaders/GLTFLoader';

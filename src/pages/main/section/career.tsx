@@ -128,7 +128,8 @@ const Career = (career: ICareer & { index: number; t: ITranslations['experience'
                         <div className="career-type">{tr(career.type)}</div>
                     ) : null}
                 </div>
-                <div className="career-summary-grid">
+                {/* 나열할 프로젝트가 없는 경력은 Features 가 전체 폭을 씁니다. */}
+                <div className={`career-summary-grid ${career.projects?.length ? '' : 'career-summary-solo'}`}>
                     <section>
                         <span>{t.features}</span>
                         <ul className="career-feature-list">
@@ -138,19 +139,21 @@ const Career = (career: ICareer & { index: number; t: ITranslations['experience'
                             })}
                         </ul>
                     </section>
-                    <section>
-                        <span>{t.projects}</span>
-                        <ul className="career-project-showcase">
-                            {career.projects?.map((project) => (
-                                <CareerProjectRow
-                                    key={career.id + tr(project.label)}
-                                    project={project}
-                                    careerId={career.id}
-                                    t={t}
-                                />
-                            ))}
-                        </ul>
-                    </section>
+                    {career.projects?.length ? (
+                        <section>
+                            <span>{t.projects}</span>
+                            <ul className="career-project-showcase">
+                                {career.projects.map((project) => (
+                                    <CareerProjectRow
+                                        key={career.id + tr(project.label)}
+                                        project={project}
+                                        careerId={career.id}
+                                        t={t}
+                                    />
+                                ))}
+                            </ul>
+                        </section>
+                    ) : null}
                 </div>
             </div>
         </article>

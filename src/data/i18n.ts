@@ -180,13 +180,13 @@ const translations: Record<'ko' | 'en', ITranslations> = {
             philosophyEyebrow: 'Engineering Philosophy',
             philosophyTitle: ['보이지 않는 곳의 완성도가', '서비스의 수준을 결정합니다'],
             philosophyDesc: '돌아가는 코드를 넘어, 비즈니스가 커져도 흔들리지 않는 구조를 만듭니다.',
-            howEyebrow: 'How I Work',
+            howEyebrow: 'How Do I Work',
             howTitle: '설계부터 개선까지, 전 구간을 직접 맡습니다',
             capabilities: [
-                {title: '전체를 보는 시야', desc: '전체 흐름을 구조화해 복잡도를 낮춥니다.'},
-                {title: '견고한 백엔드', desc: '도메인 책임을 나누고 데이터 계층을 분리합니다.'},
-                {title: '배포 자동화', desc: '빌드부터 릴리즈까지 손댈 일을 없앱니다.'},
-                {title: '운영 관측', desc: '시스템과 비즈니스 지표를 항상 지켜봅니다.'},
+                {title: '전체를 보는 시야', desc: '요구사항을 데이터 모델부터 인프라까지 하나의 흐름으로 구조화합니다. 전체가 한눈에 잡히는 설계가 복잡도를 낮춥니다.'},
+                {title: '견고한 백엔드', desc: '도메인 경계를 따라 책임을 나누고 데이터 계층을 분리합니다. 비즈니스가 커져도 흔들리지 않는 구조를 만듭니다.'},
+                {title: '배포 자동화', desc: '빌드·테스트·릴리즈를 파이프라인으로 묶어 손댈 일을 없앱니다. 배포가 두렵지 않아야 자주, 안전하게 내보낼 수 있습니다.'},
+                {title: '운영 관측', desc: '로그·지표·알림으로 시스템과 비즈니스 상태를 항상 지켜봅니다. 관측에서 얻은 숫자는 다시 설계 개선으로 이어집니다.'},
             ],
             devopsFlow: {
                 dev: ['설계', '개발', '빌드', '테스트'],
@@ -238,23 +238,23 @@ const translations: Record<'ko' | 'en', ITranslations> = {
             ],
         },
             badge: {
-                twinkle: 'Twinkle Night Sky',
-                modalTitle: 'Twinkle Night Sky',
+                twinkle: 'Twinkle Room',
+                modalTitle: 'Twinkle Room',
                 modalDesc: [
-                    'Twinkle Night Sky는 사용자의 시선이 머무는 곳마다 별이 반짝이는 신비로운 밤하늘을 테마로 합니다.',
-                    'Three.js를 활용하여 구현된 3D 우주 공간과 사용자의 포인터를 따라 걷는 캐릭터는 정적인 포트폴리오에 생동감을 불어넣습니다.',
-                    '어두운 밤하늘(Deep Navy & Night Black) 색감은 콘텐츠에 대한 집중도를 높이며, 반짝이는 별 효과는 미래지향적이고 감각적인 사용자 경험을 선사합니다.'
+                    'Twinkle Room은 사용자의 포인터를 따라 캐릭터가 산책하는 포근한 3D 방을 테마로 합니다.',
+                    'Three.js로 침대, 책상, 창문, 조명, 식물, 러그를 배치해 개인 작업실 같은 분위기를 만들었습니다.',
+                    '따뜻한 조명과 창밖의 밤하늘은 포트폴리오에 편안하고 감각적인 인터랙션을 더합니다.'
                 ],
             },
             space: {
-                title: 'Twinkle Night Sky',
+                title: 'Twinkle Room',
                 desc: [
-                    'Three.js 엔진을 활용하여 구현한 3D 밤하늘 공간입니다.',
-                    '마우스나 터치로 화면 위 위치를 가리키면 캐릭터가 그 방향으로 걸어갑니다.',
-                    '우주 공간 위에서 캐릭터를 직접 움직이며 탐험해보세요.'
+                    'Three.js 엔진으로 꾸민 포근한 3D 방입니다.',
+                    '마우스나 터치로 바닥 위 위치를 가리키면 캐릭터가 그 방향으로 걸어갑니다.',
+                    '침대, 책상, 조명, 식물이 놓인 방 안을 직접 산책해보세요.'
                 ],
-                openModal: '공간 소개 보기',
-                loading: '3D 공간을 불러오는 중...',
+                openModal: '방 소개 보기',
+                loading: '3D 방을 불러오는 중...',
             },
         },
     en: {
@@ -318,13 +318,13 @@ const translations: Record<'ko' | 'en', ITranslations> = {
             philosophyEyebrow: 'Engineering Philosophy',
             philosophyTitle: ['The quality of what you cannot see', 'defines the quality of the service'],
             philosophyDesc: 'Beyond code that merely runs, I build structures that hold steady as the business grows.',
-            howEyebrow: 'How I Work',
+            howEyebrow: 'How Do I Work',
             howTitle: 'From design to improvement — I own every stage',
             capabilities: [
-                {title: 'Holistic View', desc: 'I structure the whole flow to reduce complexity.'},
-                {title: 'Reliable Backend', desc: 'I separate domain responsibilities and isolate the data layer.'},
-                {title: 'Automated Delivery', desc: 'I remove manual work from build through release.'},
-                {title: 'Observability', desc: 'I keep system and business metrics always in view.'},
+                {title: 'Holistic View', desc: 'I structure requirements into one flow, from data model to infrastructure. A design you can see at a glance keeps complexity down.'},
+                {title: 'Reliable Backend', desc: 'I split responsibilities along domain boundaries and isolate the data layer — a structure that holds steady as the business grows.'},
+                {title: 'Automated Delivery', desc: 'Build, test, and release run as one pipeline with nothing left to touch by hand. Deploys should be frequent and safe, never scary.'},
+                {title: 'Observability', desc: 'Logs, metrics, and alerts keep system and business health in view. What we observe feeds straight back into better design.'},
             ],
             devopsFlow: {
                 dev: ['Design', 'Code', 'Build', 'Test'],
@@ -376,23 +376,23 @@ const translations: Record<'ko' | 'en', ITranslations> = {
             ],
         },
             badge: {
-                twinkle: 'Twinkle Night Sky',
-                modalTitle: 'Twinkle Night Sky',
+                twinkle: 'Twinkle Room',
+                modalTitle: 'Twinkle Room',
                 modalDesc: [
-                    'Twinkle Night Sky is themed around a mysterious night sky where stars twinkle wherever your gaze lingers.',
-                    'The 3D outer space implemented using Three.js and the character walking toward your pointer bring life to the static portfolio.',
-                    'The deep navy and night black colors enhance focus on content, while the sparkling star effects provide a futuristic and sensory user experience.'
+                    'Twinkle Room is a cozy 3D room where the character walks toward your pointer.',
+                    'Built with Three.js, the scene combines a bed, desk, window, lights, plant and rug to feel like a personal studio.',
+                    'Warm lighting and the night sky outside the window add a calm, tactile interaction to the portfolio.'
                 ],
             },
             space: {
-                title: 'Twinkle Night Sky',
+                title: 'Twinkle Room',
                 desc: [
-                    'This is a 3D night sky space implemented using the Three.js engine.',
-                    'Move your mouse or touch the screen to guide the character across the space.',
-                    'Explore the universe by directly steering the character.'
+                    'This is a cozy 3D room implemented with the Three.js engine.',
+                    'Move your mouse or touch the floor to guide the character.',
+                    'Walk around the room with the bed, desk, lighting and plants.'
                 ],
-                openModal: 'View space intro',
-                loading: 'Loading 3D Space...',
+                openModal: 'View room intro',
+                loading: 'Loading 3D Room...',
             },
         },
 };

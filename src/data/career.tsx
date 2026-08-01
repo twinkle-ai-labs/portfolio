@@ -11,11 +11,6 @@ import NaviStatsLogo from '@Images/logo_inavi.png'
 import SmartLibraryLogo from '@Images/project_smart_library.png'
 
 import NlmImg from '@Images/og_nlm.png'
-import KappledenImg from '@Images/og_kappleden.png'
-import IlegImg from '@Images/og_ileg.png'
-import BarundcImg from '@Images/og_barundc.jpg'
-import Dental100yearImg from '@Images/og_100dental.jpg'
-import SsjobgyImg from '@Images/og_ssjobgy.jpg'
 
 export interface ICareerProject {
     label: LocalizedText;
@@ -63,10 +58,22 @@ const careers: ICareer[] = [
         dotColor: 'info',
         position: {ko: 'Lead Backend Engineer · DevOps', en: 'Lead Backend Engineer · DevOps'},
         features: [
-            {ko: '서버·인프라 아키텍처 단독 설계 (Owner)', en: 'Sole owner of server & infrastructure architecture'},
-            {ko: 'AWS·CI/CD 파이프라인 단독 구축', en: 'Built the AWS and CI/CD pipeline single-handedly'},
-            {ko: '내비게이션 서비스 운영 및 통합통계 시스템 신규 개발', en: 'Operated navigation services and built a new unified statistics system'},
-            {ko: '실시간 관측 체계 구축 및 장애 대응 전담', en: 'Established real-time observability and owned incident response'},
+            {
+                ko: '신규 서비스의 서버·인프라 아키텍처 전주기 단독 설계 (Owner)',
+                en: 'Sole owner of the full server & infrastructure architecture lifecycle for a new service',
+            },
+            {
+                ko: 'AWS 클라우드 토폴로지와 Jenkins·Harbor 기반 CI/CD 파이프라인 단독 구축',
+                en: 'Single-handedly built the AWS topology and the Jenkins·Harbor CI/CD pipeline',
+            },
+            {
+                ko: '내비게이션 서비스 서버 운영과 BigQuery 기반 통합통계 시스템 신규 개발 병행',
+                en: 'Ran navigation service servers while building a new BigQuery-based unified statistics system',
+            },
+            {
+                ko: 'Prometheus·Grafana 실시간 관측 체계 구축 및 장애 대응 전담',
+                en: 'Built real-time observability on Prometheus·Grafana and owned incident response',
+            },
         ],
         projects: [
             {label: {ko: '아이나비 스탬프 오르다', en: 'INAVI Stamp ORDA'}, projectId: 'orda', image: OrdaLogo},
@@ -90,17 +97,20 @@ const careers: ICareer[] = [
         logo: (<LazyLoadImage src={FillaDesignLogo} alt={"FillaDesign"} title={"FillaDesign"}/>),
         logoColor: '#060606',
         position: {ko: 'Core Web Publisher', en: 'Core Web Publisher'},
+        /* 단기 계약 건이라 개별 사이트를 나열하지 않습니다 — 규모는 features 의 "5종" 으로만 전달합니다. */
         features: [
-            {ko: '그누보드5 기반 홈페이지 퍼블리싱', en: 'Website publishing on Gnuboard5'},
-            {ko: 'LAMP 기반 사이트 관리', en: 'LAMP-based site maintenance'},
-            {ko: '반응형 레이아웃 및 크로스 브라우징', en: 'Responsive layouts and cross-browser support'},
-        ],
-        projects: [
-            {label: {ko: '김포사과나무치과', en: 'Gimpo Appletree Dental'}, url: 'http://kappleden.com', image: KappledenImg},
-            {label: {ko: '주식회사 아이레그', en: 'ILEG Corp.'}, url: 'http://ilegcorp.com', image: IlegImg},
-            {label: {ko: '왕십리 바른치과', en: 'Wangsimni Barun Dental'}, url: 'http://barundc.com', image: BarundcImg},
-            {label: {ko: '연세 백세치과', en: 'Yonsei Baekse Dental'}, url: 'http://100yeardental.com', image: Dental100yearImg},
-            {label: {ko: '왕십리 산부인과', en: "Wangsimni OB/GYN"}, url: 'http://ssjobgy.com', image: SsjobgyImg},
+            {
+                ko: '그누보드5 기반 병원·기업 홈페이지 5종 퍼블리싱',
+                en: 'Published five hospital and corporate websites on Gnuboard5',
+            },
+            {
+                ko: 'LAMP 스택 환경에서 사이트 운영 및 유지 관리',
+                en: 'Operated and maintained the sites on a LAMP stack',
+            },
+            {
+                ko: '반응형 레이아웃 구현 및 크로스 브라우징 대응',
+                en: 'Implemented responsive layouts with cross-browser support',
+            },
         ],
     },
     {
@@ -114,10 +124,22 @@ const careers: ICareer[] = [
         dotColor: 'primary',
         position: {ko: 'Web Maintenance / Security & SEO Engineer', en: 'Web Maintenance / Security & SEO Engineer'},
         features: [
-            {ko: 'PHP 기반 다국어 콘텐츠 플랫폼 유지보수 (27개 언어)', en: 'Maintained a PHP multilingual content platform (27 languages)'},
-            {ko: '보안·인증·권한 체계 개선 (CSRF, 관리자 Role)', en: 'Improved security, authentication and authorization (CSRF, admin roles)'},
-            {ko: '개인정보 암호화 체계 정립 (키 교체 가능 구조)', en: 'Established personal-data encryption with a key-rotatable design'},
-            {ko: '글로벌 SEO 구조 정리 및 운영 자동화 방향 수립', en: 'Restructured global SEO and set the direction for operational automation'},
+            {
+                ko: '27개 언어를 제공하는 PHP 다국어 콘텐츠 플랫폼 단독 유지보수',
+                en: 'Sole maintainer of a PHP multilingual content platform serving 27 languages',
+            },
+            {
+                ko: 'CSRF 방어와 관리자 Role 정비 등 보안·인증·권한 체계 개선',
+                en: 'Hardened security, authentication and authorization — CSRF defense, admin role cleanup',
+            },
+            {
+                ko: '키 교체가 가능한 구조로 개인정보 암호화 체계 정립',
+                en: 'Established personal-data encryption designed around rotatable keys',
+            },
+            {
+                ko: '글로벌 SEO 구조 정리 및 운영 자동화 방향 수립',
+                en: 'Restructured global SEO and set the direction for operational automation',
+            },
         ],
         projects: [
             {
@@ -144,11 +166,26 @@ const careers: ICareer[] = [
         logoColor: '#fff',
         position: {ko: 'Full-Stack Engineer', en: 'Full-Stack Engineer'},
         features: [
-            {ko: 'SDLC 전반에 걸친 10개+ 프로젝트 주도 개발', en: 'Led 10+ projects across the full SDLC'},
-            {ko: 'ActiveMQ·Socket·WebSocket 통신 개발 경험', en: 'Built ActiveMQ, socket and WebSocket communication layers'},
-            {ko: '자사 웹 서버 구축 및 솔루션 배포', en: 'Set up in-house web servers and deployed solutions'},
-            {ko: '하이브리드 웹앱 개발 및 Play/App Store 런칭', en: 'Developed hybrid web apps and launched on Play/App Store'},
-            {ko: 'JAVA 라이브러리 개발 및 Maven 배포', en: 'Developed Java libraries and published via Maven'},
+            {
+                ko: '기획부터 배포까지 SDLC 전 과정을 아우르는 10개+ 프로젝트 주도',
+                en: 'Led 10+ projects end to end, from planning through deployment',
+            },
+            {
+                ko: '무인 기기 연동을 위한 ActiveMQ·Socket·WebSocket 통신 계층 개발',
+                en: 'Built ActiveMQ, socket and WebSocket layers for self-service kiosk integration',
+            },
+            {
+                ko: '자사 웹 서버 인프라 구축 및 고객사 솔루션 배포 운영',
+                en: 'Set up in-house web server infrastructure and ran customer solution deployments',
+            },
+            {
+                ko: '하이브리드 앱 개발 및 Play Store · App Store 정식 출시',
+                en: 'Developed hybrid apps released officially on the Play Store and App Store',
+            },
+            {
+                ko: '공용 Java 라이브러리 설계 및 Maven 배포 체계 운영',
+                en: 'Designed shared Java libraries and ran their Maven release process',
+            },
         ],
         projects: [
             {
@@ -172,8 +209,14 @@ const careers: ICareer[] = [
         logoColor: '#333',
         position: {ko: 'Atlassian 솔루션 지원', en: 'Atlassian Solutions Support'},
         features: [
-            {ko: 'Jira, Confluence, Bitbucket, Crowd 서버 구축', en: 'Set up Jira, Confluence, Bitbucket and Crowd servers'},
-            {ko: 'Linux 서버 및 포트 포워딩 환경 구성', en: 'Configured Linux servers and port forwarding'},
+            {
+                ko: 'Jira · Confluence · Bitbucket · Crowd 연동 서버 구축',
+                en: 'Built interconnected Jira, Confluence, Bitbucket and Crowd servers',
+            },
+            {
+                ko: 'Linux 서버 초기 구성과 포트 포워딩 네트워크 환경 구축',
+                en: 'Provisioned Linux servers and configured the port-forwarding network',
+            },
         ],
         projects: [
             {label: {ko: 'Atlassian ALM 아키텍처 구축 산출물', en: 'Atlassian ALM architecture deliverables'}},

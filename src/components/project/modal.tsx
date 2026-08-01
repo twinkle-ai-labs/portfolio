@@ -230,6 +230,8 @@ const ProjectModal = ({project, onClose, onNavigate, index = 0, total = 1}: IPro
                                         {String(chapterIndex + 1).padStart(2, '0')}
                                     </span>
                                     <div>
+                                        {/* 상단 탭과 같은 라벨을 eyebrow 로 반복해 챕터 시작점을 알립니다. */}
+                                        <p className="pm-chapter-eyebrow" aria-hidden="true">{tr(chapter.label)}</p>
                                         <h3 id={`pm-chapter-title-${chapter.id}`} className="pm-chapter-title">
                                             {tr(chapter.title)}
                                         </h3>

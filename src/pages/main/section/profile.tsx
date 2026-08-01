@@ -74,13 +74,14 @@ const ProfileSection = () => {
                     <p className="profile-block-desc">{t.philosophyDesc}</p>
                 </section>
 
-                {/* 3) 어떻게 일하는가 — 흐름(∞)과 그 흐름에서 맡는 일 */}
+                {/* 3) 어떻게 일하는가 — 왼쪽은 머리글 + 흐름(∞), 오른쪽은 그 흐름에서 맡는 일 */}
                 <section className="profile-block">
-                    <p className="profile-block-eyebrow">{t.howEyebrow}</p>
-                    <h3 className="profile-block-title">{t.howTitle}</h3>
-
                     <div className="profile-flow">
-                        <DevOpsCycle activeId={activeId} onHover={setActiveId}/>
+                        <div className="profile-flow-lead">
+                            <p className="profile-block-eyebrow">{t.howEyebrow}</p>
+                            <h3 className="profile-block-title">{t.howTitle}</h3>
+                            <DevOpsCycle activeId={activeId} onHover={setActiveId}/>
+                        </div>
 
                         <div className="profile-capability-grid">
                             {t.capabilities.map((card, index) => {
@@ -101,6 +102,7 @@ const ProfileSection = () => {
                         </div>
                     </div>
                 </section>
+
             </div>
         </section>
     );

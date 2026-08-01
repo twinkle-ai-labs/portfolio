@@ -134,12 +134,7 @@ body[data-theme="dark"] .project-impact li svg {
     color: var(--blue);
 }
 
-body[data-theme="dark"] .project-stack li {
-    background: rgba(165, 180, 252, 0.14);
-    color: #c7d2fe;
-}
-
-body[data-theme="dark"] .project-stack li:hover,
+/* .project-stack li 는 style.css 의 토큰(--blue-soft 등)이 다크 값을 그대로 따라오므로 덮어쓰지 않습니다. */
 body[data-theme="dark"] .skill-tags li:hover,
 body[data-theme="dark"] .flop-item a:hover {
     background: rgba(165, 180, 252, 0.14);
