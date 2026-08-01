@@ -1,5 +1,6 @@
 import React, {useEffect, useRef} from 'react';
 import * as THREE from 'three';
+import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
 
 interface IThreeSpaceProps {
     onLoaded?: () => void
@@ -18,7 +19,7 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
         scene.background = new THREE.Color(0x050510);
 
         // Camera setup
-        const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 2000);
+        const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 20000);
         camera.position.set(0, 4, -10);
 
         // Renderer setup
@@ -70,6 +71,47 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
         scene.add(grid);
 
         const clock = new THREE.Clock();
+        const loader = new GLTFLoader();
+        let sky: InstanceType<typeof THREE.Group> | null = null;
+
+        // Load original Night Sky GLTF environment with critical fog & culling bugfixes
+        loader.load('/models/night_sky/scene.gltf', (gltf: any) => {
+            sky = gltf.scene;
+            // Scale up sky dome safely within the camera's far clipping plane (500 units radius)
+            sky.scale.setScalar(500);
+            sky.position.set(0, 0, 0);
+
+            sky.traverse((child: any) => {
+                if (child.isMesh) {
+                    child.castShadow = false;
+                    child.receiveShadow = false;
+                    
+                    // Support both single materials and multi-material arrays safely
+                    const materials = Array.isArray(child.material) ? child.material : [child.material];
+                    materials.forEach((material: any) => {
+                        if (material) {
+                            // FIX 1: Prevent black fog from obscuring the distant sky dome
+                            material.fog = false;
+                            material.depthWrite = false;
+                            
+                            // FIX 2: Enable double-sided rendering so the dome faces are visible from the inside
+                            material.side = THREE.DoubleSide;
+                            
+                            // FIX 3: Boost emissive brightness so the nebula and stars glow vibrantly in modern light units
+                            if (material.emissive) {
+                                if (material.emissive.getHex() === 0) {
+                                    material.emissive.setHex(0xffffff); // Force glowing if it was black
+                                }
+                                material.emissiveIntensity = 3.5; // High brightness boost
+                            }
+                        }
+                    });
+                }
+            });
+            scene.add(sky);
+        }, undefined, (err: any) => {
+            console.error('Error loading night sky GLTF model:', err);
+        });
 
         // 1. Procedural Twinkling Starfield Particle System
         const starCount = 3500;
