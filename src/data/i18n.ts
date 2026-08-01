@@ -113,7 +113,6 @@ export interface ITranslations {
     space: {
         title: string;
         desc: string[];
-        openModal: string;
         loading: string;
     };
 }
@@ -253,8 +252,7 @@ const translations: Record<'ko' | 'en', ITranslations> = {
                     '마우스나 터치로 바닥 위 위치를 가리키면 캐릭터가 그 방향으로 걸어갑니다.',
                     '침대, 책상, 조명, 식물이 놓인 방 안을 직접 산책해보세요.'
                 ],
-                openModal: '방 소개 보기',
-                loading: '3D 방을 불러오는 중...',
+                loading: '로딩중'
             },
         },
     en: {
@@ -385,14 +383,13 @@ const translations: Record<'ko' | 'en', ITranslations> = {
                 ],
             },
             space: {
-                title: 'Twinkle Room',
+                title: 'Twinkle Space',
                 desc: [
                     'This is a cozy 3D room implemented with the Three.js engine.',
                     'Move your mouse or touch the floor to guide the character.',
                     'Walk around the room with the bed, desk, lighting and plants.'
                 ],
-                openModal: 'View room intro',
-                loading: 'Loading 3D Room...',
+                loading: 'Loading...',
             },
         },
 };

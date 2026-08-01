@@ -16,7 +16,7 @@ const App = () => {
     return (
         <>
             <ScrollBar/>
-            <Header/>
+            <Header showMenu={true}/>
             <main id="content">
                 <HomeSection/>
                 <ProfileSection/>

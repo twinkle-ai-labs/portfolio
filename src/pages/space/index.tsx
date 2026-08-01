@@ -8,7 +8,7 @@ import TwinkleBadge from "@Components/badge/TwinkleBadge";
 const App = () => {
     return (
         <>
-            <Header/>
+            <Header showMenu={false}/>
             <main id="content" className={'wallpaper'}>
                 <HomeSection />
             </main>
