@@ -354,20 +354,58 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
             character.position.x = 0;
             character.position.z = 0; // Spawn exactly at center (X=0, Z=0)
             
-            character.traverse((child: any) => {
-                if (child.isMesh) {
-                    child.castShadow = true;
-                    child.receiveShadow = true;
-                    if (child.material) {
-                        const materials = Array.isArray(child.material) ? child.material : [child.material];
-                        materials.forEach((material: any) => {
-                            if (material) {
-                                material.roughness = Math.min(material.roughness, 0.7);
+            // Since ellina.glb uses the deprecated KHR_materials_pbrSpecularGlossiness extension,
+            // core Three.js GLTFLoader ignores its diffuseTexture.
+            // We can dynamically fetch the texture from the GLTF parser and apply it as a standard .map!
+            if (gltf.parser && gltf.parser.getDependency) {
+                gltf.parser.getDependency('texture', 0).then((texture: any) => {
+                    if (texture) {
+                        texture.colorSpace = THREE.SRGBColorSpace; // set correct, beautiful sRGB colors!
+                        character.traverse((child: any) => {
+                            if (child.isMesh) {
+                                child.castShadow = true;
+                                child.receiveShadow = true;
+                                if (child.material) {
+                                    const materials = Array.isArray(child.material) ? child.material : [child.material];
+                                    materials.forEach((material: any, matIdx: number) => {
+                                        if (material) {
+                                            // Convert to modern standard material so it reacts beautifully to our PBR lighting!
+                                            const standardMaterial = new THREE.MeshStandardMaterial({
+                                                map: texture,
+                                                roughness: 0.8,
+                                                metalness: 0.15,
+                                                side: THREE.DoubleSide
+                                            });
+                                            if (Array.isArray(child.material)) {
+                                                child.material[matIdx] = standardMaterial;
+                                            } else {
+                                                child.material = standardMaterial;
+                                            }
+                                        }
+                                    });
+                                }
                             }
                         });
                     }
-                }
-            });
+                }).catch((err: any) => {
+                    console.warn('Could not load textures for Ellina:', err);
+                });
+            } else {
+                character.traverse((child: any) => {
+                    if (child.isMesh) {
+                        child.castShadow = true;
+                        child.receiveShadow = true;
+                        if (child.material) {
+                            const materials = Array.isArray(child.material) ? child.material : [child.material];
+                            materials.forEach((material: any) => {
+                                if (material) {
+                                    material.roughness = Math.min(material.roughness, 0.7);
+                                }
+                            });
+                        }
+                    }
+                });
+            }
 
             scene.add(character);
 
