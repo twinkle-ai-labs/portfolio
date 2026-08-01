@@ -8,9 +8,16 @@ interface IThreeSpaceProps {
 
 const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
     const containerRef = useRef<HTMLDivElement | null>(null);
-    const keysRef = useRef({ w: false, a: false, s: false, d: false, shift: false });
+    const keysRef = useRef({ w: false, a: false, s: false, d: false, shift: false, space: false });
     const joystickBaseRef = useRef<HTMLDivElement | null>(null);
     const joystickHandleRef = useRef<HTMLDivElement | null>(null);
+
+    const handleJumpStart = () => {
+        keysRef.current.space = true;
+    };
+    const handleJumpEnd = () => {
+        keysRef.current.space = false;
+    };
 
     // Track active joystick dragging state
     const joystickDragState = useRef({
@@ -711,6 +718,7 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
             if (key === 'a' || code === 'KeyA' || code === 'ArrowLeft') keys.a = true;
             if (key === 's' || code === 'KeyS' || code === 'ArrowDown') keys.s = true;
             if (key === 'd' || code === 'KeyD' || code === 'ArrowRight') keys.d = true;
+            if (key === ' ' || code === 'Space') keys.space = true;
         };
         const handleKeyUp = (e: KeyboardEvent) => {
             const key = e.key.toLowerCase();
@@ -723,6 +731,7 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
             if (key === 'a' || code === 'KeyA' || code === 'ArrowLeft') keys.a = false;
             if (key === 's' || code === 'KeyS' || code === 'ArrowDown') keys.s = false;
             if (key === 'd' || code === 'KeyD' || code === 'ArrowRight') keys.d = false;
+            if (key === ' ' || code === 'Space') keys.space = false;
         };
         window.addEventListener('keydown', handleKeyDown);
         window.addEventListener('keyup', handleKeyUp);
@@ -873,17 +882,41 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
                 }
                 const currentBaseY = targetY + characterBaseY;
                 const gravity = 28; // standard gravity acceleration (units/s^2)
+                const jumpStrength = 10.5; // jumping initial velocity (units/s)
+                let isGrounded = false;
 
                 if (hasGround) {
-                    verticalVelocity = 0;
-                    // Smoothly elevate character for baked GLTF models and basic procedural fallbacks
-                    if (!bones) {
-                        characterGroup.position.y = THREE.MathUtils.lerp(characterGroup.position.y, currentBaseY, 12 * delta);
+                    const floorY = currentBaseY;
+                    // If character is at or below the floor level, and we aren't rising (verticalVelocity <= 0)
+                    if (characterGroup.position.y <= floorY + 0.05 && verticalVelocity <= 0) {
+                        characterGroup.position.y = floorY;
+                        verticalVelocity = 0;
+                        isGrounded = true;
+                    }
+                }
+
+                if (isGrounded) {
+                    // Trigger jump!
+                    if (keys.space) {
+                        verticalVelocity = jumpStrength;
+                        isGrounded = false;
+                        keys.space = false; // consume jump trigger
                     }
                 } else {
-                    // walked off the floating island! Experience gravity and fall into deep space!
+                    // We are in the air (either jumped, or walked off the island)
+                    // Apply gravity
                     verticalVelocity -= gravity * delta;
                     characterGroup.position.y += verticalVelocity * delta;
+
+                    // Check if we have landed back on the building floor while falling down
+                    if (hasGround && verticalVelocity <= 0) {
+                        const floorY = currentBaseY;
+                        if (characterGroup.position.y <= floorY) {
+                            characterGroup.position.y = floorY;
+                            verticalVelocity = 0;
+                            isGrounded = true;
+                        }
+                    }
 
                     // Fall trigger below -40 units -> respawn safely back on the island
                     if (characterGroup.position.y < -40) {
@@ -891,6 +924,7 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
                         characterGroup.position.set(0, 15, 0);
                         characterGroup.rotation.set(0, 0, 0); // reset rotation to face forward
                         verticalVelocity = 0;
+                        isGrounded = false;
                     }
                 }
 
@@ -1164,7 +1198,51 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
                 boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
                 border: '1px solid rgba(129, 140, 248, 0.2)'
             }}>
-                Use <b>W A S D</b> or <b>Joystick</b> to walk &nbsp;•&nbsp; Hold <b>Shift</b> or <b>Drag Far</b> to run
+                Use <b>W A S D / Space</b> or <b>Joystick / Jump</b> to move &nbsp;•&nbsp; Hold <b>Shift</b> or <b>Drag Far</b> to run
+            </div>
+
+            {/* Virtual Jump Button on the bottom right (positioned next to the joystick) */}
+            <div 
+                onPointerDown={(e) => {
+                    handleJumpStart();
+                    e.currentTarget.style.transform = 'scale(0.9)';
+                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.15)';
+                }}
+                onPointerUp={(e) => {
+                    handleJumpEnd();
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.06)';
+                }}
+                onPointerCancel={(e) => {
+                    handleJumpEnd();
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.06)';
+                }}
+                style={{
+                    position: 'absolute',
+                    bottom: '56px',
+                    right: '152px',
+                    width: '64px',
+                    height: '64px',
+                    borderRadius: '50%',
+                    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(8px)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 100,
+                    touchAction: 'none',
+                    boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.25)',
+                    cursor: 'pointer',
+                    userSelect: 'none',
+                    color: '#ffffff',
+                    transition: 'transform 0.1s ease, background-color 0.1s ease',
+                }}
+            >
+                <div style={{ fontSize: '18px', lineHeight: 1, marginBottom: '2px' }}>▲</div>
+                <div style={{ fontSize: '9px', fontWeight: 'bold', letterSpacing: '1px' }}>JUMP</div>
             </div>
 
             {/* Virtual Joystick on the bottom right (highly responsive for desktop & mobile) */}
