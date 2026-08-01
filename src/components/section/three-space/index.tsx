@@ -317,9 +317,78 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
             };
         };
 
-        const astronaut = createAstronaut();
-        const characterGroup = astronaut.mesh;
-        scene.add(characterGroup);
+        let characterGroup: InstanceType<typeof THREE.Group> | null = null;
+        let mixer: InstanceType<typeof THREE.AnimationMixer> | null = null;
+        let walkAction: InstanceType<typeof THREE.AnimationAction> | null = null;
+        let idleAction: InstanceType<typeof THREE.AnimationAction> | null = null;
+        let currentAction: InstanceType<typeof THREE.AnimationAction> | null = null;
+        let isProcedural = false;
+        let astronautParts: any = null;
+
+        // Load the custom Nova GLB character with robust automatic scaling & procedural fallback
+        loader.load('/models/character/nova.glb', (gltf: any) => {
+            const character = gltf.scene;
+            characterGroup = character;
+            
+            // Calculate bounding box of the loaded model to automatically set the scale and position
+            const box = new THREE.Box3().setFromObject(character);
+            const size = box.getSize(new THREE.Vector3());
+            
+            // Set scale based on height so character is exactly 2 units tall
+            const targetHeight = 2.0;
+            const scaleFactor = targetHeight / (size.y || 1.0);
+            character.scale.setScalar(scaleFactor);
+            
+            // Align feet to the ground (y = 0)
+            character.position.y = -box.min.y * scaleFactor;
+            character.position.x = 0;
+            character.position.z = 0;
+            
+            character.traverse((child: any) => {
+                if (child.isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                    if (child.material) {
+                        child.material.roughness = Math.min(child.material.roughness, 0.7);
+                    }
+                }
+            });
+
+            scene.add(character);
+
+            // Smart animation mapping by checking names for keywords (highly robust for custom GLBs)
+            if (gltf.animations && gltf.animations.length > 0) {
+                mixer = new THREE.AnimationMixer(character);
+                
+                const idleClip = gltf.animations.find((clip: any) => 
+                    clip.name.toLowerCase().includes('idle') || 
+                    clip.name.toLowerCase().includes('breath') ||
+                    clip.name.toLowerCase().includes('stand')
+                ) || gltf.animations[0];
+                
+                const walkClip = gltf.animations.find((clip: any) => 
+                    clip.name.toLowerCase().includes('walk') || 
+                    clip.name.toLowerCase().includes('run') || 
+                    clip.name.toLowerCase().includes('move') ||
+                    clip.name.toLowerCase().includes('play')
+                ) || gltf.animations[1] || gltf.animations[0];
+                
+                idleAction = mixer.clipAction(idleClip);
+                walkAction = mixer.clipAction(walkClip);
+                
+                idleAction.play();
+                currentAction = idleAction;
+            }
+        }, undefined, (error: any) => {
+            console.warn('Error loading custom Nova GLB model, falling back to procedural astronaut:', error);
+            
+            // Fallback to beautiful procedural astronaut
+            const astronaut = createAstronaut();
+            characterGroup = astronaut.mesh;
+            astronautParts = astronaut;
+            isProcedural = true;
+            scene.add(characterGroup);
+        });
 
         // 3. Floating Glowing Cosmic Crystals (Creates dynamic movement depth)
         const crystalGroup = new THREE.Group();
@@ -461,31 +530,56 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
                     }
                 }
 
-                // Smoothly animate limb swinging based on movement states
+                // Smoothly animate limb swinging (procedural) or play GLTF animations (gltf mixer)
                 if (isWalking) {
-                    const swingFreq = time * (keys.shift ? 15 : 9.5);
-                    const swingAngle = 0.55;
+                    if (isProcedural && astronautParts) {
+                        const swingFreq = time * (keys.shift ? 15 : 9.5);
+                        const swingAngle = 0.55;
 
-                    // Opposite swings for natural biomechanics
-                    astronaut.leftArm.rotation.x = Math.sin(swingFreq) * swingAngle;
-                    astronaut.rightArm.rotation.x = -Math.sin(swingFreq) * swingAngle;
-                    
-                    astronaut.leftLeg.rotation.x = -Math.sin(swingFreq) * swingAngle * 0.9;
-                    astronaut.rightLeg.rotation.x = Math.sin(swingFreq) * swingAngle * 0.9;
+                        // Opposite swings for natural biomechanics
+                        astronautParts.leftArm.rotation.x = Math.sin(swingFreq) * swingAngle;
+                        astronautParts.rightArm.rotation.x = -Math.sin(swingFreq) * swingAngle;
 
-                    // Slight hip bobbing up and down while walking
-                    astronaut.torso.position.y = 0.95 + Math.abs(Math.sin(swingFreq * 2)) * 0.06;
+                        astronautParts.leftLeg.rotation.x = -Math.sin(swingFreq) * swingAngle * 0.9;
+                        astronautParts.rightLeg.rotation.x = Math.sin(swingFreq) * swingAngle * 0.9;
+
+                        // Slight hip bobbing up and down while walking
+                        astronautParts.torso.position.y = 0.95 + Math.abs(Math.sin(swingFreq * 2)) * 0.06;
+                    } else if (walkAction) {
+                        // Play walk/run GLTF animation
+                        const targetAction = walkAction;
+                        if (currentAction !== targetAction && targetAction) {
+                            currentAction.fadeOut(0.25);
+                            targetAction.reset().fadeIn(0.25).play();
+                            currentAction = targetAction;
+                        }
+                    }
                 } else {
-                    // Soft, floating "astronaut weightless breathing" idle animation
-                    const breathFreq = time * 2.2;
-                    astronaut.leftArm.rotation.x = Math.sin(breathFreq) * 0.08;
-                    astronaut.rightArm.rotation.x = -Math.sin(breathFreq) * 0.08;
-                    
-                    // Revert legs to resting position
-                    astronaut.leftLeg.rotation.x = THREE.MathUtils.lerp(astronaut.leftLeg.rotation.x, 0, 5 * delta);
-                    astronaut.rightLeg.rotation.x = THREE.MathUtils.lerp(astronaut.rightLeg.rotation.x, 0, 5 * delta);
-                    
-                    astronaut.torso.position.y = 0.95 + Math.sin(breathFreq) * 0.025;
+                    if (isProcedural && astronautParts) {
+                        // Soft, floating "astronaut weightless breathing" idle animation
+                        const breathFreq = time * 2.2;
+                        astronautParts.leftArm.rotation.x = Math.sin(breathFreq) * 0.08;
+                        astronautParts.rightArm.rotation.x = -Math.sin(breathFreq) * 0.08;
+
+                        // Revert legs to resting position
+                        astronautParts.leftLeg.rotation.x = THREE.MathUtils.lerp(astronautParts.leftLeg.rotation.x, 0, 5 * delta);
+                        astronautParts.rightLeg.rotation.x = THREE.MathUtils.lerp(astronautParts.rightLeg.rotation.x, 0, 5 * delta);
+
+                        astronautParts.torso.position.y = 0.95 + Math.sin(breathFreq) * 0.025;
+                    } else if (idleAction) {
+                        // Play idle/stand GLTF animation
+                        const targetAction = idleAction;
+                        if (currentAction !== targetAction && targetAction) {
+                            currentAction.fadeOut(0.25);
+                            targetAction.reset().fadeIn(0.25).play();
+                            currentAction = targetAction;
+                        }
+                    }
+                }
+
+                // Update the GLTF animation mixer if active
+                if (mixer) {
+                    mixer.update(delta * speedMultiplier);
                 }
 
                 // 4. Smooth Follow Camera
