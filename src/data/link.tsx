@@ -42,9 +42,9 @@ export const links: IExternalLink[] = [
     },
 ]
 export const menus: ILink[] = [
-    {id: 'home', name: 'Home', link: '#s_home', icon: (<IoHome />)},
-    {id: 'profile', name: 'Profile', link: '#s_profile', icon: (<IoPersonCircle />)},
-    {id: 'career', name: 'Experience', link: '#s_career', icon: (<FaBriefcase />)},
-    {id: 'project', name: 'Projects', link: '#s_project', icon: (<IoIdCard />)},
-    {id: 'skill', name: 'Skills', link: '#s_skill', icon: (<FaCode />)},
+    {id: 'home', name: 'Home', link: '/#s_home', icon: (<IoHome />)},
+    {id: 'profile', name: 'Profile', link: '/#s_profile', icon: (<IoPersonCircle />)},
+    {id: 'career', name: 'Experience', link: '/#s_career', icon: (<FaBriefcase />)},
+    {id: 'project', name: 'Projects', link: '/#s_project', icon: (<IoIdCard />)},
+    {id: 'skill', name: 'Skills', link: '/#s_skill', icon: (<FaCode />)},
 ]

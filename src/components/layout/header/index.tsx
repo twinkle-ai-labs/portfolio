@@ -9,9 +9,18 @@ import {DrawerType, openDrawer} from "@Store/slice/drawer";
 import Logo from "@Components/section/logo";
 import LanguageSelect from "@Components/section/language";
 
-const Header = () => {
+interface HeaderState {
+    showMenu?: boolean;
+}
+
+const Header = (
+    props: HeaderState
+) => {
     const dispatch = useDispatch()
     const offset = useSelector((state: RootState) => state.offset.value)
+    
+    // Default showMenu to true if not explicitly set to false
+    const showMenu = props.showMenu !== false;
 
     useEffect(() => {
         const onScroll = () => dispatch(changeOffset(window.scrollY));
@@ -28,26 +37,45 @@ const Header = () => {
             <div className="inner">
                 <Logo/>
                 <div className="flex-1"></div>
-                <ul className="header-nav">
-                    {menus.map(menu => {
-                        return (
-                            <li key={'menu_' + menu.id}>
-                                <a href={menu.link}
-                                   title={menu.name}
-                                   translate="no"
-                                   onClick={(event) => {
-                                       if (!menu.link.startsWith('#')) return;
-                                       event.preventDefault();
-                                       document.querySelector(menu.link)?.scrollIntoView({
-                                           behavior: 'smooth',
-                                           block: 'start'
-                                       });
-                                   }}
-                                >{menu.name}</a>
-                            </li>
-                        )
-                    })}
-                </ul>
+                {showMenu && (
+                    <ul className="header-nav">
+                        {menus.map(menu => {
+                            return (
+                                <li key={'menu_' + menu.id}>
+                                    <a href={menu.link}
+                                       title={menu.name}
+                                       translate="no"
+                                       onClick={(event) => {
+                                           // Extract the target hash (e.g. "/#s_profile" -> "#s_profile")
+                                           const hashIndex = menu.link.indexOf('#');
+                                           if (hashIndex === -1) return;
+                                           
+                                           const hash = menu.link.slice(hashIndex);
+                                           
+                                           // Detect if the user is on the main landing page (local dev, production, or GitHub Pages subpath)
+                                           const isHomePage = window.location.pathname === '/' || 
+                                                              window.location.pathname === '/index.html' || 
+                                                              window.location.pathname === '/hjkim1004.github.io/' ||
+                                                              window.location.pathname.endsWith('/index.html');
+                                           
+                                           if (isHomePage) {
+                                               event.preventDefault();
+                                               document.querySelector(hash)?.scrollIntoView({
+                                                   behavior: 'smooth',
+                                                   block: 'start'
+                                               });
+                                               // Update URL hash cleanly without a full page reload
+                                               window.history.pushState(null, '', hash);
+                                           }
+                                           // If on a subpage (e.g. /space or /resume), let the browser redirect to "/" with the hash.
+                                       }}
+                                    >{menu.name}</a>
+                                </li>
+                            )
+                        })}
+                    </ul>
+                )}
+
                 <LanguageSelect/>
                 <IconButton className="header-icon" onClick={() => {
                     dispatch(openDrawer(DrawerType.SIDEBAR))
