@@ -28,6 +28,12 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
         renderer.setSize(container.clientWidth, container.clientHeight, false);
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        
+        // Enable modern Three.js sRGB color space output and cinema tone mapping
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.35; // boost bright, rich colors in dark space
+        
         container.appendChild(renderer.domElement);
         renderer.domElement.className = 'babylon-canvas babylon-loaded';
 
@@ -40,38 +46,25 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
         scene.add(hemiLight);
 
         const dirLight = new THREE.DirectionalLight(0xffffff, 1.8);
-        dirLight.position.set(15, 30, 10);
+        dirLight.position.set(40, 80, 30);
         dirLight.castShadow = true;
-        dirLight.shadow.camera.top = 25;
-        dirLight.shadow.camera.bottom = -25;
-        dirLight.shadow.camera.left = -25;
-        dirLight.shadow.camera.right = 25;
+        dirLight.shadow.camera.top = 80;
+        dirLight.shadow.camera.bottom = -80;
+        dirLight.shadow.camera.left = -80;
+        dirLight.shadow.camera.right = 80;
         dirLight.shadow.camera.near = 0.1;
-        dirLight.shadow.camera.far = 100;
+        dirLight.shadow.camera.far = 300;
         dirLight.shadow.mapSize.width = 2048;
         dirLight.shadow.mapSize.height = 2048;
         dirLight.shadow.bias = -0.0005;
         scene.add(dirLight);
 
-        // Ground setup
-        const groundGeometry = new THREE.PlaneGeometry(300, 300);
-        const groundMaterial = new THREE.MeshStandardMaterial({
-            color: 0x070714,
-            roughness: 0.85,
-            metalness: 0.15
-        });
-        const ground = new THREE.Mesh(groundGeometry, groundMaterial);
-        ground.rotation.x = -Math.PI / 2;
-        ground.receiveShadow = true;
-        scene.add(ground);
-
-        // Cool neon spatial grid
-        const grid = new THREE.GridHelper(300, 150, 0x4f46e5, 0x1e1b4b);
-        grid.position.y = 0.01;
-        scene.add(grid);
+        // No flat ground or grid plane so that the building acts as a floating island in space!
 
         const clock = new THREE.Clock();
         const loader = new GLTFLoader();
+        const raycaster = new THREE.Raycaster();
+        const pmremGenerator = new THREE.PMREMGenerator(renderer);
         let sky: InstanceType<typeof THREE.Group> | null = null;
 
         // Load original Night Sky GLTF environment with critical fog & culling bugfixes
@@ -109,6 +102,15 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
                 }
             });
             scene.add(sky);
+
+            // Generate environment map from the loaded sky so metallic parts look gorgeous with reflections of the nebula/stars!
+            try {
+                const envMap = pmremGenerator.fromScene(sky).texture;
+                scene.environment = envMap;
+                pmremGenerator.dispose(); // clean up resources of the generator itself
+            } catch (e) {
+                console.warn('Could not generate environment map from sky scene:', e);
+            }
         }, undefined, (err: any) => {
             console.error('Error loading night sky GLTF model:', err);
         });
@@ -326,9 +328,13 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
         let astronautParts: any = null;
         let characterBaseY = 0;
         let bones: any = null;
+        let buildingGroup: InstanceType<typeof THREE.Group> | null = null;
+        let verticalVelocity = 0;
+        let spawnHeight = 0;
 
-        // Load the custom Nova GLB character with robust automatic scaling & procedural fallback
-        loader.load('/models/character/nova.glb', (gltf: any) => {
+        // Load the custom Ellina GLB character with robust automatic scaling & procedural fallback
+        loader.load('/models/character/ellina.glb', (gltf: any) => {
+            console.log('Successfully loaded ellina.glb. Animations:', gltf.animations?.map((a: any) => a.name));
             const character = gltf.scene;
             characterGroup = character;
             
@@ -343,17 +349,55 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
             
             // Align feet to the ground (y = 0)
             const bY = -box.min.y * scaleFactor;
-            character.position.y = bY;
+            character.position.y = spawnHeight || bY;
             characterBaseY = bY;
             character.position.x = 0;
-            character.position.z = 0;
+            character.position.z = 0; // Spawn exactly at center (X=0, Z=0)
             
             character.traverse((child: any) => {
                 if (child.isMesh) {
                     child.castShadow = true;
                     child.receiveShadow = true;
                     if (child.material) {
-                        child.material.roughness = Math.min(child.material.roughness, 0.7);
+                        child.material.roughness = Math.min(child.material.roughness, 0.6);
+                        
+                        // Dynamic styling fallback in case the GLB model lacks embedded textures (appears flat grey)
+                        if (!child.material.map) {
+                            const name = child.name.toLowerCase();
+                            if (name.includes('hair')) {
+                                child.material.color.setHex(0xfeb2b2); // stylish pastel pink hair
+                                if (child.material.emissive) {
+                                    child.material.emissive.setHex(0xfeb2b2);
+                                    child.material.emissiveIntensity = 0.25;
+                                }
+                            } else if (name.includes('head') || name.includes('face') || name.includes('skin') || name.includes('body_m')) {
+                                child.material.color.setHex(0xffe4e6); // soft peach skin tone
+                                child.material.roughness = 0.85;
+                            } else if (name.includes('eye')) {
+                                child.material.color.setHex(0x00f0ff); // glowing cyan cyber eyes
+                                if (child.material.emissive) {
+                                    child.material.emissive.setHex(0x00f0ff);
+                                    child.material.emissiveIntensity = 2.5;
+                                }
+                            } else if (name.includes('suit') || name.includes('body') || name.includes('cloth') || name.includes('armor') || name.includes('leg') || name.includes('arm')) {
+                                child.material.color.setHex(0x1e1b4b); // dark obsidian cosmic suit
+                                child.material.metalness = 0.85;
+                                child.material.roughness = 0.15;
+                                if (child.material.emissive) {
+                                    child.material.emissive.setHex(0x6366f1); // glowing blue-indigo circuit lines
+                                    child.material.emissiveIntensity = 1.8;
+                                }
+                            } else {
+                                // Stylish rose-gold / cyan dual accents
+                                if (child.id % 2 === 0) {
+                                    child.material.color.setHex(0xf43f5e); // hot rose-pink accents
+                                    child.material.metalness = 0.5;
+                                } else {
+                                    child.material.color.setHex(0x06b6d4); // electric cyan accents
+                                    child.material.metalness = 0.8;
+                                }
+                            }
+                        }
                     }
                 }
             });
@@ -407,7 +451,7 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
                 currentAction = idleAction;
             }
         }, undefined, (error: any) => {
-            console.warn('Error loading custom Nova GLB model, falling back to procedural astronaut:', error);
+            console.warn('Error loading custom ellina.glb model, falling back to procedural astronaut:', error);
             
             // Fallback to beautiful procedural astronaut
             const astronaut = createAstronaut();
@@ -415,7 +459,78 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
             astronautParts = astronaut;
             isProcedural = true;
             characterBaseY = 0;
+            characterGroup.position.x = 0;
+            characterGroup.position.y = spawnHeight || 0;
+            characterGroup.position.z = 0;
             scene.add(characterGroup);
+        });
+
+        // Load the custom Future City GLB building model
+        loader.load('/models/future_city.glb', (gltf: any) => {
+            const building = gltf.scene;
+            buildingGroup = building;
+
+            // Calculate bounding box of the loaded building to automatically scale it
+            const box = new THREE.Box3().setFromObject(building);
+            const size = box.getSize(new THREE.Vector3());
+
+            // Scale building safely so that it spans a reasonable width/depth (around 120 units wide/deep)
+            const maxDim = Math.max(size.x, size.z);
+            const targetDim = 120.0;
+            const scaleFactor = targetDim / (maxDim || 1.0);
+            building.scale.setScalar(scaleFactor);
+
+            // Align bottom of the building to the ground (y = 0)
+            const bY = -box.min.y * scaleFactor;
+            building.position.y = bY;
+            building.position.x = 0;
+            building.position.z = 0;
+
+            // Force world matrix update immediately so Raycaster can query accurate world coords
+            building.updateMatrixWorld(true);
+
+            // Dynamically detect the exact floor height at (0, 0) by casting a test ray down
+            const testRaycaster = new THREE.Raycaster();
+            const testOrigin = new THREE.Vector3(0, 500, 0);
+            const testDirection = new THREE.Vector3(0, -1, 0);
+            testRaycaster.set(testOrigin, testDirection);
+            
+            const testIntersects = testRaycaster.intersectObject(building, true);
+            let centerFloorY = 0;
+            if (testIntersects.length > 0) {
+                centerFloorY = testIntersects[0].point.y;
+                console.log('Dynamically detected central floor height:', centerFloorY);
+            }
+            spawnHeight = centerFloorY;
+
+            // If the character is already loaded, place them perfectly on top of this surface immediately!
+            if (characterGroup) {
+                characterGroup.position.set(0, spawnHeight, 0);
+            }
+
+            building.traverse((child: any) => {
+                if (child.isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                    
+                    // Boost materials if needed, e.g., enabling emissive lighting for window glows
+                    const materials = Array.isArray(child.material) ? child.material : [child.material];
+                    materials.forEach((material: any) => {
+                        if (material) {
+                            // Force DoubleSide so raycasting hits floors/ceilings from either side!
+                            material.side = THREE.DoubleSide;
+                            material.roughness = Math.max(material.roughness, 0.4);
+                            if (material.emissive && material.emissive.getHex() !== 0) {
+                                material.emissiveIntensity = Math.max(material.emissiveIntensity, 1.5);
+                            }
+                        }
+                    });
+                }
+            });
+
+            scene.add(building);
+        }, undefined, (error: any) => {
+            console.warn('Error loading custom future_city.glb model:', error);
         });
 
         // 3. Floating Glowing Cosmic Crystals (Creates dynamic movement depth)
@@ -588,28 +703,160 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
                 let isWalking = false;
                 let speedMultiplier = 1;
 
+                // Calculate current elevation on top of buildings (acting as our floating island)
+                let targetY = 0;
+                let hasGround = false;
+                if (buildingGroup) {
+                    const rayOrigin = new THREE.Vector3(characterGroup.position.x, 200, characterGroup.position.z);
+                    const rayDirection = new THREE.Vector3(0, -1, 0);
+                    raycaster.set(rayOrigin, rayDirection);
+                    
+                    // Recursively intersect with the entire building group
+                    const intersects = raycaster.intersectObject(buildingGroup, true);
+                    if (intersects.length > 0) {
+                        hasGround = true;
+                        // Find the intersection that is closest to the character's current height,
+                        // ignoring surfaces that are far above their torso (such as high ceilings/roofs)
+                        let bestY = 0;
+                        let minDiff = Infinity;
+                        const charY = characterGroup.position.y;
+
+                        for (let i = 0; i < intersects.length; i++) {
+                            const intersectY = intersects[i].point.y;
+                            // Consider any surface below or slightly above the character's current position (waist/chest height buffer of +1.5)
+                            if (intersectY <= charY + 1.5) {
+                                const diff = Math.abs(intersectY - charY);
+                                if (diff < minDiff) {
+                                    minDiff = diff;
+                                    bestY = intersectY;
+                                }
+                            }
+                        }
+                        
+                        if (minDiff !== Infinity) {
+                            targetY = bestY;
+                        } else {
+                            // If all intersections are above (e.g. initial spawn), fall back to the closest overall
+                            let closestY = 0;
+                            let closestDiff = Infinity;
+                            for (let i = 0; i < intersects.length; i++) {
+                                const intersectY = intersects[i].point.y;
+                                const diff = Math.abs(intersectY - charY);
+                                if (diff < closestDiff) {
+                                    closestDiff = diff;
+                                    closestY = intersectY;
+                                }
+                            }
+                            targetY = closestY;
+                        }
+                    }
+                } else {
+                    // If the building is still loading, pretend we have ground at y = 0
+                    // so the character doesn't fall into the void before the island loads!
+                    hasGround = true;
+                    targetY = 0;
+                }
+                const currentBaseY = targetY + characterBaseY;
+                const gravity = 28; // standard gravity acceleration (units/s^2)
+
+                if (hasGround) {
+                    verticalVelocity = 0;
+                    // Smoothly elevate character for baked GLTF models and basic procedural fallbacks
+                    if (!bones) {
+                        characterGroup.position.y = THREE.MathUtils.lerp(characterGroup.position.y, currentBaseY, 12 * delta);
+                    }
+                } else {
+                    // walked off the floating island! Experience gravity and fall into deep space!
+                    verticalVelocity -= gravity * delta;
+                    characterGroup.position.y += verticalVelocity * delta;
+
+                    // Fall trigger below -40 units -> respawn safely back on the island
+                    if (characterGroup.position.y < -40) {
+                        // Respawn slightly in the air above center (X=0, Z=0) so we fall cleanly onto the highest building surface
+                        characterGroup.position.set(0, 15, 0);
+                        characterGroup.rotation.set(0, 0, 0); // reset rotation to face forward
+                        verticalVelocity = 0;
+                    }
+                }
+
                 if (keys.w || keys.s || keys.a || keys.d) {
                     isWalking = true;
                     const speed = keys.shift ? runSpeed : walkSpeed;
                     speedMultiplier = keys.shift ? 1.7 : 1;
                     
-                    if (keys.w) {
-                        characterGroup.translateZ(speed * delta);
-                    }
-                    if (keys.s) {
-                        characterGroup.translateZ(-speed * delta);
-                    }
+                    // 1. Calculate rotation first (rotation is always allowed and safe)
                     if (keys.a) {
                         characterGroup.rotation.y += rotationSpeed * delta;
                     }
                     if (keys.d) {
                         characterGroup.rotation.y -= rotationSpeed * delta;
                     }
+
+                    // 2. Prepare predicted translation
+                    const moveDistance = speed * delta;
+                    const moveDir = new THREE.Vector3();
+                    let hasTranslation = false;
+
+                    if (keys.w) {
+                        characterGroup.getWorldDirection(moveDir); // forward vector
+                        hasTranslation = true;
+                    } else if (keys.s) {
+                        characterGroup.getWorldDirection(moveDir);
+                        moveDir.negate(); // backward vector
+                        hasTranslation = true;
+                    }
+
+                    let canTranslate = true;
+
+                    if (hasTranslation && moveDir.lengthSq() > 0) {
+                        moveDir.normalize();
+
+                        // A. Check wall collision in the translation direction against the city buildings
+                        if (buildingGroup) {
+                            const collisionOrigin = characterGroup.position.clone();
+                            collisionOrigin.y += 0.8; // waist height of 2-unit tall character
+
+                            const collisionRaycaster = new THREE.Raycaster();
+                            collisionRaycaster.set(collisionOrigin, moveDir);
+                            collisionRaycaster.far = 1.1; // wall detection distance (slightly larger than character radius)
+
+                            const wallIntersects = collisionRaycaster.intersectObject(buildingGroup, true);
+                            if (wallIntersects.length > 0) {
+                                canTranslate = false; // block walking through walls/buildings!
+                            }
+                        }
+
+                        // B. Check boundary of the island (max radius 58 units) so character can't fall off
+                        const predictedPos = characterGroup.position.clone();
+                        predictedPos.addScaledVector(moveDir, moveDistance);
+                        const distFromCenter = Math.sqrt(predictedPos.x * predictedPos.x + predictedPos.z * predictedPos.z);
+                        if (distFromCenter > 58.0) {
+                            canTranslate = false; // block going outside the floating city!
+                        }
+                    }
+
+                    if (canTranslate && hasTranslation) {
+                        if (keys.w) {
+                            characterGroup.translateZ(moveDistance);
+                        }
+                        if (keys.s) {
+                            characterGroup.translateZ(-moveDistance);
+                        }
+                    }
                 }
 
                 // Smoothly animate limb swinging (procedural) or play GLTF animations (gltf mixer)
                 if (isWalking) {
-                    if (isProcedural && astronautParts) {
+                    if (walkAction) {
+                        // Play walk/run GLTF animation
+                        const targetAction = walkAction;
+                        if (currentAction !== targetAction && targetAction) {
+                            currentAction.fadeOut(0.25);
+                            targetAction.reset().fadeIn(0.25).play();
+                            currentAction = targetAction;
+                        }
+                        walkAction.paused = false;
+                    } else if (isProcedural && astronautParts) {
                         const swingFreq = time * (keys.shift ? 15 : 9.5);
                         const swingAngle = 0.55;
 
@@ -649,18 +896,25 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
                         bones.rightCalf.rotation.x = (Math.sin(swingFreq + Math.PI / 2) + 1.0) * 0.35;
 
                         // Upper body spine bobbing up and down slightly
-                        characterGroup.position.y = characterBaseY + Math.abs(Math.sin(swingFreq * 2)) * 0.07;
-                    } else if (walkAction) {
-                        // Play walk/run GLTF animation
-                        const targetAction = walkAction;
+                        characterGroup.position.y = currentBaseY + Math.abs(Math.sin(swingFreq * 2)) * 0.07;
+                    }
+                } else {
+                    if (idleAction) {
+                        // Play idle/stand GLTF animation
+                        const targetAction = idleAction;
                         if (currentAction !== targetAction && targetAction) {
                             currentAction.fadeOut(0.25);
                             targetAction.reset().fadeIn(0.25).play();
                             currentAction = targetAction;
                         }
-                    }
-                } else {
-                    if (isProcedural && astronautParts) {
+                        // If the idle action is actually the SAME as the walking action (only one animation exists), pause it when standing still!
+                        if (idleAction === walkAction) {
+                            idleAction.paused = true;
+                            idleAction.time = 0; // Freeze at the first frame (resting pose)
+                        } else {
+                            idleAction.paused = false;
+                        }
+                    } else if (isProcedural && astronautParts) {
                         // Soft, floating "astronaut weightless breathing" idle animation
                         const breathFreq = time * 2.2;
                         astronautParts.leftArm.rotation.x = Math.sin(breathFreq) * 0.08;
@@ -695,15 +949,7 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
                         bones.rightCalf.rotation.x = THREE.MathUtils.lerp(bones.rightCalf.rotation.x, 0, 4 * delta);
 
                         // Body breathing bobbing
-                        characterGroup.position.y = THREE.MathUtils.lerp(characterGroup.position.y, characterBaseY + Math.sin(breathFreq) * 0.015, 4 * delta);
-                    } else if (idleAction) {
-                        // Play idle/stand GLTF animation
-                        const targetAction = idleAction;
-                        if (currentAction !== targetAction && targetAction) {
-                            currentAction.fadeOut(0.25);
-                            targetAction.reset().fadeIn(0.25).play();
-                            currentAction = targetAction;
-                        }
+                        characterGroup.position.y = THREE.MathUtils.lerp(characterGroup.position.y, currentBaseY + Math.sin(breathFreq) * 0.015, 4 * delta);
                     }
                 }
 
