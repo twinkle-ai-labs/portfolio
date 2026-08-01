@@ -28,7 +28,6 @@
     "material-ui-popup-state": "^5.0.10",
     "pdfjs-dist": "4.4.168",
     "react": "^18.3.1",
-    "react-babylonjs": "^3.1.29",
     "react-dom": "^18.3.1",
     "react-icons": "5.4.0",
     "react-material-ui-carousel": "^3.4.2",

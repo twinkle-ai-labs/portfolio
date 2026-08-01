@@ -238,10 +238,10 @@ const translations: Record<'ko' | 'en', ITranslations> = {
             ],
         },
             badge: {
-                twinkle: 'Twinkle Room',
-                modalTitle: 'Twinkle Room',
+                twinkle: 'Twinkle Space',
+                modalTitle: 'Twinkle Space',
                 modalDesc: [
-                    'Twinkle Room은 사용자의 포인터를 따라 캐릭터가 산책하는 포근한 3D 방을 테마로 합니다.',
+                    'Twinkle Space은 사용자의 포인터를 따라 캐릭터가 산책하는 포근한 3D 방을 테마로 합니다.',
                     'Three.js로 침대, 책상, 창문, 조명, 식물, 러그를 배치해 개인 작업실 같은 분위기를 만들었습니다.',
                     '따뜻한 조명과 창밖의 밤하늘은 포트폴리오에 편안하고 감각적인 인터랙션을 더합니다.'
                 ],
