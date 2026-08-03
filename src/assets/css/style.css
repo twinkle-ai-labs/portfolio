@@ -2686,11 +2686,216 @@ span.pc {
     margin: 0 !important;
 }
 
-.babylon-canvas {
+.three-canvas {
     width: 100%;
     height: 100%;
     display: block;
     outline: none;
+    touch-action: none;
+}
+
+/* ==========================================================================
+   Space page — game-style HUD (joystick, jump button, keyboard hint bar)
+   ========================================================================== */
+@keyframes space-joystick-ring-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes space-jump-btn-pulse {
+    0%, 100% { filter: drop-shadow(0 0 4px rgba(34, 211, 238, 0.35)); }
+    50% { filter: drop-shadow(0 0 12px rgba(34, 211, 238, 0.75)); }
+}
+
+.space-hud-bar {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    color: #cbd5e1;
+    background: rgba(2, 6, 23, 0.8);
+    backdrop-filter: blur(8px);
+    border-radius: 12px;
+    border: 1px solid rgba(129, 140, 248, 0.4);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), 0 0 20px rgba(79, 70, 229, 0.25);
+    font-family: 'Courier New', monospace;
+    pointer-events: none;
+    z-index: 10;
+    text-align: center;
+    padding: clamp(7px, 1.6vmin, 10px) clamp(12px, 3vw, 22px);
+    font-size: clamp(11px, 2.4vw, 13px);
+    gap: clamp(5px, 1.2vw, 8px);
+}
+
+.space-hud-sep { opacity: 0.5; }
+.space-hud-divider { opacity: 0.4; }
+.space-hud-accent { color: #a5b4fc; }
+.space-hud-run { color: #fb7185; }
+
+.space-keycap {
+    display: inline-block;
+    margin: 0 1px;
+    border-radius: 5px;
+    border: 1px solid rgba(148, 163, 184, 0.55);
+    border-bottom-width: 3px;
+    background: linear-gradient(180deg, rgba(51, 65, 85, 0.95), rgba(15, 23, 42, 0.95));
+    color: #e2e8f0;
+    font-weight: bold;
+    line-height: 1.2;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    min-width: clamp(15px, 3.2vw, 18px);
+    padding: 2px clamp(4px, 1vw, 5px);
+    font-size: clamp(9.5px, 2vw, 11px);
+}
+
+.space-controls-cluster {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    z-index: 100;
+    bottom: clamp(16px, 4vmin, 40px);
+    right: clamp(12px, 4vmin, 40px);
+    gap: clamp(10px, 3vmin, 24px);
+}
+
+.space-jump-btn {
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 30%, #67e8f9 0%, #0e7490 75%, #155e75 100%);
+    border: 2px solid rgba(165, 243, 252, 0.6);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    touch-action: none;
+    box-shadow: 0 5px 0 #155e75, 0 10px 20px rgba(0, 0, 0, 0.45), inset 0 2px 6px rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    user-select: none;
+    color: #ecfeff;
+    transition: transform 0.08s ease, box-shadow 0.08s ease;
+    animation: space-jump-btn-pulse 2.4s ease-in-out infinite;
+    width: clamp(52px, 13vmin, 68px);
+    height: clamp(52px, 13vmin, 68px);
+}
+
+.space-jump-btn.pressed {
+    transform: translateY(4px) scale(0.97);
+    box-shadow: 0 1px 0 #155e75, 0 4px 10px rgba(0, 0, 0, 0.45), inset 0 2px 6px rgba(255, 255, 255, 0.4);
+}
+
+.space-jump-icon {
+    line-height: 1;
+    margin-bottom: 2px;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+    font-size: clamp(15px, 4vmin, 20px);
+}
+
+.space-jump-label {
+    font-weight: bold;
+    letter-spacing: 2px;
+    font-family: 'Courier New', monospace;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    font-size: clamp(7px, 1.6vmin, 9px);
+}
+
+.space-joystick-base {
+    position: relative;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 35%, rgba(49, 46, 129, 0.4), rgba(2, 6, 23, 0.75) 70%);
+    border: 2px solid rgba(129, 140, 248, 0.45);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    touch-action: none;
+    box-shadow: 0 0 24px rgba(79, 70, 229, 0.35), inset 0 0 18px rgba(15, 23, 42, 0.9);
+    user-select: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    width: clamp(84px, 21vmin, 110px);
+    height: clamp(84px, 21vmin, 110px);
+}
+
+.space-joystick-base.running {
+    border-color: rgba(251, 113, 133, 0.85);
+    box-shadow: 0 0 32px rgba(244, 63, 94, 0.55), inset 0 0 18px rgba(15, 23, 42, 0.9);
+}
+
+.space-radar-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px dashed rgba(129, 140, 248, 0.4);
+    animation: space-joystick-ring-spin 16s linear infinite;
+    pointer-events: none;
+    inset: clamp(3px, 1vmin, 4px);
+}
+
+.space-crosshair-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(129, 140, 248, 0.2);
+    pointer-events: none;
+    inset: clamp(20px, 6vmin, 26px);
+}
+
+.space-joystick-arrow {
+    position: absolute;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.35);
+    opacity: 0.7;
+    pointer-events: none;
+    user-select: none;
+    transition: color 0.1s ease, text-shadow 0.1s ease, opacity 0.1s ease;
+    font-size: clamp(10px, 2.4vmin, 12px);
+}
+
+.space-joystick-arrow.active {
+    color: #22d3ee;
+    text-shadow: 0 0 8px #22d3ee, 0 0 18px rgba(34, 211, 238, 0.8);
+    opacity: 1;
+}
+
+.space-arrow-up { top: clamp(5px, 1.5vmin, 7px); left: 50%; transform: translateX(-50%); }
+.space-arrow-down { bottom: clamp(5px, 1.5vmin, 7px); left: 50%; transform: translateX(-50%); }
+.space-arrow-left { left: clamp(5px, 1.5vmin, 7px); top: 50%; transform: translateY(-50%); }
+.space-arrow-right { right: clamp(5px, 1.5vmin, 7px); top: 50%; transform: translateY(-50%); }
+
+.space-joystick-handle {
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 30%, #c7d2fe 0%, #6366f1 45%, #312e81 100%);
+    border: 2px solid rgba(199, 210, 254, 0.7);
+    box-shadow: 0 0 18px rgba(99, 102, 241, 0.8), 0 4px 8px rgba(0, 0, 0, 0.5), inset 0 -4px 6px rgba(0, 0, 0, 0.35), inset 0 3px 4px rgba(255, 255, 255, 0.45);
+    cursor: grab;
+    touch-action: none;
+    transition: transform 0.15s ease-out;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    position: relative;
+    z-index: 2;
+    width: clamp(38px, 9.5vmin, 48px);
+    height: clamp(38px, 9.5vmin, 48px);
+}
+
+.space-grip-line {
+    width: 14px;
+    height: 2px;
+    border-radius: 2px;
+    background: rgba(15, 23, 42, 0.45);
+}
+
+.space-grip-line.wide { width: 18px; }
+
+/* Drop the keyboard-hint bar on small/touch screens — the joystick & jump button
+   speak for themselves without hints for a keyboard that isn't there. */
+@media (max-width: 600px) {
+    .space-hud-bar { display: none; }
 }
 
 .loading {

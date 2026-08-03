@@ -20,6 +20,29 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
     });
     const joystickBaseRef = useRef<HTMLDivElement | null>(null);
     const joystickHandleRef = useRef<HTMLDivElement | null>(null);
+    const arrowUpRef = useRef<HTMLDivElement | null>(null);
+    const arrowDownRef = useRef<HTMLDivElement | null>(null);
+    const arrowLeftRef = useRef<HTMLDivElement | null>(null);
+    const arrowRightRef = useRef<HTMLDivElement | null>(null);
+
+    // Light up a directional arrow around the joystick rim when pushed that way (see .space-joystick-arrow.active in style.css)
+    const setArrowActive = (el: HTMLDivElement | null, active: boolean) => {
+        el?.classList.toggle('active', active);
+    };
+
+    // Turn the joystick ring red-pink while in "run" mode (see .space-joystick-base.running in style.css)
+    const setRunGlow = (running: boolean) => {
+        joystickBaseRef.current?.classList.toggle('running', running);
+    };
+
+    const updateJoystickVisuals = () => {
+        const keys = keysRef.current;
+        setArrowActive(arrowUpRef.current, keys.w);
+        setArrowActive(arrowDownRef.current, keys.s);
+        setArrowActive(arrowLeftRef.current, keys.a);
+        setArrowActive(arrowRightRef.current, keys.d);
+        setRunGlow(keys.shift);
+    };
 
     const handleJumpStart = () => {
         keysRef.current.space = true;
@@ -117,6 +140,8 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
             keys.d = false;
             keys.shift = false;
         }
+
+        updateJoystickVisuals();
     };
 
     const handleJoystickEnd = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -141,6 +166,8 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
         keys.a = false;
         keys.d = false;
         keys.shift = false;
+
+        updateJoystickVisuals();
     };
 
     useEffect(() => {
@@ -169,7 +196,7 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
         renderer.toneMappingExposure = 1.35; // boost bright, rich colors in dark space
         
         container.appendChild(renderer.domElement);
-        renderer.domElement.className = 'babylon-canvas babylon-loaded';
+        renderer.domElement.className = 'three-canvas three-loaded';
 
         // Lights
         const ambientLight = new THREE.AmbientLight(0x222244, 0.8);
@@ -465,6 +492,7 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
         let buildingGroup: InstanceType<typeof THREE.Group> | null = null;
         let verticalVelocity = 0;
         let spawnHeight = 0;
+        let walkTimeScale = 1; // eased playback speed of the walk clip; ramps to 0 on stop so a single-clip GLB decelerates to a natural stand instead of freezing mid-stride
 
         // Load the custom Ellina GLB character with robust automatic scaling & procedural fallback
         loader.load('/models/character/ellina.glb', (gltf: any) => {
@@ -1028,14 +1056,17 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
                 // Smoothly animate limb swinging (procedural) or play GLTF animations (gltf mixer)
                 if (isWalking) {
                     if (walkAction) {
-                        // Play walk/run GLTF animation
+                        // Play walk/run GLTF animation, easing its playback speed back up to full pace
                         const targetAction = walkAction;
                         if (currentAction !== targetAction && targetAction) {
-                            currentAction.fadeOut(0.25);
+                            currentAction?.fadeOut(0.25);
                             targetAction.reset().fadeIn(0.25).play();
                             currentAction = targetAction;
                         }
                         walkAction.paused = false;
+                        walkAction.enabled = true;
+                        walkTimeScale = THREE.MathUtils.lerp(walkTimeScale, 1, 6 * delta);
+                        walkAction.timeScale = walkTimeScale;
                     } else if (isProcedural && astronautParts) {
                         const swingFreq = time * (keys.shift ? 15 : 9.5);
                         const swingAngle = 0.55;
@@ -1079,21 +1110,29 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
                         characterGroup.position.y = currentBaseY + Math.abs(Math.sin(swingFreq * 2)) * 0.07;
                     }
                 } else {
-                    if (idleAction) {
-                        // Play idle/stand GLTF animation
+                    if (idleAction && idleAction !== walkAction) {
+                        // A genuinely distinct idle/stand clip exists in the GLB — play it
                         const targetAction = idleAction;
-                        if (currentAction !== targetAction && targetAction) {
-                            currentAction.fadeOut(0.25);
+                        if (currentAction !== targetAction) {
+                            currentAction?.fadeOut(0.25);
                             targetAction.reset().fadeIn(0.25).play();
                             currentAction = targetAction;
                         }
-                        // If the idle action is actually the SAME as the walking action (only one animation exists), pause it when standing still!
-                        if (idleAction === walkAction) {
-                            idleAction.paused = true;
-                            idleAction.time = 0; // Freeze at the first frame (resting pose)
-                        } else {
-                            idleAction.paused = false;
+                        idleAction.paused = false;
+                    } else if (idleAction) {
+                        // No dedicated idle clip — idle and walk fall back to the same walking animation.
+                        // Rather than freezing on frame 0 (an awkward mid-stride pose), ease the walk
+                        // cycle's own playback speed down to a stop, so the character settles naturally
+                        // wherever its stride happened to be — like decelerating into a standstill.
+                        const targetAction = idleAction;
+                        if (currentAction !== targetAction) {
+                            currentAction?.fadeOut(0.25);
+                            targetAction.reset().fadeIn(0.25).play();
+                            currentAction = targetAction;
                         }
+                        walkTimeScale = THREE.MathUtils.lerp(walkTimeScale, 0, 4 * delta);
+                        idleAction.timeScale = walkTimeScale;
+                        idleAction.paused = false;
                     } else if (isProcedural && astronautParts) {
                         // Soft, floating "astronaut weightless breathing" idle animation
                         const breathFreq = time * 2.2;
@@ -1106,7 +1145,7 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
 
                         astronautParts.torso.position.y = 0.95 + Math.sin(breathFreq) * 0.025;
                     } else if (bones) {
-                        // Procedural skeletal standing/idle breathing pose for Nova's bones
+                        // Procedural skeletal standing/idle breathing pose for a clipless bone-rigged model
                         const breathFreq = time * 2.2;
 
                         // Upper arms relaxed, hanging down slightly
@@ -1208,124 +1247,76 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
 
     return (
         <>
-            <div ref={containerRef} className="babylon-canvas" style={{ touchAction: 'none' }} />
-            
-            {/* Walk Controls Overlay Instruction */}
-            <div style={{
-                position: 'absolute',
-                bottom: '20px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                color: '#cbd5e1',
-                background: 'rgba(15, 23, 42, 0.75)',
-                backdropFilter: 'blur(8px)',
-                padding: '12px 24px',
-                borderRadius: '999px',
-                fontFamily: 'sans-serif',
-                fontSize: '14px',
-                pointerEvents: 'none',
-                zIndex: 10,
-                textAlign: 'center',
-                boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
-                border: '1px solid rgba(129, 140, 248, 0.2)'
-            }}>
-                Use <b>W A S D / Space</b> or <b>Joystick / Jump</b> to move &nbsp;•&nbsp; Hold <b>Shift</b> or <b>Drag Far</b> to run
+            <div ref={containerRef} className="three-canvas" />
+
+            {/* Walk Controls HUD Instruction (game-style keycaps) */}
+            <div className="space-hud-bar">
+                <span>
+                    <span className="space-keycap">W</span><span className="space-keycap">A</span><span className="space-keycap">S</span><span className="space-keycap">D</span>
+                </span>
+                <span className="space-hud-sep">/</span>
+                <span>
+                    <span className="space-keycap">↑</span><span className="space-keycap">←</span><span className="space-keycap">↓</span><span className="space-keycap">→</span>
+                </span>
+                <span className="space-hud-accent">MOVE</span>
+                <span className="space-hud-divider">|</span>
+                <span className="space-keycap">SPACE</span>
+                <span className="space-hud-accent">JUMP</span>
+                <span className="space-hud-divider">|</span>
+                <span className="space-keycap">SHIFT</span>
+                <span className="space-hud-run">RUN</span>
             </div>
 
-            {/* Virtual Jump Button on the bottom right (positioned next to the joystick) */}
-            <div 
-                onPointerDown={(e) => {
-                    handleJumpStart();
-                    e.currentTarget.style.transform = 'scale(0.9)';
-                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.15)';
-                }}
-                onPointerUp={(e) => {
-                    handleJumpEnd();
-                    e.currentTarget.style.transform = 'scale(1)';
-                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.06)';
-                }}
-                onPointerCancel={(e) => {
-                    handleJumpEnd();
-                    e.currentTarget.style.transform = 'scale(1)';
-                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.06)';
-                }}
-                style={{
-                    position: 'absolute',
-                    bottom: '56px',
-                    right: '152px',
-                    width: '64px',
-                    height: '64px',
-                    borderRadius: '50%',
-                    backgroundColor: 'rgba(255, 255, 255, 0.06)',
-                    border: '1px solid rgba(255, 255, 255, 0.15)',
-                    backdropFilter: 'blur(8px)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    zIndex: 100,
-                    touchAction: 'none',
-                    boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.25)',
-                    cursor: 'pointer',
-                    userSelect: 'none',
-                    color: '#ffffff',
-                    transition: 'transform 0.1s ease, background-color 0.1s ease',
-                }}
-            >
-                <div style={{ fontSize: '18px', lineHeight: 1, marginBottom: '2px' }}>▲</div>
-                <div style={{ fontSize: '9px', fontWeight: 'bold', letterSpacing: '1px' }}>JUMP</div>
-            </div>
-
-            {/* Virtual Joystick on the bottom right (highly responsive for desktop & mobile) */}
-            <div 
-                ref={joystickBaseRef}
-                style={{
-                    position: 'absolute',
-                    bottom: '40px',
-                    right: '40px',
-                    width: '96px',
-                    height: '96px',
-                    borderRadius: '50%',
-                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                    border: '1px solid rgba(255, 255, 255, 0.12)',
-                    backdropFilter: 'blur(8px)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    zIndex: 100,
-                    touchAction: 'none', // Prevent scrolling/zooming gestures while dragging!
-                    boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.3)',
-                    userSelect: 'none'
-                }}
-            >
-                {/* Joystick Knob Handle */}
-                <div 
-                    ref={joystickHandleRef}
-                    onPointerDown={handleJoystickStart}
-                    onPointerMove={handleJoystickMove}
-                    onPointerUp={handleJoystickEnd}
-                    onPointerCancel={handleJoystickEnd}
-                    style={{
-                        width: '44px',
-                        height: '44px',
-                        borderRadius: '50%',
-                        background: 'radial-gradient(circle, #a5b4fc 0%, #4f46e5 100%)',
-                        boxShadow: '0 0 16px rgba(99, 102, 241, 0.5), inset 0 2px 4px rgba(255,255,255,0.4)',
-                        cursor: 'grab',
-                        touchAction: 'none',
-                        transition: 'transform 0.15s ease-out', // smooth snap back
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
+            {/* Touch controls cluster: jump button + joystick, laid out with flex so they scale and
+                stay glued together across every viewport size instead of using magic offsets */}
+            <div className="space-controls-cluster">
+                {/* Virtual Jump Button: chunky 3D arcade button next to the joystick */}
+                <div
+                    className="space-jump-btn"
+                    onPointerDown={(e) => {
+                        handleJumpStart();
+                        e.currentTarget.classList.add('pressed');
+                    }}
+                    onPointerUp={(e) => {
+                        handleJumpEnd();
+                        e.currentTarget.classList.remove('pressed');
+                    }}
+                    onPointerCancel={(e) => {
+                        handleJumpEnd();
+                        e.currentTarget.classList.remove('pressed');
                     }}
                 >
-                    {/* Tiny center ring detail */}
-                    <div style={{
-                        width: '16px',
-                        height: '16px',
-                        borderRadius: '50%',
-                        border: '2px solid rgba(255,255,255,0.25)'
-                    }} />
+                    <div className="space-jump-icon">▲</div>
+                    <div className="space-jump-label">JUMP</div>
+                </div>
+
+                {/* Virtual Joystick: gamepad-style base with glowing directional arrows */}
+                <div ref={joystickBaseRef} className="space-joystick-base">
+                    {/* Slowly rotating dashed radar ring */}
+                    <div className="space-radar-ring" />
+                    {/* Inner crosshair guide ring */}
+                    <div className="space-crosshair-ring" />
+
+                    {/* Directional arrows on the rim: light up cyan when the stick pushes that way */}
+                    <div ref={arrowUpRef} className="space-joystick-arrow space-arrow-up">▲</div>
+                    <div ref={arrowDownRef} className="space-joystick-arrow space-arrow-down">▼</div>
+                    <div ref={arrowLeftRef} className="space-joystick-arrow space-arrow-left">◀</div>
+                    <div ref={arrowRightRef} className="space-joystick-arrow space-arrow-right">▶</div>
+
+                    {/* Joystick Knob Handle: glossy thumbstick with grip lines */}
+                    <div
+                        ref={joystickHandleRef}
+                        className="space-joystick-handle"
+                        onPointerDown={handleJoystickStart}
+                        onPointerMove={handleJoystickMove}
+                        onPointerUp={handleJoystickEnd}
+                        onPointerCancel={handleJoystickEnd}
+                    >
+                        {/* Thumb grip lines */}
+                        <div className="space-grip-line" />
+                        <div className="space-grip-line wide" />
+                        <div className="space-grip-line" />
+                    </div>
                 </div>
             </div>
         </>

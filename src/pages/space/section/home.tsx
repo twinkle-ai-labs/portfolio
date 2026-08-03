@@ -16,7 +16,7 @@ const HomeSection = () => {
     return (
         <section id="s_home" className="section h-100">
             <div className="section-bg">
-                <Suspense fallback={<canvas className="babylon-canvas"/>}>
+                <Suspense fallback={<canvas className="three-canvas"/>}>
                     <ThreeSpaceComponent onLoaded={() => dispatch(mainLoaded())}/>
                 </Suspense>
             </div>
