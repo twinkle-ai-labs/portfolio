@@ -852,7 +852,10 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
         container.addEventListener('wheel', handleWheel, { passive: false });
 
         const render = () => {
-            const delta = clock.getDelta();
+            // Clamp to guard against huge spikes (tab backgrounded/throttled, GC pause, heavy
+            // synchronous GLTF parsing on load) — THREE.Vector3.lerp doesn't clamp its alpha,
+            // so an unclamped delta can make camera/physics lerps overshoot wildly past their target.
+            const delta = Math.min(clock.getDelta(), 0.1);
             const time = clock.getElapsedTime();
 
             // 1. Twinkling Stars Animation (oscillate opacity in custom logic)

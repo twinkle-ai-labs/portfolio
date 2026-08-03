@@ -42,7 +42,7 @@ export interface ICareer {
 
 const EmploymentType = {
     fullTime: {ko: '정규직', en: 'Full-time'},
-    contractFreelance: {ko: '계약직, 프리랜서', en: 'Contract · Freelance'},
+    contractFreelance: {ko: '프리랜서', en: 'Contract · Freelance'},
     freelance: {ko: '프리랜서', en: 'Freelance'},
     intern: {ko: '인턴', en: 'Internship'},
 };
