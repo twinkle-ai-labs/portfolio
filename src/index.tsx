@@ -19,6 +19,7 @@ const ResumeApp = React.lazy(() => import("@Pages/resume"));
 import {createBrowserRouter, RouterProvider, useLocation,} from "react-router-dom";
 import * as process from "process";
 import GlobalModal from "@Components/modal/global";
+import SpaceLoading from "@Components/loading/SpaceLoading";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -39,21 +40,10 @@ const Root = () => {
     )
 }
 
-// Dark, space-themed stand-in for the brief moment the Space page's own JS chunk is still
-// downloading — reuses the same visual language as ThreeSpace's in-page loading screen so the
-// two hand off seamlessly instead of flashing the generic light app-shell loader first.
-const SpaceRoot = () => {
-    return (
-        <div className="space-loading-screen" role="status" aria-live="polite">
-            <div className="space-loading-orbit">
-                <div className="space-loading-ring"/>
-                <div className="space-loading-ring space-loading-ring-2"/>
-                <div className="space-loading-core"/>
-            </div>
-            <div className="space-loading-title">Loading...</div>
-        </div>
-    )
-}
+// Stand-in for the brief moment the Space page's own JS chunk is still downloading. It renders
+// the exact same component the page itself uses, so the handoff between the two is invisible —
+// the player perceives a single continuous loading screen rather than one loader replacing another.
+const SpaceRoot = () => <SpaceLoading/>;
 
 const GA_MEASUREMENT_ID = 'G-5M8ND449DZ';
 

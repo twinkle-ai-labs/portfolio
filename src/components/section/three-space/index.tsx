@@ -252,12 +252,19 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
         const pmremGenerator = new THREE.PMREMGenerator(renderer);
         let sky: InstanceType<typeof THREE.Group> | null = null;
 
-        // Real per-asset loading progress (sky dome, character, city) averaged into one 0-100 figure for the loading screen
+        // Real per-asset loading progress (sky dome, city) averaged into one 0-100 figure for the loading screen
         const assetProgress = {sky: 0, building: 0}; // the character itself is procedural — no download to track
+        let assetsReady = false;      // every tracked asset has finished (or errored out) and been added to the scene
+        let loadedDispatched = false; // onLoaded fired exactly once
+        let framesSinceReady = 0;
+
         const reportProgress = () => {
             const values = Object.values(assetProgress);
             const overall = values.reduce((a, b) => a + b, 0) / values.length;
             onProgress?.(Math.round(overall * 100));
+            if (values.every((v) => v >= 1)) {
+                assetsReady = true;
+            }
         };
         const trackProgress = (key: keyof typeof assetProgress) => (xhr: ProgressEvent) => {
             if (xhr.lengthComputable) {
@@ -268,8 +275,6 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
 
         // Load original Night Sky GLTF environment with critical fog & culling bugfixes
         loader.load('/models/night_sky/scene.gltf', (gltf: any) => {
-            assetProgress.sky = 1;
-            reportProgress();
             sky = gltf.scene;
             // Scale up sky dome safely within the camera's far clipping plane (500 units radius)
             sky.scale.setScalar(500);
@@ -312,6 +317,10 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
             } catch (e) {
                 console.warn('Could not generate environment map from sky scene:', e);
             }
+
+            // Mark complete only now that the dome is actually in the scene
+            assetProgress.sky = 1;
+            reportProgress();
         }, trackProgress('sky'), (err: any) => {
             console.error('Error loading night sky GLTF model:', err);
             assetProgress.sky = 1; // don't let a failed asset stall the loading screen forever
@@ -595,8 +604,6 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
 
         // Load the custom Future City GLB building model
         loader.load('/models/future_city.glb', (gltf: any) => {
-            assetProgress.building = 1;
-            reportProgress();
             const building = gltf.scene;
             buildingGroup = building;
 
@@ -736,6 +743,10 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
             });
 
             scene.add(building);
+
+            // Mark complete only now that the city is actually in the scene
+            assetProgress.building = 1;
+            reportProgress();
         }, trackProgress('building'), (error: any) => {
             console.warn('Error loading custom future_city.glb model:', error);
             assetProgress.building = 1;
@@ -787,10 +798,16 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
         }
         scene.add(crystalGroup);
 
-        // Dispatch load completion immediately as everything is procedurally made (brief artificial delay for smooth transition)
+        // The loading screen normally waits for every asset to land AND a few frames to actually paint
+        // (see the render loop). This is only a safety net: if a download stalls without ever firing
+        // its load or error callback, don't strand the player behind the curtain forever.
         const loadTimer = setTimeout(() => {
-            if (onLoaded) onLoaded();
-        }, 600);
+            if (!loadedDispatched) {
+                console.warn('Space assets still loading after 30s — revealing the scene anyway.');
+                loadedDispatched = true;
+                onLoaded?.();
+            }
+        }, 30000);
 
         // Keyboard inputs (robust mapping using e.code to bypass Korean IME / '한영 키' lock)
         const keys = keysRef.current;
@@ -1242,6 +1259,18 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
             }
 
             renderer.render(scene, camera);
+
+            // Only lift the loading screen once every asset is in the scene AND a few frames have
+            // genuinely been painted — otherwise the curtain drops on a half-built world (the city
+            // model in particular takes far longer to arrive than any fixed timer would guess).
+            if (assetsReady && !loadedDispatched) {
+                framesSinceReady++;
+                if (framesSinceReady >= 3) {
+                    loadedDispatched = true;
+                    onLoaded?.();
+                }
+            }
+
             animationFrame = window.requestAnimationFrame(render);
         };
 

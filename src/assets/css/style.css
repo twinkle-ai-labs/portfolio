@@ -2980,7 +2980,9 @@ span.pc {
    Space page — game-style loading screen (shown while the 3D assets load)
    ========================================================================== */
 .space-loading-screen {
-    position: absolute;
+    /* Fixed rather than absolute: this same component is mounted both inside the page section and
+       as a bare router-level Suspense fallback, and fixed covers the viewport correctly in both. */
+    position: fixed;
     inset: 0;
     z-index: 20;
     width: 100% !important;

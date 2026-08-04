@@ -3,6 +3,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "@Store/index";
 import {mainLoaded} from "@Store/slice/loading";
 import translations from "@Data/i18n";
+import SpaceLoading from "@Components/loading/SpaceLoading";
 
 const ThreeSpaceComponent = lazy(() => import('@Components/section/three-space'));
 
@@ -40,19 +41,7 @@ const HomeSection = () => {
                     <ThreeSpaceComponent onLoaded={handleLoaded} onProgress={handleProgress}/>
                 </Suspense>
             </div>
-            <div className={loading ? "space-loading-screen" : "space-loading-screen hide"}>
-                <div className="space-loading-orbit">
-                    <div className="space-loading-ring"/>
-                    <div className="space-loading-ring space-loading-ring-2"/>
-                    <div className="space-loading-core"/>
-                </div>
-                <div className="space-loading-title">{t.loading}</div>
-                <div className="space-loading-bar">
-                    <div className="space-loading-bar-fill" style={{width: `${progress}%`}}/>
-                </div>
-                <div className="space-loading-percent">{progress}%</div>
-                <div key={tipIndex} className="space-loading-tip">{t.loadingTips[tipIndex]}</div>
-            </div>
+            <SpaceLoading progress={progress} tipIndex={tipIndex} hidden={!loading}/>
         </section>
     );
 };
