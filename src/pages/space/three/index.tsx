@@ -109,14 +109,24 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
         const reportProgress = () => {
             const values = Object.values(assetProgress);
             const overall = values.reduce((a, b) => a + b, 0) / values.length;
-            onProgress?.(Math.round(overall * 100));
+            onProgress?.(Math.min(100, Math.max(0, Math.round(overall * 100))));
             if (values.every((v) => v >= 1)) {
                 assetsReady = true;
             }
         };
         const trackProgress = (key: keyof typeof assetProgress) => (xhr: ProgressEvent) => {
             if (xhr.lengthComputable) {
-                assetProgress[key] = xhr.loaded / xhr.total;
+                // 다운로드 중에는 1에 닿지 못하게 묶는다. '다 됐다'는 도장은 아래 .then/.catch만
+                // 찍을 수 있어야 한다 — 그래야 assetsReady가 '씬에 들어갔다'를 뜻한다.
+                //
+                // 묶지 않으면 이 값이 1을 훌쩍 넘는다. 서버가 모델을 압축해 보내면서
+                // (dev 서버는 br, GitHub Pages는 gzip) 브라우저는 total에 압축된 크기를,
+                // loaded에는 풀린 바이트를 담는다. 55MB짜리 정점 데이터는 4배 넘게 줄어드니
+                // 비율이 4를 넘고, 그래서 로딩 화면에 400%가 찍혔다.
+                //
+                // 게다가 그 순간 every(v >= 1)이 참이 되어 도시가 씬에 들어가기도 전에
+                // 로딩 화면이 걷혔다 — 바닥 없는 검은 허공에 캐릭터만 떠 있는 그 화면이다.
+                assetProgress[key] = Math.min(xhr.loaded / xhr.total, 0.99);
                 reportProgress();
             }
         };
