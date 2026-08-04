@@ -753,15 +753,15 @@ span.pc {
     }
 }
 
-/* Hero */
-#s_home.hero-dark {
+/* Hero — 404 화면도 같은 밤하늘을 쓰므로 ID 대신 클래스로 겁니다. */
+.hero-dark {
     position: relative;
     background: var(--grid-dark);
     background-size: var(--grid-dark-size);
     overflow: hidden;
 }
 
-#s_home.hero-dark::before {
+.hero-dark::before {
     display: none !important;
 }
 
@@ -1180,6 +1180,9 @@ span.pc {
     border: 1px solid rgba(255, 255, 255, 0.2);
     background: rgba(255, 255, 255, 0.06);
     color: white;
+    /* <a> 로도 <button> 으로도 쓰이므로 버튼 기본 스타일을 지웁니다 */
+    font-family: inherit;
+    cursor: pointer;
 }
 
 .hero-secondary:hover {
@@ -2655,21 +2658,129 @@ span.pc {
     color: var(--blue-deep);
 }
 
-/* Utility pages */
+/* ==========================================================================
+   404 — 히어로와 같은 밤하늘(--grid-dark + .hero-stars) 위에 세운 안내 화면
+   ========================================================================== */
 #s_error {
     min-height: 100vh;
     display: grid;
     place-items: center;
+    padding: calc(var(--header-height) + 2rem) 0 clamp(3rem, 8vw, 6rem);
 }
 
-.section-card {
+.error-shell {
+    position: relative;
+    z-index: 1;
     display: grid;
-    gap: 1rem;
     justify-items: center;
+    gap: 1.15rem;
+    padding: 0 1.5rem;
+    text-align: center;
+}
+
+.error-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.42rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+/* 404 숫자 자체가 일러스트입니다. 가운데 0 자리는 성운처럼 빛나는 구체로 대체합니다. */
+.error-code {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(0.35rem, 1.5vw, 0.9rem);
+    margin: clamp(0.25rem, 1vw, 0.75rem) 0;
+    font-size: clamp(5.5rem, 3rem + 16vw, 12rem);
+    font-weight: 800;
+    line-height: 0.9;
+    letter-spacing: -0.06em;
+}
+
+.error-code span:not(.error-code-orb) {
+    background: linear-gradient(180deg, #ffffff 0%, #a5b4fc 55%, #8b5cf6 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+}
+
+.error-code-orb {
+    width: clamp(4rem, 2.2rem + 11.5vw, 8.6rem);
+    height: clamp(4rem, 2.2rem + 11.5vw, 8.6rem);
+    border-radius: 50%;
+    background:
+            radial-gradient(circle at 34% 30%, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0) 42%),
+            radial-gradient(circle at 68% 72%, rgba(167, 139, 250, 0.85), rgba(99, 102, 241, 0) 58%),
+            var(--grad-accent);
+    box-shadow:
+            0 0 60px rgba(129, 140, 248, 0.45),
+            inset 0 0 34px rgba(255, 255, 255, 0.28);
+    animation: error-orb-float 6s ease-in-out infinite;
+}
+
+@keyframes error-orb-float {
+    0%, 100% {
+        transform: translateY(-4%) scale(0.985);
+    }
+    50% {
+        transform: translateY(4%) scale(1.015);
+    }
+}
+
+.error-title {
+    max-width: 20ch;
+    color: #ffffff;
+    font-size: clamp(1.55rem, 1.1rem + 2vw, 2.5rem);
+    font-weight: 800;
+    line-height: 1.25;
+    letter-spacing: -0.03em;
+    word-break: keep-all;
+}
+
+.error-title em {
+    background: var(--grad-accent);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    font-style: normal;
+}
+
+.error-desc {
+    max-width: 46ch;
+    color: rgba(255, 255, 255, 0.62);
+    font-size: clamp(0.95rem, 0.88rem + 0.35vw, 1.05rem);
+    line-height: 1.75;
+    word-break: keep-all;
+}
+
+.error-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+}
+
+/* 모션을 줄여달라는 설정에서는 떠다니는 구체와 별의 깜빡임을 멈춥니다. */
+@media (prefers-reduced-motion: reduce) {
+    .error-code-orb,
+    #s_error .hero-star {
+        animation: none;
+    }
 }
 
 .wallpaper #s_home,
-.resume #s_home,
 #s_home.h-100 {
     min-height: 100vh;
 }

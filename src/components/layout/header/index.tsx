@@ -67,7 +67,7 @@ const Header = (
                                                // Update URL hash cleanly without a full page reload
                                                window.history.pushState(null, '', hash);
                                            }
-                                           // If on a subpage (e.g. /space or /resume), let the browser redirect to "/" with the hash.
+                                           // If on a subpage (e.g. /space or the 404 screen), let the browser redirect to "/" with the hash.
                                        }}
                                     >{menu.name}</a>
                                 </li>

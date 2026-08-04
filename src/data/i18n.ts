@@ -116,6 +116,14 @@ export interface ITranslations {
         loading: string;
         loadingTips: string[];
     };
+    error: {
+        badge: string;
+        title: string;
+        titleAccent: string;
+        desc: string;
+        home: string;
+        space: string;
+    };
 }
 
 const translations: Record<'ko' | 'en', ITranslations> = {
@@ -261,6 +269,14 @@ const translations: Record<'ko' | 'en', ITranslations> = {
                     'Tip. 반짝이는 파란 빛이 보이면, 그 건물은 안으로 들어갈 수 있어요.'
                 ]
             },
+            error: {
+                badge: 'Error 404',
+                title: '길을 잃은',
+                titleAccent: '페이지',
+                desc: '찾으시는 주소가 사라졌거나, 처음부터 없던 페이지예요. 홈으로 돌아가거나 우주를 한 바퀴 걸어보세요.',
+                home: '홈으로 돌아가기',
+                space: 'Twinkle Space 둘러보기',
+            },
         },
     en: {
         nav: {
@@ -403,6 +419,14 @@ const translations: Record<'ko' | 'en', ITranslations> = {
                     'Tip. Press Space or the jump button to leap.',
                     'Tip. See a glowing blue light? That building has an interior you can walk into.'
                 ]
+            },
+            error: {
+                badge: 'Error 404',
+                title: 'This page went',
+                titleAccent: 'off the map',
+                desc: "The address you're looking for has moved, or never existed. Head back home — or take a walk through space instead.",
+                home: 'Back to home',
+                space: 'Explore Twinkle Space',
             },
         },
 };

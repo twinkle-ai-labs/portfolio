@@ -433,7 +433,8 @@
         display: none;
     }
 
-    .hero-actions {
+    .hero-actions,
+    .error-actions {
         align-items: stretch;
         flex-direction: column;
     }

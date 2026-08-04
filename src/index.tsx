@@ -14,7 +14,6 @@ import {store} from "@Store/index";
 const MainApp = React.lazy(() => import("@Pages/main"));
 const SpaceApp = React.lazy(() => import("@Pages/space"));
 const ErrorApp = React.lazy(() => import("@Pages/error"));
-const ResumeApp = React.lazy(() => import("@Pages/resume"));
 
 import {createBrowserRouter, RouterProvider, useLocation,} from "react-router-dom";
 import * as process from "process";
@@ -87,10 +86,6 @@ const routes = [
     {
         path: "space",
         element: <AppShell fallback={<SpaceRoot/>}><SpaceApp/></AppShell>,
-    },
-    {
-        path: "resume",
-        element: <AppShell><ResumeApp/></AppShell>
     },
     {
         path: "*",
