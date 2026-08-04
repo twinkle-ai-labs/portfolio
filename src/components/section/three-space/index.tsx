@@ -4,9 +4,10 @@ import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
 
 interface IThreeSpaceProps {
     onLoaded?: () => void
+    onProgress?: (percent: number) => void
 }
 
-const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
+const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
     const containerRef = useRef<HTMLDivElement | null>(null);
     const keysRef = useRef({ 
         w: false, 
@@ -228,8 +229,24 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
         const pmremGenerator = new THREE.PMREMGenerator(renderer);
         let sky: InstanceType<typeof THREE.Group> | null = null;
 
+        // Real per-asset loading progress (sky dome, character, city) averaged into one 0-100 figure for the loading screen
+        const assetProgress = {sky: 0, character: 0, building: 0};
+        const reportProgress = () => {
+            const values = Object.values(assetProgress);
+            const overall = values.reduce((a, b) => a + b, 0) / values.length;
+            onProgress?.(Math.round(overall * 100));
+        };
+        const trackProgress = (key: keyof typeof assetProgress) => (xhr: ProgressEvent) => {
+            if (xhr.lengthComputable) {
+                assetProgress[key] = xhr.loaded / xhr.total;
+                reportProgress();
+            }
+        };
+
         // Load original Night Sky GLTF environment with critical fog & culling bugfixes
         loader.load('/models/night_sky/scene.gltf', (gltf: any) => {
+            assetProgress.sky = 1;
+            reportProgress();
             sky = gltf.scene;
             // Scale up sky dome safely within the camera's far clipping plane (500 units radius)
             sky.scale.setScalar(500);
@@ -272,8 +289,10 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
             } catch (e) {
                 console.warn('Could not generate environment map from sky scene:', e);
             }
-        }, undefined, (err: any) => {
+        }, trackProgress('sky'), (err: any) => {
             console.error('Error loading night sky GLTF model:', err);
+            assetProgress.sky = 1; // don't let a failed asset stall the loading screen forever
+            reportProgress();
         });
 
         // 1. Procedural Twinkling Starfield Particle System
@@ -493,9 +512,12 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
         let verticalVelocity = 0;
         let spawnHeight = 0;
         let walkTimeScale = 1; // eased playback speed of the walk clip; ramps to 0 on stop so a single-clip GLB decelerates to a natural stand instead of freezing mid-stride
+        const entranceBeacons: Array<{ mesh: InstanceType<typeof THREE.Mesh>; seed: number; yBase: number }> = [];
 
         // Load the custom Ellina GLB character with robust automatic scaling & procedural fallback
         loader.load('/models/character/ellina.glb', (gltf: any) => {
+            assetProgress.character = 1;
+            reportProgress();
             console.log('Successfully loaded ellina.glb. Animations:', gltf.animations?.map((a: any) => a.name));
             const character = gltf.scene;
             characterGroup = character;
@@ -617,9 +639,11 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
                 idleAction.play();
                 currentAction = idleAction;
             }
-        }, undefined, (error: any) => {
+        }, trackProgress('character'), (error: any) => {
             console.warn('Error loading custom ellina.glb model, falling back to procedural astronaut:', error);
-            
+            assetProgress.character = 1;
+            reportProgress();
+
             // Fallback to beautiful procedural astronaut
             const astronaut = createAstronaut();
             characterGroup = astronaut.mesh;
@@ -632,8 +656,20 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
             scene.add(characterGroup);
         });
 
+        // Shared geometry/material for the entrance beacons that mark walkable building interiors (see below)
+        const beaconGeom = new THREE.SphereGeometry(0.32, 16, 16);
+        const beaconMaterial = new THREE.MeshStandardMaterial({
+            color: 0x67e8f9,
+            emissive: 0x22d3ee,
+            emissiveIntensity: 2.4,
+            transparent: true,
+            opacity: 0.9
+        });
+
         // Load the custom Future City GLB building model
         loader.load('/models/future_city.glb', (gltf: any) => {
+            assetProgress.building = 1;
+            reportProgress();
             const building = gltf.scene;
             buildingGroup = building;
 
@@ -695,9 +731,88 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
                 }
             });
 
+            // Auto-detect walkable "doorway" gaps around each building's footprint by probing its
+            // perimeter with rays — the same technique the movement collision code uses — instead of
+            // trusting the model's node names (which turned out to collapse to one bogus shared
+            // position for every building here). Wherever a probe travels much farther than its
+            // neighbors before hitting the building, that's an opening in the wall. Each one gets a
+            // warm interior light + a pulsing beacon so it's noticeable from outside.
+            const probeRay = new THREE.Raycaster();
+            const probeHeight = spawnHeight + 0.8; // roughly waist height, matching the walk-collision probe
+            const entranceCandidates: InstanceType<typeof THREE.Vector3>[] = [];
+
+            const buildingRoots: any[] = [];
+            building.traverse((child: any) => {
+                if (child.name && /^building/i.test(child.name)) {
+                    buildingRoots.push(child);
+                }
+            });
+
+            buildingRoots.forEach((root) => {
+                const box = new THREE.Box3().setFromObject(root);
+                const size = box.getSize(new THREE.Vector3());
+                const center = box.getCenter(new THREE.Vector3());
+
+                // Skip tiny fragments and anything sitting outside the playable island (radius 58)
+                if (size.x < 4 || size.z < 4) return;
+                if (Math.sqrt(center.x * center.x + center.z * center.z) > 58) return;
+
+                const sampleCount = 12;
+                const margin = 1.5; // start each probe just outside the footprint
+                const samples: Array<{ point: InstanceType<typeof THREE.Vector3>; dir: InstanceType<typeof THREE.Vector3>; dist: number | null }> = [];
+
+                for (let i = 0; i < sampleCount; i++) {
+                    const t = i / sampleCount;
+                    // Walk the rectangular perimeter of the footprint bounding box
+                    let x: number, z: number;
+                    if (t < 0.25) { x = box.min.x + (t / 0.25) * size.x; z = box.min.z; }
+                    else if (t < 0.5) { x = box.max.x; z = box.min.z + ((t - 0.25) / 0.25) * size.z; }
+                    else if (t < 0.75) { x = box.max.x - ((t - 0.5) / 0.25) * size.x; z = box.max.z; }
+                    else { x = box.min.x; z = box.max.z - ((t - 0.75) / 0.25) * size.z; }
+
+                    const dir = new THREE.Vector3(center.x - x, 0, center.z - z).normalize();
+                    const origin = new THREE.Vector3(x - dir.x * margin, probeHeight, z - dir.z * margin);
+
+                    probeRay.set(origin, dir);
+                    probeRay.far = Math.max(size.x, size.z);
+                    const hits = probeRay.intersectObject(buildingGroup as any, true);
+                    samples.push({point: origin, dir, dist: hits.length ? hits[0].distance : null});
+                }
+
+                const finiteDists = samples.map((s) => s.dist).filter((d): d is number => d !== null);
+                if (finiteDists.length < sampleCount * 0.5) return; // too many misses on this facade — unreliable, skip
+                const sorted = [...finiteDists].sort((a, b) => a - b);
+                const baseline = sorted[Math.floor(sorted.length / 2)]; // median "solid wall" distance
+
+                samples.forEach((s) => {
+                    if (s.dist !== null && s.dist > baseline + 3 && s.dist > baseline * 1.6) {
+                        // Found a gap — drop the marker a little way inside the opening
+                        const spot = s.point.clone().addScaledVector(s.dir, Math.min(s.dist * 0.5, 6));
+                        const nearby = entranceCandidates.some((p) => p.distanceTo(spot) < 6);
+                        if (!nearby) entranceCandidates.push(spot);
+                    }
+                });
+            });
+
+            entranceCandidates.forEach((spot) => {
+                // Warm point light so the lobby actually reads as a lit room instead of a dark void
+                const interiorLight = new THREE.PointLight(0xffd8a8, 8, 20, 2);
+                interiorLight.position.set(spot.x, spot.y + 2.2, spot.z);
+                scene.add(interiorLight);
+
+                // Small glowing beacon hovering near the entrance — visible through the opening as a hint
+                const beacon = new THREE.Mesh(beaconGeom, beaconMaterial);
+                const yBase = spot.y + 1.6;
+                beacon.position.set(spot.x, yBase, spot.z);
+                scene.add(beacon);
+                entranceBeacons.push({mesh: beacon, seed: Math.random() * 100, yBase});
+            });
+
             scene.add(building);
-        }, undefined, (error: any) => {
+        }, trackProgress('building'), (error: any) => {
             console.warn('Error loading custom future_city.glb model:', error);
+            assetProgress.building = 1;
+            reportProgress();
         });
 
         // 3. Floating Glowing Cosmic Crystals (Creates dynamic movement depth)
@@ -868,6 +983,13 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
                 crystal.mesh.rotation.y += delta * crystal.speed * 0.4;
                 crystal.mesh.rotation.z += delta * crystal.speed * 0.2;
                 crystal.mesh.position.y = crystal.yBase + Math.sin(time * crystal.speed + crystal.seed) * 0.35;
+            });
+
+            // 2b. Animate Entrance Beacons (gentle bob + pulse to draw the eye toward enterable buildings)
+            entranceBeacons.forEach((beacon) => {
+                beacon.mesh.position.y = beacon.yBase + Math.sin(time * 1.6 + beacon.seed) * 0.25;
+                const pulse = 0.85 + Math.sin(time * 2.4 + beacon.seed) * 0.2;
+                beacon.mesh.scale.setScalar(pulse);
             });
 
             // 3. Astronaut Controller & Procedural Rig Animation
@@ -1244,9 +1366,11 @@ const ThreeSpace = ({onLoaded}: IThreeSpaceProps) => {
             starMaterial.dispose();
             crystalGeom.dispose();
             crystalMaterial.dispose();
+            beaconGeom.dispose();
+            beaconMaterial.dispose();
             renderer.dispose();
         };
-    }, [onLoaded]);
+    }, [onLoaded, onProgress]);
 
     return (
         <>

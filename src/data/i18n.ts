@@ -114,6 +114,7 @@ export interface ITranslations {
         title: string;
         desc: string[];
         loading: string;
+        loadingTips: string[];
     };
 }
 
@@ -252,7 +253,13 @@ const translations: Record<'ko' | 'en', ITranslations> = {
                     '마우스나 터치로 바닥 위 위치를 가리키면 캐릭터가 그 방향으로 걸어갑니다.',
                     '침대, 책상, 조명, 식물이 놓인 방 안을 직접 산책해보세요.'
                 ],
-                loading: '로딩중'
+                loading: '로딩중',
+                loadingTips: [
+                    'Tip. W A S D 또는 화살표 키로 이동할 수 있어요.',
+                    'Tip. Shift를 누르거나 조이스틱을 끝까지 밀면 달릴 수 있어요.',
+                    'Tip. Space 또는 점프 버튼으로 뛰어오를 수 있어요.',
+                    'Tip. 반짝이는 파란 빛이 보이면, 그 건물은 안으로 들어갈 수 있어요.'
+                ]
             },
         },
     en: {
@@ -390,6 +397,12 @@ const translations: Record<'ko' | 'en', ITranslations> = {
                     'Walk around the room with the bed, desk, lighting and plants.'
                 ],
                 loading: 'Loading...',
+                loadingTips: [
+                    'Tip. Move with W A S D or the arrow keys.',
+                    'Tip. Hold Shift or push the joystick all the way to run.',
+                    'Tip. Press Space or the jump button to leap.',
+                    'Tip. See a glowing blue light? That building has an interior you can walk into.'
+                ]
             },
         },
 };
