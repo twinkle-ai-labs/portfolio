@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import DevOpsCycle from '@Components/section/devops';
+import DevOpsCycle from '@Pages/main/components/devops';
 import config from '@Data/config';
 import translations from '@Data/i18n';
 import {useLocale} from '@Utils/i18n';

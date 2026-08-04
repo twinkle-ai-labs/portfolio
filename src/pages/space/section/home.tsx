@@ -3,9 +3,9 @@ import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "@Store/index";
 import {mainLoaded} from "@Store/slice/loading";
 import translations from "@Data/i18n";
-import SpaceLoading from "@Components/loading/SpaceLoading";
+import SpaceLoading from "@Pages/space/components/SpaceLoading";
 
-const ThreeSpaceComponent = lazy(() => import('@Components/section/three-space'));
+const ThreeSpaceComponent = lazy(() => import('@Pages/space/three'));
 
 const HomeSection = () => {
     const language = useSelector((state: RootState) => state.language.value) as 'ko' | 'en';

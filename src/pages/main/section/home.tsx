@@ -5,8 +5,8 @@ import {RootState} from "@Store/index";
 import translations from "@Data/i18n";
 import {FaArrowDown, FaGithub} from "react-icons/fa6";
 import {Button} from "@mui/material";
-import CountUp from "@Components/section/countup";
-import HeroConsole from "@Components/section/console";
+import CountUp from "@Pages/main/components/countup";
+import HeroConsole from "@Pages/main/components/console";
 
 const HomeSection = () => {
     const language = useSelector((state: RootState) => state.language.value) as 'ko' | 'en';

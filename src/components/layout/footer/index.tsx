@@ -1,6 +1,6 @@
 import React from 'react';
 import {links} from "@Data/link";
-import Logo from "@Components/section/logo";
+import Logo from "@Components/logo";
 import {useLocale} from "@Utils/i18n";
 
 const Footer = () => {

@@ -19,7 +19,7 @@ const ResumeApp = React.lazy(() => import("@Pages/resume"));
 import {createBrowserRouter, RouterProvider, useLocation,} from "react-router-dom";
 import * as process from "process";
 import GlobalModal from "@Components/modal/global";
-import SpaceLoading from "@Components/loading/SpaceLoading";
+import SpaceLoading from "@Pages/space/components/SpaceLoading";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement

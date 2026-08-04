@@ -3,7 +3,7 @@ import React from 'react';
 import HomeSection from "@Pages/space/section/home";
 import Header from "@Layout/header";
 import DrawerSection from "@Layout/drawer";
-import TwinkleBadge from "@Components/badge/TwinkleBadge";
+import TwinkleBadge from "@Pages/space/components/TwinkleBadge";
 
 const App = () => {
     return (

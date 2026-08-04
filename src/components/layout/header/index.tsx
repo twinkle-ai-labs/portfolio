@@ -6,8 +6,8 @@ import {SlMenu} from "react-icons/sl";
 import {changeOffset} from "@Store/slice/offset";
 import {menus} from "@Data/link";
 import {DrawerType, openDrawer} from "@Store/slice/drawer";
-import Logo from "@Components/section/logo";
-import LanguageSelect from "@Components/section/language";
+import Logo from "@Components/logo";
+import LanguageSelect from "@Components/language";
 
 interface HeaderState {
     showMenu?: boolean;

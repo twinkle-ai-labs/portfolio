@@ -23,14 +23,23 @@ npx tsc --noEmit   # 타입 검사
 
 ```
 src/
-  pages/main/section/   home · profile · career · project · skill  (각 섹션 = #s_xxx)
-  components/
-    layout/             header · footer · drawer · flop · scrollbar
-    section/            devops(∞ 다이어그램) · console · language · countup · babylon …
+  pages/main/
+    section/            home · profile · career · project · skill  (각 섹션 = #s_xxx)
+    components/         console · countup · devops(∞ 다이어그램)
+  pages/space/
+    section/home.tsx    로딩 화면 + ThreeSpace 마운트
+    components/         SpaceLoading · TwinkleBadge
+    three/              3D 월드. index.tsx 가 오케스트레이터이고 나머지는 전부
+                        {create*() → {update(time|delta), dispose()}} 형태의 모듈:
+                        sky · starfield · fireflies · entrances · city ·
+                        ground-repair · astronaut · character · camera-rig ·
+                        keyboard · assets(모델 프로미스 캐시) · hud.tsx
+  components/           페이지 두 곳 이상이 쓰는 것만: layout/ · logo · language ·
+                        modal · project
   data/
     i18n.ts             UI 문자열 카탈로그 (ko / en)
     config.tsx          프로필 · 사이트 메타
-    career.tsx  project.tsx  skill.tsx  link.tsx
+    career.tsx  project.tsx  link.tsx
   assets/css/
     style.css           토큰 + 전체 스타일 (단일 출처)
     dark.css            body[data-theme="dark"] 토큰 덮어쓰기
@@ -43,6 +52,27 @@ src/
 (webpack.config.js 와 tsconfig.json 양쪽에 정의 — 하나만 고치면 안 됩니다)
 
 ## 이 저장소의 규칙
+
+### 컴포넌트 배치
+
+한 페이지에서만 쓰는 컴포넌트는 `pages/<page>/components/` 에 둡니다.
+`components/` 최상위는 **두 페이지 이상이 실제로 import 하는 것**만 남깁니다 —
+전부 `components/section/` 에 몰아넣던 시절엔 아무도 안 쓰는 컴포넌트가
+섞여 있어도 티가 나지 않았습니다.
+
+### Space 3D
+
+`pages/space/three/` 의 모듈은 씬 그래프에 자기 오브젝트를 추가하고
+`update`/`dispose` 를 돌려주는 팩토리입니다. render 루프(`index.tsx`)는
+프레임마다 그 `update` 만 호출합니다 — 새 요소를 넣을 때도 루프를 건드리지 말고
+모듈을 하나 더 만드세요.
+
+* **모델은 `assets.ts` 를 통해서만 로드합니다.** 완성된 씬이 아니라 로딩
+  *프로미스*를 캐시합니다. 같은 GLTF 를 동시에 두 번 파싱하면 `THREE.Cache`
+  를 두고 경쟁하다 진 쪽 텍스처가 빈 채로 남아 밤하늘이 통째로 검게 나옵니다.
+* **실제 광원(PointLight)을 늘리지 마세요.** forward 렌더러라 조명 하나가
+  130만 삼각형 도시 전체의 프래그먼트 비용에 곱해집니다. "불빛이 많아 보이는"
+  연출은 additive 스프라이트(`fireflies.ts`)로 합니다.
 
 ### CSS
 
