@@ -10,7 +10,7 @@ const Logo = () => {
         <div className="logo" translate="no">
             <Link to={"/"} title={t({ko: '메인페이지 이동', en: 'Go to home'})}>
                 <div className="logo-mark">HJ</div>
-                <div className="title">{config.profile.name.english}</div>
+                <div className="title">{t(config.profile.name)}</div>
             </Link>
         </div>
     );

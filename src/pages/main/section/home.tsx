@@ -38,10 +38,11 @@ const HomeSection = () => {
                     </div>
                     <div className="hero-kicker">{t.hero.kicker}</div>
                     <h1 className="hero-title">
+                        {/* 인사말은 언어마다 문장 구조가 달라 이름만 갈아끼울 수 없습니다 */}
                         {language === 'ko' ? (
-                            <>안녕하세요,<br/><em>{config.profile.name.korean}</em>입니다.</>
+                            <>안녕하세요,<br/><em>{config.profile.name.ko}</em>입니다.</>
                         ) : (
-                            <>Hello I'm<br/><em>{config.profile.name.english}</em></>
+                            <>Hello I'm<br/><em>{config.profile.name.en}</em></>
                         )}
                     </h1>
                     <p className="hero-desc">

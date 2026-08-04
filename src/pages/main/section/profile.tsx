@@ -17,9 +17,9 @@ const capabilities = [
 ];
 
 const ProfileSection = () => {
-    const {language} = useLocale();
+    const {language, t: localize} = useLocale();
     const t = translations[language].profile;
-    const name = language === 'ko' ? config.profile.name.korean : config.profile.name.english;
+    const name = localize(config.profile.name);
     const [activeId, setActiveId] = useState<string | null>(null);
 
     /** 문장 대신 라벨/값으로 읽는 시간을 줄입니다. */

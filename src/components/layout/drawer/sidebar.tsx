@@ -65,10 +65,10 @@ const SidebarDrawer = () => {
                     </Box>
                     <Box sx={{minWidth: 0}}>
                         <Typography sx={{fontSize: 16, fontWeight: 600, lineHeight: 1.3}}>
-                            {config.profile.name.korean}
+                            {t(config.profile.name)}
                         </Typography>
                         <Typography sx={{fontSize: 12.5, color: 'var(--muted)', lineHeight: 1.4}}>
-                            {config.profile.jobs[1]}
+                            {t(config.profile.job)}
                         </Typography>
                     </Box>
                 </Stack>

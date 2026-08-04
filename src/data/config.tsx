@@ -1,21 +1,20 @@
 import React, {ReactNode} from "react";
 import {FaCalendar, FaMailBulk, FaPhoneAlt, FaUser, FaUserGraduate, FaUserTie} from "react-icons/fa";
 import {Tooltip} from "@mui/material";
-
-export interface MultiLanguage {
-    korean: string
-    english?: string
-    chinese?: string
-}
+import {LocalizedText} from "@Utils/i18n";
 
 export interface IPerson {
-    name: MultiLanguage,
+    /** 화면에 나가는 값은 @Utils/i18n 의 Localized 규약을 따릅니다 — t(config.profile.name) 으로 씁니다. */
+    name: LocalizedText,
+    /** 표기용 보관값. 현재 화면에는 노출하지 않습니다. */
+    nameChinese: string
     nickname: string
     birth: string,
     tel: string,
     email: string
     degree: string
-    jobs: string[]
+    /** 이름 아래 한 줄로 붙는 직함 (사이드바 프로필) */
+    job: LocalizedText
 }
 
 export interface IConfig {
@@ -28,13 +27,14 @@ const config: IConfig = {
     logoText: 'Twinkle',
     titleText: "Twinkle's Portfolio",
     profile: {
-        name: {korean: '김희정', english: 'Heejeong Kim', chinese: '金禧呈'},
+        name: {ko: '김희정', en: 'Heejeong Kim'},
+        nameChinese: '金禧呈',
         nickname: 'Twinkle',
         birth: '1997.08.06',
         tel: '010-5705-9594',
         email: 'developer.heejeong@gmail.com',
         degree: 'Bachelor of Computer Engineering',
-        jobs: ['Full-Stack Developer', 'Backend Developer']
+        job: {ko: '백엔드 개발자', en: 'Backend Developer'}
     }
 }
 
@@ -45,7 +45,7 @@ export interface IProfile {
 }
 
 export const profiles: IProfile[] = [
-    {title: '이름', text: config.profile.name.korean, icon: (<FaUser/>)},
+    {title: '이름', text: config.profile.name.ko, icon: (<FaUser/>)},
     {title: '생년월일', text: config.profile.birth, icon: (<FaCalendar/>)},
     {title: '경력', text: "실무 만 5년", icon: (<FaUserTie/>)},
     {
