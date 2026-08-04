@@ -643,7 +643,7 @@ span.pc {
 #s_project::after,
 #s_skill::after {
     position: absolute;
-    top: 2.5rem;
+    top: clamp(3.75rem, 8vw, 7rem);
     /* 화면 오른쪽 끝 — 글자가 14vw 라 컬럼 기준으로 잡으면 왼쪽으로 번집니다 */
     right: max(2rem, calc((100% - var(--content-width)) / 2 + 1rem));
     left: auto;
