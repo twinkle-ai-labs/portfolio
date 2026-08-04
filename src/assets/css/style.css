@@ -553,7 +553,6 @@ span.pc {
     background-color: var(--skill-bg);
 }
 
-#s_home,
 #s_career,
 #s_skill {
     background-image:
@@ -595,7 +594,6 @@ span.pc {
 }
 
 .section-title {
-    max-width: 860px;
     color: var(--ink);
     font-size: clamp(1.95rem, 1.35rem + 2.6vw, 3.1rem);
     line-height: 1.18;
@@ -632,13 +630,24 @@ span.pc {
     overflow: hidden;
 }
 
-#s_profile::before,
-#s_career::before,
-#s_project::before,
-#s_skill::before {
+/*
+ * 섹션 번호 워터마크.
+ * ::after 를 쓰는 이유: 다크 테마의 `.section::before { inset: 0 }` 별무늬 오버레이와
+ * 같은 의사요소를 두고 부딪힙니다. ID 선택자라 top/right 는 이겨도 inset 이 함께 깔아둔
+ * left:0 / bottom:0 은 남아 상자가 섹션 폭 전체로 늘어나고, 그러면 상속된
+ * text-align: center 때문에 숫자가 화면 한가운데 찍혔습니다.
+ * ::after 로 옮기면 별무늬도 살아나고 숫자는 자기 상자만 갖습니다.
+ */
+#s_profile::after,
+#s_career::after,
+#s_project::after,
+#s_skill::after {
     position: absolute;
     top: 2.5rem;
+    /* 화면 오른쪽 끝 — 글자가 14vw 라 컬럼 기준으로 잡으면 왼쪽으로 번집니다 */
     right: max(2rem, calc((100% - var(--content-width)) / 2 + 1rem));
+    left: auto;
+    bottom: auto;
     z-index: 0;
     color: var(--ink);
     opacity: 0.035;
@@ -650,19 +659,19 @@ span.pc {
     user-select: none;
 }
 
-#s_profile::before {
+#s_profile::after {
     content: '01';
 }
 
-#s_career::before {
+#s_career::after {
     content: '02';
 }
 
-#s_project::before {
+#s_project::after {
     content: '03';
 }
 
-#s_skill::before {
+#s_skill::after {
     content: '04';
 }
 
@@ -1385,6 +1394,7 @@ span.pc {
 
 .profile-fact dd {
     display: flex;
+    flex-direction: column;
     flex-wrap: wrap;
     align-items: baseline;
     gap: 0.55rem;
@@ -1452,7 +1462,6 @@ span.pc {
 }
 
 .profile-block-title {
-    max-width: 720px;
     margin-top: 0.55rem;
     color: var(--ink);
     font-size: clamp(1.3rem, 0.95rem + 1.25vw, 1.85rem);
@@ -1472,7 +1481,6 @@ span.pc {
 }
 
 .profile-block-desc {
-    max-width: 640px;
     margin-top: 0.85rem;
     color: var(--muted);
     font-size: clamp(0.97rem, 0.88rem + 0.4vw, 1.06rem);
