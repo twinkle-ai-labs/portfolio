@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {raycastCity} from './city-raycast';
 
 // 격자 해상도·탐색 범위 등 지형 복구 튜닝 값
 const CELL = 0.3;               // grid resolution — fine enough that patch edges read as straight
@@ -184,7 +185,7 @@ export const repairCityGround = (building: any): SampleGroundY => {
             for (let sz = -48; sz <= 48; sz += 12) {
                 if (Math.sqrt(sx * sx + sz * sz) > PLAY_RADIUS) continue;
                 sampleRay.set(new THREE.Vector3(sx, 200, sz), sampleDir);
-                const hit = sampleRay.intersectObject(building, true)
+                const hit = raycastCity(sampleRay, building)
                     .find((h: any) => Math.abs(h.point.y - deckLevel) < 0.5);
                 const hitMat = hit && (Array.isArray((hit.object as any).material) ? (hit.object as any).material[0] : (hit.object as any).material);
                 if (!hitMat || !hitMat.color) continue;

@@ -104,7 +104,13 @@ module.exports = (env, argv) => {
             new CleanWebpackPlugin(),
             new CopyWebpackPlugin({
                 patterns: [
-                    {from: 'src/assets/models', to: 'models'},
+                    // interior_7.glb(31MB)은 어디서도 로드되지 않는데 폴더째 복사되는 바람에
+                    // 배포물에 그대로 실려 나갔다. 실제로 쓰는 모델만 내보낸다.
+                    {
+                        from: 'src/assets/models',
+                        to: 'models',
+                        globOptions: {ignore: ['**/interior_7.glb']},
+                    },
                     {from: 'src/assets/pdf', to: 'pdf'},
                     {from: 'src/assets/images/star-bubble.png', to: 'logo.png'},
                     {from: 'template/robots.txt', to: 'robots.txt'},

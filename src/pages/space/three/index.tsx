@@ -46,6 +46,11 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
         renderer.setSize(container.clientWidth, container.clientHeight, false);
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = THREE.PCFShadowMap; // Optimized PCF shadow mapping (fast hardware-filtered edges)
+        // 그림자 맵을 매 프레임 다시 굽지 않는다. 도시(삼각형 128만 개)와 태양은 붙박이라
+        // 그림자가 달라질 일이 없고, 움직이는 건 우주비행사 하나뿐이다. 아래 render 루프가
+        // 몇 프레임에 한 번만 needsUpdate를 세운다.
+        renderer.shadowMap.autoUpdate = false;
+        renderer.shadowMap.needsUpdate = true; // 첫 굽기
 
         // Enable modern Three.js sRGB color space output and cinema tone mapping
         renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -198,6 +203,7 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
 
         // --- Render loop ------------------------------------------------------------------------
         let animationFrame = 0;
+        let frame = 0;
 
         const render = () => {
             // Clamp to guard against huge spikes (tab backgrounded/throttled, GC pause, heavy
@@ -208,10 +214,16 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
 
             starfield.update(time);
             fireflies.update(time);
-            entranceBeacons?.update(time);
+            entranceBeacons?.update(time, astronaut.mesh.position);
 
             const {isWalking} = characterController.update(delta, time, buildingGroup);
             cameraRig.update(delta, astronaut.mesh, isWalking);
+
+            // 우주비행사의 그림자만 따라오면 된다. 3프레임에 한 번이면 60fps에서 20Hz —
+            // 최대 33ms 뒤처지는데 눈에 띄지 않고, 도시를 그림자 맵에 다시 그리는 일은
+            // 3분의 1로 줄어든다.
+            frame++;
+            if (frame % 3 === 0) renderer.shadowMap.needsUpdate = true;
 
             renderer.render(scene, camera);
 

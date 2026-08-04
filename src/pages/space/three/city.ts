@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {raycastCity, setCityMaterials} from './city-raycast';
 import {repairCityGround, SampleGroundY} from './ground-repair';
 
 export interface PreparedCity {
@@ -29,39 +30,57 @@ export const prepareCity = (building: any): PreparedCity => {
     // Force world matrix update immediately so Raycaster can query accurate world coords
     building.updateMatrixWorld(true);
 
+    const allMaterials: any[] = [];
+    building.traverse((child: any) => {
+        if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+
+            // 삼각형 128만 개짜리 모델이다. 트리를 미리 세워두지 않으면 레이 한 방마다
+            // 전부 훑는다. clone()은 지오메트리를 공유하므로 재마운트해도 다시 짓지 않는다.
+            if (child.geometry && !child.geometry.boundsTree) {
+                child.geometry.computeBoundsTree();
+            }
+
+            // Boost materials if needed, e.g., enabling emissive lighting for window glows
+            const materials = Array.isArray(child.material) ? child.material : [child.material];
+            materials.forEach((material: any) => {
+                if (material) {
+                    // 그릴 때는 앞면만 — 뒷면 컬링이 꺼져 있으면 건물 안쪽의 보이지도 않는
+                    // 면까지 전부 래스터라이즈된다. 충돌 판정용 양면은 raycastCity가 맡는다.
+                    material.side = THREE.FrontSide;
+                    material.roughness = Math.max(material.roughness, 0.4);
+                    if (material.emissive && material.emissive.getHex() !== 0) {
+                        material.emissiveIntensity = Math.max(material.emissiveIntensity, 1.5);
+                    }
+                    allMaterials.push(material);
+                }
+            });
+        }
+    });
+    setCityMaterials(allMaterials);
+
     // Dynamically detect the exact floor height at (0, 0) by casting a test ray down
     const testRaycaster = new THREE.Raycaster();
     const testOrigin = new THREE.Vector3(0, 500, 0);
     const testDirection = new THREE.Vector3(0, -1, 0);
     testRaycaster.set(testOrigin, testDirection);
 
-    const testIntersects = testRaycaster.intersectObject(building, true);
+    const testIntersects = raycastCity(testRaycaster, building);
     let spawnHeight = 0;
     if (testIntersects.length > 0) {
         spawnHeight = testIntersects[0].point.y;
     }
 
-    building.traverse((child: any) => {
-        if (child.isMesh) {
-            child.castShadow = true;
-            child.receiveShadow = true;
+    const sampleGroundY = repairCityGround(building);
 
-            // Boost materials if needed, e.g., enabling emissive lighting for window glows
-            const materials = Array.isArray(child.material) ? child.material : [child.material];
-            materials.forEach((material: any) => {
-                if (material) {
-                    // Force DoubleSide so raycasting hits floors/ceilings from either side!
-                    material.side = THREE.DoubleSide;
-                    material.roughness = Math.max(material.roughness, 0.4);
-                    if (material.emissive && material.emissive.getHex() !== 0) {
-                        material.emissiveIntensity = Math.max(material.emissiveIntensity, 1.5);
-                    }
-                }
-            });
+    // 복구 패치도 캐릭터가 밟는 바닥이다 — 여기 트리가 없으면 그 위를 걷는 동안만
+    // 레이캐스트가 선형 탐색으로 되돌아간다.
+    building.traverse((child: any) => {
+        if (child.isMesh && child.geometry && !child.geometry.boundsTree) {
+            child.geometry.computeBoundsTree();
         }
     });
-
-    const sampleGroundY = repairCityGround(building);
 
     return {building, spawnHeight, sampleGroundY};
 };

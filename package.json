@@ -38,6 +38,7 @@
     "react-spinners": "^0.13.8",
     "redux": "^5.0.1",
     "three": "^0.185.1",
+    "three-mesh-bvh": "^0.9.14",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

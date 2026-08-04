@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import {AstronautRig} from './astronaut';
+import {raycastCity} from './city-raycast';
 import {SpaceKeys} from './types';
 
 const walkSpeed = 7;
@@ -29,6 +30,10 @@ export const createCharacterController = (astronaut: AstronautRig, keys: SpaceKe
     const raycaster = new THREE.Raycaster();
     const collisionRaycaster = new THREE.Raycaster();
     collisionRaycaster.far = 1.1;
+    // 벽 판정은 "하나라도 맞았나"만 본다 — BVH가 첫 교차에서 탐색을 멈추게 한다.
+    // (지면 레이는 쓸 수 없다. 아래에서 모든 교차를 훑어 캐릭터 높이에 가장 가까운
+    //  면을 고르기 때문이다.)
+    (collisionRaycaster as any).firstHitOnly = true;
 
     let lastCharX = Infinity;
     let lastCharZ = Infinity;
@@ -57,7 +62,7 @@ export const createCharacterController = (astronaut: AstronautRig, keys: SpaceKe
                 raycaster.set(rayOrigin, rayDirection);
 
                 // Recursively intersect with the entire building group
-                const intersects = raycaster.intersectObject(buildingGroup, true);
+                const intersects = raycastCity(raycaster, buildingGroup);
                 if (intersects.length > 0) {
                     cachedHasGround = true;
                     // Find the intersection that is closest to the character's current height,
@@ -222,7 +227,7 @@ export const createCharacterController = (astronaut: AstronautRig, keys: SpaceKe
                     collisionOrigin.y += 0.8; // waist height of 2-unit tall character
 
                     collisionRaycaster.set(collisionOrigin, moveDir);
-                    const wallIntersects = collisionRaycaster.intersectObject(buildingGroup, true);
+                    const wallIntersects = raycastCity(collisionRaycaster, buildingGroup);
                     if (wallIntersects.length > 0) {
                         canTranslate = false; // block walking through walls/buildings!
                     }
