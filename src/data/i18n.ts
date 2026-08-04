@@ -241,17 +241,17 @@ const translations: Record<'ko' | 'en', ITranslations> = {
                 twinkle: 'Twinkle Space',
                 modalTitle: 'Twinkle Space',
                 modalDesc: [
-                    'Twinkle Space은 사용자의 포인터를 따라 캐릭터가 산책하는 포근한 3D 방을 테마로 합니다.',
-                    'Three.js로 침대, 책상, 창문, 조명, 식물, 러그를 배치해 개인 작업실 같은 분위기를 만들었습니다.',
-                    '따뜻한 조명과 창밖의 밤하늘은 포트폴리오에 편안하고 감각적인 인터랙션을 더합니다.'
+                    'Twinkle Space는 Three.js로 만든 미니 SF 도시를 캐릭터가 직접 걸어 다니며 탐험하는 공간입니다.',
+                    'WASD나 화살표 키, 화면의 조이스틱으로 이동하고, Shift로 달리고, Space로 점프할 수 있어요.',
+                    '반짝이는 표식이 보이는 건물은 안으로 들어가 내부까지 둘러볼 수 있습니다.'
                 ],
             },
             space: {
-                title: 'Twinkle Room',
+                title: 'Twinkle Space',
                 desc: [
-                    'Three.js 엔진으로 꾸민 포근한 3D 방입니다.',
-                    '마우스나 터치로 바닥 위 위치를 가리키면 캐릭터가 그 방향으로 걸어갑니다.',
-                    '침대, 책상, 조명, 식물이 놓인 방 안을 직접 산책해보세요.'
+                    'Three.js 엔진으로 만든 미니 SF 도시를 자유롭게 걸어 다니는 공간입니다.',
+                    'WASD/화살표 키나 조이스틱으로 이동하고, Shift로 달리고, Space로 점프해보세요.',
+                    '반짝이는 표식이 있는 건물은 안으로 들어가 내부까지 탐험할 수 있습니다.'
                 ],
                 loading: '로딩중',
                 loadingTips: [
@@ -381,20 +381,20 @@ const translations: Record<'ko' | 'en', ITranslations> = {
             ],
         },
             badge: {
-                twinkle: 'Twinkle Room',
-                modalTitle: 'Twinkle Room',
+                twinkle: 'Twinkle Space',
+                modalTitle: 'Twinkle Space',
                 modalDesc: [
-                    'Twinkle Room is a cozy 3D room where the character walks toward your pointer.',
-                    'Built with Three.js, the scene combines a bed, desk, window, lights, plant and rug to feel like a personal studio.',
-                    'Warm lighting and the night sky outside the window add a calm, tactile interaction to the portfolio.'
+                    'Twinkle Space is a miniature sci-fi city built with Three.js that you walk around and explore in person.',
+                    'Move with WASD or the arrow keys (or the on-screen joystick), hold Shift to run, and press Space to jump.',
+                    'Buildings marked with a glowing beacon can be entered — walk inside to look around.'
                 ],
             },
             space: {
                 title: 'Twinkle Space',
                 desc: [
-                    'This is a cozy 3D room implemented with the Three.js engine.',
-                    'Move your mouse or touch the floor to guide the character.',
-                    'Walk around the room with the bed, desk, lighting and plants.'
+                    'A miniature sci-fi city built with the Three.js engine, free to walk around.',
+                    'Move with WASD/arrow keys or the joystick, hold Shift to run, and press Space to jump.',
+                    'Buildings marked with a glowing beacon can be entered and explored inside.'
                 ],
                 loading: 'Loading...',
                 loadingTips: [

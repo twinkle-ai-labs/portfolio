@@ -7,6 +7,29 @@ interface IThreeSpaceProps {
     onProgress?: (percent: number) => void
 }
 
+interface IDPadKeys {
+    up: string;
+    left: string;
+    right: string;
+    down: string;
+}
+
+const DPAD_ARROWS: IDPadKeys = {up: '▲', left: '◀', right: '▶', down: '▼'};
+const DPAD_WASD: IDPadKeys = {up: 'W', left: 'A', right: 'D', down: 'S'};
+
+// Small directional-pad graphic: keys/icons laid out in their true up/left/right/down spatial
+// arrangement (a plus/cross shape) instead of a flat row — used for both WASD and the arrow keys,
+// since W/A/S/D sit in exactly the same cross shape on a real keyboard (W above, A/S/D below).
+const DPad = ({keys = DPAD_ARROWS, size = 'sm'}: {keys?: IDPadKeys; size?: 'sm' | 'lg'}) => (
+    <div className={`space-dpad space-dpad-${size}`}>
+        <span className="space-dpad-cell space-dpad-up">{keys.up}</span>
+        <span className="space-dpad-cell space-dpad-left">{keys.left}</span>
+        <span className="space-dpad-cell space-dpad-center"/>
+        <span className="space-dpad-cell space-dpad-right">{keys.right}</span>
+        <span className="space-dpad-cell space-dpad-down">{keys.down}</span>
+    </div>
+);
+
 const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
     const containerRef = useRef<HTMLDivElement | null>(null);
     const keysRef = useRef({ 
@@ -230,7 +253,7 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
         let sky: InstanceType<typeof THREE.Group> | null = null;
 
         // Real per-asset loading progress (sky dome, character, city) averaged into one 0-100 figure for the loading screen
-        const assetProgress = {sky: 0, character: 0, building: 0};
+        const assetProgress = {sky: 0, building: 0}; // the character itself is procedural — no download to track
         const reportProgress = () => {
             const values = Object.values(assetProgress);
             const overall = values.reduce((a, b) => a + b, 0) / values.length;
@@ -350,311 +373,215 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
         scene.add(starfield);
 
         // 2. Procedural Space Astronaut Character Construction
+        // Builds a cute chibi-style astronaut entirely in code — oversized helmet, chubby body,
+        // pastel-pink accents, glowing eyes and blush marks inside the visor. A proper joint
+        // hierarchy (shoulder → elbow, hip → knee) lets limbs genuinely bend while animating.
+        // The soles of the boots sit exactly at y = 0, so physics can drive the root directly.
         const createAstronaut = () => {
-            const group = new THREE.Group();
+            const root = new THREE.Group();
+            // Animation bobs and leans this inner group, so the root's y stays owned purely by physics
+            const body = new THREE.Group();
+            root.add(body);
 
-            // Quality materials with nice metallic/roughness adjustments
             const suitMaterial = new THREE.MeshStandardMaterial({
-                color: 0xf8fafc, // Clean slate white
+                color: 0xfdf2f8, // Milky white with the faintest pink blush
                 roughness: 0.5,
+                metalness: 0.08
+            });
+
+            const accentMaterial = new THREE.MeshStandardMaterial({
+                color: 0xf472b6, // Candy pink plating
+                roughness: 0.35,
+                metalness: 0.35
+            });
+
+            const jointMaterial = new THREE.MeshStandardMaterial({
+                color: 0xc4b5fd, // Soft lavender joints
+                roughness: 0.7,
                 metalness: 0.15
             });
 
-            const armorMaterial = new THREE.MeshStandardMaterial({
-                color: 0x4f46e5, // Cosmic Indigo accents
-                roughness: 0.3,
-                metalness: 0.7
+            const visorGlassMaterial = new THREE.MeshStandardMaterial({
+                color: 0x312e81, // Deep indigo glass
+                roughness: 0.12,
+                metalness: 0.85,
+                emissive: 0x312e81,
+                emissiveIntensity: 0.25
             });
 
-            const visorMaterial = new THREE.MeshStandardMaterial({
-                color: 0x06b6d4, // Cyan visor
-                emissive: 0x0891b2, // Glowing
-                emissiveIntensity: 0.9,
-                roughness: 0.1,
-                metalness: 0.9
+            const eyeMaterial = new THREE.MeshStandardMaterial({
+                color: 0xffffff,
+                emissive: 0xffffff,
+                emissiveIntensity: 1.8
             });
 
-            const rubberMaterial = new THREE.MeshStandardMaterial({
-                color: 0x1e293b, // Dark joints/details
-                roughness: 0.8,
-                metalness: 0.1
+            const blushMaterial = new THREE.MeshStandardMaterial({
+                color: 0xfda4af, // Rosy cheeks
+                emissive: 0xfb7185,
+                emissiveIntensity: 0.55,
+                roughness: 0.6
             });
 
-            // Torso (Main spacesuit body)
-            const torsoGeom = new THREE.CylinderGeometry(0.4, 0.32, 1.0, 16);
-            const torso = new THREE.Mesh(torsoGeom, suitMaterial);
-            torso.position.y = 0.95;
-            torso.castShadow = true;
-            torso.receiveShadow = true;
-            group.add(torso);
+            const glowPinkMaterial = new THREE.MeshStandardMaterial({
+                color: 0xf9a8d4,
+                emissive: 0xf472b6,
+                emissiveIntensity: 2.2
+            });
 
-            // Jetpack (Cosmic backpack)
-            const packGeom = new THREE.BoxGeometry(0.55, 0.75, 0.32);
-            const jetpack = new THREE.Mesh(packGeom, armorMaterial);
-            jetpack.position.set(0, 0.95, -0.3);
-            jetpack.castShadow = true;
-            group.add(jetpack);
+            const add = (
+                parent: InstanceType<typeof THREE.Object3D>,
+                geom: any,
+                mat: any,
+                x: number, y: number, z: number
+            ) => {
+                const mesh = new THREE.Mesh(geom, mat);
+                mesh.position.set(x, y, z);
+                mesh.castShadow = true;
+                mesh.receiveShadow = true;
+                parent.add(mesh);
+                return mesh;
+            };
 
-            // Life Support Chest Plate
-            const chestGeom = new THREE.BoxGeometry(0.4, 0.28, 0.12);
-            const chestPlate = new THREE.Mesh(chestGeom, armorMaterial);
-            chestPlate.position.set(0, 1.05, 0.22);
-            chestPlate.castShadow = true;
-            group.add(chestPlate);
+            // --- Torso: small round marshmallow body (chibi proportions: body < head) ---
+            add(body, new THREE.CapsuleGeometry(0.26, 0.16, 6, 18), suitMaterial, 0, 0.82, 0);
+            // Heart-light on the chest
+            add(body, new THREE.SphereGeometry(0.05, 12, 12), glowPinkMaterial, 0, 0.88, 0.24);
+            // Tiny belt line
+            add(body, new THREE.CylinderGeometry(0.235, 0.235, 0.06, 18), accentMaterial, 0, 0.63, 0);
 
-            // Head (Round helmet)
-            const headGeom = new THREE.SphereGeometry(0.36, 20, 20);
-            const helmet = new THREE.Mesh(headGeom, suitMaterial);
-            helmet.position.set(0, 1.62, 0);
-            helmet.castShadow = true;
-            group.add(helmet);
+            // Rounded mini backpack with twin thrusters
+            add(body, new THREE.CapsuleGeometry(0.16, 0.16, 6, 14), accentMaterial, 0, 0.86, -0.28);
+            const thrusterGeom = new THREE.CylinderGeometry(0.05, 0.065, 0.10, 10);
+            add(body, thrusterGeom, jointMaterial, -0.09, 0.66, -0.28);
+            add(body, thrusterGeom, jointMaterial, 0.09, 0.66, -0.28);
 
-            // Glowing Visor (Cyber Astronaut Face)
-            const visorGeom = new THREE.SphereGeometry(0.28, 16, 16, 0, Math.PI * 2, 0, Math.PI / 1.7);
-            const visor = new THREE.Mesh(visorGeom, visorMaterial);
-            visor.rotation.x = Math.PI / 1.9;
-            visor.position.set(0, 1.62, 0.14);
-            group.add(visor);
+            // --- Head: BIG bubble helmet ---
+            add(body, new THREE.CylinderGeometry(0.13, 0.13, 0.07, 16), jointMaterial, 0, 1.06, 0); // neck ring
+            add(body, new THREE.SphereGeometry(0.36, 24, 24), suitMaterial, 0, 1.40, 0);
+            // Visor glass: a big friendly window across the face.
+            // (three.js sphere phi=π/2 faces +Z, so start at π/2 − length/2 to center the window on the face)
+            const visorPhiLength = Math.PI / 1.2;
+            const visor = add(
+                body,
+                new THREE.SphereGeometry(0.37, 24, 20, Math.PI / 2 - visorPhiLength / 2, visorPhiLength, Math.PI / 4.2, Math.PI / 2.4),
+                visorGlassMaterial,
+                0, 1.40, 0
+            );
+            visor.castShadow = false;
+            // Sparkly eyes (slightly oval) + tiny highlight dots
+            const eyeGeom = new THREE.SphereGeometry(0.045, 12, 12);
+            const leftEye = add(body, eyeGeom, eyeMaterial, -0.11, 1.43, 0.335);
+            const rightEye = add(body, eyeGeom, eyeMaterial, 0.11, 1.43, 0.335);
+            leftEye.scale.set(1, 1.5, 0.5);
+            rightEye.scale.set(1, 1.5, 0.5);
+            // Rosy blush cheeks just under the eyes
+            const blushGeom = new THREE.SphereGeometry(0.035, 10, 10);
+            const leftBlush = add(body, blushGeom, blushMaterial, -0.19, 1.33, 0.30);
+            const rightBlush = add(body, blushGeom, blushMaterial, 0.19, 1.33, 0.30);
+            leftBlush.scale.set(1.3, 0.8, 0.5);
+            rightBlush.scale.set(1.3, 0.8, 0.5);
+            // Side pods — like little space headphones
+            add(body, new THREE.SphereGeometry(0.09, 12, 12), accentMaterial, -0.34, 1.40, 0);
+            add(body, new THREE.SphereGeometry(0.09, 12, 12), accentMaterial, 0.34, 1.40, 0);
+            // Bouncy antenna with a glowing pink bobble
+            add(body, new THREE.CylinderGeometry(0.012, 0.012, 0.14, 6), jointMaterial, 0, 1.82, 0);
+            add(body, new THREE.SphereGeometry(0.05, 10, 10), glowPinkMaterial, 0, 1.91, 0);
 
-            // Neck ring
-            const neckGeom = new THREE.CylinderGeometry(0.22, 0.22, 0.08, 16);
-            const neck = new THREE.Mesh(neckGeom, rubberMaterial);
-            neck.position.y = 1.45;
-            group.add(neck);
-
-            // Arm parts helper
+            // --- Arms: stubby and huggable (shoulder pivot → elbow pivot → mitten) ---
             const createArm = (isLeft: boolean) => {
-                const armGroup = new THREE.Group();
-                const shoulderOffset = isLeft ? -0.52 : 0.52;
-                armGroup.position.set(shoulderOffset, 1.3, 0);
+                const side = isLeft ? -1 : 1;
 
-                // Upper arm
-                const upperArmGeom = new THREE.CylinderGeometry(0.12, 0.1, 0.5, 8);
-                const upperArm = new THREE.Mesh(upperArmGeom, suitMaterial);
-                upperArm.position.y = -0.22;
-                upperArm.castShadow = true;
-                armGroup.add(upperArm);
+                const shoulder = new THREE.Group();
+                shoulder.position.set(side * 0.30, 0.96, 0);
+                body.add(shoulder);
 
-                // Shoulder joint
-                const shoulderGeom = new THREE.SphereGeometry(0.14, 12, 12);
-                const shoulder = new THREE.Mesh(shoulderGeom, rubberMaterial);
-                shoulder.position.set(0, 0, 0);
-                armGroup.add(shoulder);
+                add(shoulder, new THREE.SphereGeometry(0.09, 12, 12), accentMaterial, 0, 0, 0);
+                add(shoulder, new THREE.CapsuleGeometry(0.07, 0.10, 4, 10), suitMaterial, 0, -0.11, 0);
 
-                // Glove
-                const gloveGeom = new THREE.SphereGeometry(0.1, 10, 10);
-                const glove = new THREE.Mesh(gloveGeom, armorMaterial);
-                glove.position.set(0, -0.48, 0);
-                armGroup.add(glove);
+                const elbow = new THREE.Group();
+                elbow.position.set(0, -0.22, 0);
+                shoulder.add(elbow);
 
-                return armGroup;
+                add(elbow, new THREE.SphereGeometry(0.06, 10, 10), jointMaterial, 0, 0, 0);
+                add(elbow, new THREE.CapsuleGeometry(0.065, 0.08, 4, 10), suitMaterial, 0, -0.09, 0);
+                add(elbow, new THREE.SphereGeometry(0.085, 12, 12), accentMaterial, 0, -0.20, 0); // mitten
+
+                return {shoulder, elbow};
             };
 
             const leftArm = createArm(true);
             const rightArm = createArm(false);
-            group.add(leftArm);
-            group.add(rightArm);
 
-            // Leg parts helper
+            // --- Legs: short and chubby (hip pivot → knee pivot → rounded bootie) ---
             const createLeg = (isLeft: boolean) => {
-                const legGroup = new THREE.Group();
-                const hipOffset = isLeft ? -0.22 : 0.22;
-                legGroup.position.set(hipOffset, 0.5, 0);
+                const side = isLeft ? -1 : 1;
 
-                // Leg shaft
-                const legGeom = new THREE.CylinderGeometry(0.14, 0.11, 0.58, 8);
-                const leg = new THREE.Mesh(legGeom, suitMaterial);
-                leg.position.y = -0.25;
-                leg.castShadow = true;
-                legGroup.add(leg);
+                const hip = new THREE.Group();
+                hip.position.set(side * 0.13, 0.55, 0);
+                body.add(hip);
 
-                // Hip joint
-                const hipGeom = new THREE.SphereGeometry(0.15, 12, 12);
-                const hip = new THREE.Mesh(hipGeom, rubberMaterial);
-                hip.position.set(0, 0, 0);
-                legGroup.add(hip);
+                add(hip, new THREE.SphereGeometry(0.10, 12, 12), jointMaterial, 0, 0, 0);
+                add(hip, new THREE.CapsuleGeometry(0.09, 0.10, 4, 10), suitMaterial, 0, -0.11, 0);
 
-                // Boot (Astronaut space shoe)
-                const bootGeom = new THREE.BoxGeometry(0.18, 0.12, 0.32);
-                const boot = new THREE.Mesh(bootGeom, armorMaterial);
-                boot.position.set(0, -0.56, 0.06);
-                boot.castShadow = true;
-                legGroup.add(boot);
+                const knee = new THREE.Group();
+                knee.position.set(0, -0.24, 0);
+                hip.add(knee);
 
-                return legGroup;
+                add(knee, new THREE.SphereGeometry(0.075, 10, 10), jointMaterial, 0, 0, 0);
+                add(knee, new THREE.CapsuleGeometry(0.08, 0.08, 4, 10), suitMaterial, 0, -0.09, 0);
+                const bootie = add(knee, new THREE.SphereGeometry(0.10, 14, 14), accentMaterial, 0, -0.24, 0.03);
+                bootie.scale.set(1.1, 0.7, 1.4); // squished into a cute rounded shoe
+
+                return {hip, knee};
             };
 
             const leftLeg = createLeg(true);
             const rightLeg = createLeg(false);
-            group.add(leftLeg);
-            group.add(rightLeg);
+
+            // --- Jump exhaust: pink sparkle flames out of the mini backpack while airborne ---
+            const flameGeom = new THREE.ConeGeometry(0.07, 0.28, 10);
+            const flameMaterial = new THREE.MeshBasicMaterial({
+                color: 0xf9a8d4,
+                transparent: true,
+                opacity: 0.85
+            });
+            const flames = [-0.09, 0.09].map((x) => {
+                const flame = new THREE.Mesh(flameGeom, flameMaterial);
+                flame.position.set(x, 0.50, -0.28);
+                flame.rotation.x = Math.PI; // point downward
+                flame.visible = false;
+                body.add(flame);
+                return flame;
+            });
 
             return {
-                mesh: group,
+                mesh: root,
+                body,
                 leftArm,
                 rightArm,
                 leftLeg,
                 rightLeg,
-                torso
+                flames
             };
         };
 
         let characterGroup: InstanceType<typeof THREE.Group> | null = null;
-        let mixer: InstanceType<typeof THREE.AnimationMixer> | null = null;
-        let walkAction: InstanceType<typeof THREE.AnimationAction> | null = null;
-        let idleAction: InstanceType<typeof THREE.AnimationAction> | null = null;
-        let currentAction: InstanceType<typeof THREE.AnimationAction> | null = null;
-        let isProcedural = false;
         let astronautParts: any = null;
         let characterBaseY = 0;
-        let bones: any = null;
         let buildingGroup: InstanceType<typeof THREE.Group> | null = null;
         let verticalVelocity = 0;
         let spawnHeight = 0;
-        let walkTimeScale = 1; // eased playback speed of the walk clip; ramps to 0 on stop so a single-clip GLB decelerates to a natural stand instead of freezing mid-stride
+        let turnRate = 0; // current eased angular velocity (rad/s); ramps toward the target turn speed instead of snapping so direction changes feel smooth, not twitchy
         const entranceBeacons: Array<{ mesh: InstanceType<typeof THREE.Mesh>; seed: number; yBase: number }> = [];
 
-        // Load the custom Ellina GLB character with robust automatic scaling & procedural fallback
-        loader.load('/models/character/ellina.glb', (gltf: any) => {
-            assetProgress.character = 1;
-            reportProgress();
-            console.log('Successfully loaded ellina.glb. Animations:', gltf.animations?.map((a: any) => a.name));
-            const character = gltf.scene;
-            characterGroup = character;
-            
-            // Calculate bounding box of the loaded model to automatically set the scale and position
-            const box = new THREE.Box3().setFromObject(character);
-            const size = box.getSize(new THREE.Vector3());
-            
-            // Set scale based on height so character is exactly 2 units tall
-            const targetHeight = 2.0;
-            const scaleFactor = targetHeight / (size.y || 1.0);
-            character.scale.setScalar(scaleFactor);
-            
-            // Align feet to the ground (y = 0)
-            const bY = -box.min.y * scaleFactor;
-            character.position.y = spawnHeight || bY;
-            characterBaseY = bY;
-            character.position.x = 0;
-            character.position.z = 0; // Spawn exactly at center (X=0, Z=0)
-            
-            // Since ellina.glb uses the deprecated KHR_materials_pbrSpecularGlossiness extension,
-            // core Three.js GLTFLoader ignores its diffuseTexture.
-            // We can dynamically fetch the texture from the GLTF parser and apply it as a standard .map!
-            if (gltf.parser && gltf.parser.getDependency) {
-                gltf.parser.getDependency('texture', 0).then((texture: any) => {
-                    if (texture) {
-                        texture.colorSpace = THREE.SRGBColorSpace; // set correct, beautiful sRGB colors!
-                        character.traverse((child: any) => {
-                            if (child.isMesh) {
-                                child.castShadow = true;
-                                child.receiveShadow = true;
-                                if (child.material) {
-                                    const materials = Array.isArray(child.material) ? child.material : [child.material];
-                                    materials.forEach((material: any, matIdx: number) => {
-                                        if (material) {
-                                            // Convert to modern standard material so it reacts beautifully to our PBR lighting!
-                                            const standardMaterial = new THREE.MeshStandardMaterial({
-                                                map: texture,
-                                                roughness: 0.8,
-                                                metalness: 0.15,
-                                                side: THREE.DoubleSide
-                                            });
-                                            if (Array.isArray(child.material)) {
-                                                child.material[matIdx] = standardMaterial;
-                                            } else {
-                                                child.material = standardMaterial;
-                                            }
-                                        }
-                                    });
-                                }
-                            }
-                        });
-                    }
-                }).catch((err: any) => {
-                    console.warn('Could not load textures for Ellina:', err);
-                });
-            } else {
-                character.traverse((child: any) => {
-                    if (child.isMesh) {
-                        child.castShadow = true;
-                        child.receiveShadow = true;
-                        if (child.material) {
-                            const materials = Array.isArray(child.material) ? child.material : [child.material];
-                            materials.forEach((material: any) => {
-                                if (material) {
-                                    material.roughness = Math.min(material.roughness, 0.7);
-                                }
-                            });
-                        }
-                    }
-                });
-            }
-
-            scene.add(character);
-
-            // Bind skeletal bones for procedural animation (since nova.glb doesn't have baked clips)
-            const findBone = (keyword: string) => {
-                let found: any = null;
-                character.traverse((child: any) => {
-                    if (child.isBone && child.name.includes(keyword)) {
-                        found = child;
-                    }
-                });
-                return found;
-            };
-
-            bones = {
-                leftUpperArm: findBone('L-UpperArm'),
-                leftForearm: findBone('L-Forearm'),
-                rightUpperArm: findBone('R-UpperArm'),
-                rightForearm: findBone('R-Forearm'),
-                leftThigh: findBone('L-Thigh'),
-                leftCalf: findBone('L-Calf'),
-                rightThigh: findBone('R-Thigh'),
-                rightCalf: findBone('R-Calf'),
-                spine: findBone('Spine2') || findBone('Spine1') || findBone('Spine')
-            };
-
-            // Smart animation mapping by checking names for keywords (highly robust for custom GLBs)
-            if (gltf.animations && gltf.animations.length > 0) {
-                mixer = new THREE.AnimationMixer(character);
-                
-                const idleClip = gltf.animations.find((clip: any) => 
-                    clip.name.toLowerCase().includes('idle') || 
-                    clip.name.toLowerCase().includes('breath') ||
-                    clip.name.toLowerCase().includes('stand')
-                ) || gltf.animations[0];
-                
-                const walkClip = gltf.animations.find((clip: any) => 
-                    clip.name.toLowerCase().includes('walk') || 
-                    clip.name.toLowerCase().includes('run') || 
-                    clip.name.toLowerCase().includes('move') ||
-                    clip.name.toLowerCase().includes('play')
-                ) || gltf.animations[1] || gltf.animations[0];
-                
-                idleAction = mixer.clipAction(idleClip);
-                walkAction = mixer.clipAction(walkClip);
-                
-                idleAction.play();
-                currentAction = idleAction;
-            }
-        }, trackProgress('character'), (error: any) => {
-            console.warn('Error loading custom ellina.glb model, falling back to procedural astronaut:', error);
-            assetProgress.character = 1;
-            reportProgress();
-
-            // Fallback to beautiful procedural astronaut
-            const astronaut = createAstronaut();
-            characterGroup = astronaut.mesh;
-            astronautParts = astronaut;
-            isProcedural = true;
-            characterBaseY = 0;
-            characterGroup.position.x = 0;
-            characterGroup.position.y = spawnHeight || 0;
-            characterGroup.position.z = 0;
-            scene.add(characterGroup);
-        });
+        // The astronaut is generated procedurally in code — instantly available, nothing to download.
+        // Its boots sit exactly at local y = 0, so physics can drive the root position directly.
+        const astronaut = createAstronaut();
+        characterGroup = astronaut.mesh;
+        astronautParts = astronaut;
+        characterBaseY = 0;
+        characterGroup.position.set(0, spawnHeight || 0, 0);
+        scene.add(characterGroup);
 
         // Shared geometry/material for the entrance beacons that mark walkable building interiors (see below)
         const beaconGeom = new THREE.SphereGeometry(0.32, 16, 16);
@@ -910,8 +837,8 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
 
         let animationFrame = 0;
 
-        const walkSpeed = 5;
-        const runSpeed = 9;
+        const walkSpeed = 7;
+        const runSpeed = 12;
         const rotationSpeed = 3.5;
 
         // Interactive Mouse Orbit & Zoom Camera States
@@ -995,7 +922,6 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
             // 3. Astronaut Controller & Procedural Rig Animation
             if (characterGroup) {
                 let isWalking = false;
-                let speedMultiplier = 1;
 
                 // Calculate current elevation on top of buildings (acting as our floating island)
                 let targetY = 0;
@@ -1103,19 +1029,26 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
                 if (keys.w || keys.s || keys.a || keys.d || joystickActive) {
                     isWalking = true;
                     const speed = keys.shift ? runSpeed : walkSpeed;
-                    speedMultiplier = keys.shift ? 1.7 : 1;
-                    
-                    // 1. Calculate rotation first
+
+
+                    // 1. Calculate rotation first — ease the turn rate itself (instead of snapping straight
+                    // to full angular speed) so changing direction ramps smoothly rather than whipping around.
+                    // The joystick gets a gentler ease than the keyboard: its target constantly drifts as the
+                    // thumb moves, so catching up to it as fast as a discrete keypress feels twitchy/whippy.
+                    let targetTurnRate = 0;
+                    let turnEase = 10;
                     if (keys.a) {
-                        characterGroup.rotation.y += rotationSpeed * delta;
+                        targetTurnRate = rotationSpeed;
                     } else if (keys.d) {
-                        characterGroup.rotation.y -= rotationSpeed * delta;
+                        targetTurnRate = -rotationSpeed;
                     } else if (Math.abs(keys.joystickX) > 0.05) {
                         // Smooth, analog-scaled rotation speed!
                         // Scaled down (by 0.4) for beautiful, cinematic precision instead of rapid spinning!
-                        const smoothRotSpeed = rotationSpeed * 0.4;
-                        characterGroup.rotation.y -= keys.joystickX * smoothRotSpeed * delta;
+                        targetTurnRate = -keys.joystickX * rotationSpeed * 0.4;
+                        turnEase = 6;
                     }
+                    turnRate = THREE.MathUtils.lerp(turnRate, targetTurnRate, turnEase * delta);
+                    characterGroup.rotation.y += turnRate * delta;
 
                     // 2. Prepare predicted translation
                     let moveDistance = speed * delta;
@@ -1178,128 +1111,102 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
                     }
                 }
 
-                // Smoothly animate limb swinging (procedural) or play GLTF animations (gltf mixer)
-                if (isWalking) {
-                    if (walkAction) {
-                        // Play walk/run GLTF animation, easing its playback speed back up to full pace
-                        const targetAction = walkAction;
-                        if (currentAction !== targetAction && targetAction) {
-                            currentAction?.fadeOut(0.25);
-                            targetAction.reset().fadeIn(0.25).play();
-                            currentAction = targetAction;
+                // Procedural astronaut animation: every pose eases toward per-state targets, so
+                // transitions between jump / walk / run / idle blend smoothly instead of snapping.
+                if (astronautParts) {
+                    const P = astronautParts;
+                    const ease = 12 * delta;
+                    const lerpTo = (obj: any, axis: 'x' | 'y' | 'z', target: number, factor = ease) => {
+                        obj.rotation[axis] = THREE.MathUtils.lerp(obj.rotation[axis], target, factor);
+                    };
+
+                    if (!isGrounded) {
+                        // --- Airborne: tucked jump pose, arms flared, thrusters firing ---
+                        lerpTo(P.leftArm.shoulder, 'x', -0.7);
+                        lerpTo(P.rightArm.shoulder, 'x', -0.7);
+                        lerpTo(P.leftArm.shoulder, 'z', -0.5);
+                        lerpTo(P.rightArm.shoulder, 'z', 0.5);
+                        lerpTo(P.leftArm.elbow, 'x', -0.6);
+                        lerpTo(P.rightArm.elbow, 'x', -0.6);
+
+                        lerpTo(P.leftLeg.hip, 'x', -0.45);
+                        lerpTo(P.rightLeg.hip, 'x', -0.25);
+                        lerpTo(P.leftLeg.knee, 'x', 0.95);
+                        lerpTo(P.rightLeg.knee, 'x', 0.7);
+
+                        lerpTo(P.body, 'x', -0.08);
+                        P.body.position.y = THREE.MathUtils.lerp(P.body.position.y, 0, ease);
+
+                        // Thruster exhaust: visible with a rapid flicker while in the air
+                        P.flames.forEach((flame: any, i: number) => {
+                            flame.visible = true;
+                            const flicker = 0.75 + Math.sin(time * 42 + i * 2.7) * 0.25;
+                            flame.scale.set(flicker, 0.8 + flicker * 0.5, flicker);
+                        });
+                    } else {
+                        P.flames.forEach((flame: any) => { flame.visible = false; });
+
+                        if (isWalking) {
+                            // --- Walk / run gait: opposite arm-leg swings with real elbow & knee bends ---
+                            const running = keys.shift;
+                            const swingFreq = time * (running ? 15.5 : 11);
+                            const stride = running ? 0.78 : 0.52;
+                            const s = Math.sin(swingFreq);
+
+                            lerpTo(P.leftLeg.hip, 'x', s * stride);
+                            lerpTo(P.rightLeg.hip, 'x', -s * stride);
+                            // Knees only ever flex backward (anatomically), deepest mid-swing
+                            const kneeBend = running ? 1.05 : 0.6;
+                            lerpTo(P.leftLeg.knee, 'x', (Math.sin(swingFreq - Math.PI / 2) + 1.0) * 0.5 * kneeBend);
+                            lerpTo(P.rightLeg.knee, 'x', (Math.sin(swingFreq + Math.PI / 2) + 1.0) * 0.5 * kneeBend);
+
+                            // Arms swing opposite their same-side leg, elbows pumped while running
+                            const armSwing = stride * 0.8;
+                            lerpTo(P.leftArm.shoulder, 'x', -s * armSwing);
+                            lerpTo(P.rightArm.shoulder, 'x', s * armSwing);
+                            lerpTo(P.leftArm.shoulder, 'z', -0.06);
+                            lerpTo(P.rightArm.shoulder, 'z', 0.06);
+                            lerpTo(P.leftArm.elbow, 'x', running ? -0.95 : -0.35);
+                            lerpTo(P.rightArm.elbow, 'x', running ? -0.95 : -0.35);
+
+                            // Forward lean + step bob (on the inner body group so physics owns the root)
+                            lerpTo(P.body, 'x', running ? 0.14 : 0.05);
+                            P.body.position.y = THREE.MathUtils.lerp(
+                                P.body.position.y,
+                                Math.abs(Math.sin(swingFreq)) * (running ? 0.07 : 0.04),
+                                ease
+                            );
+                        } else {
+                            // --- Idle: relaxed stance with a soft breathing sway ---
+                            const breathFreq = time * 2.0;
+                            const settle = 6 * delta;
+
+                            lerpTo(P.leftArm.shoulder, 'x', Math.sin(breathFreq) * 0.05, settle);
+                            lerpTo(P.rightArm.shoulder, 'x', -Math.sin(breathFreq) * 0.05, settle);
+                            lerpTo(P.leftArm.shoulder, 'z', -0.1, settle);
+                            lerpTo(P.rightArm.shoulder, 'z', 0.1, settle);
+                            lerpTo(P.leftArm.elbow, 'x', -0.25, settle);
+                            lerpTo(P.rightArm.elbow, 'x', -0.25, settle);
+
+                            lerpTo(P.leftLeg.hip, 'x', 0, settle);
+                            lerpTo(P.rightLeg.hip, 'x', 0, settle);
+                            lerpTo(P.leftLeg.knee, 'x', 0.05, settle);
+                            lerpTo(P.rightLeg.knee, 'x', 0.05, settle);
+
+                            lerpTo(P.body, 'x', 0, settle);
+                            P.body.position.y = THREE.MathUtils.lerp(
+                                P.body.position.y,
+                                Math.sin(breathFreq) * 0.018,
+                                settle
+                            );
                         }
-                        walkAction.paused = false;
-                        walkAction.enabled = true;
-                        walkTimeScale = THREE.MathUtils.lerp(walkTimeScale, 1, 6 * delta);
-                        walkAction.timeScale = walkTimeScale;
-                    } else if (isProcedural && astronautParts) {
-                        const swingFreq = time * (keys.shift ? 15 : 9.5);
-                        const swingAngle = 0.55;
-
-                        // Opposite swings for natural biomechanics
-                        astronautParts.leftArm.rotation.x = Math.sin(swingFreq) * swingAngle;
-                        astronautParts.rightArm.rotation.x = -Math.sin(swingFreq) * swingAngle;
-
-                        astronautParts.leftLeg.rotation.x = -Math.sin(swingFreq) * swingAngle * 0.9;
-                        astronautParts.rightLeg.rotation.x = Math.sin(swingFreq) * swingAngle * 0.9;
-
-                        // Slight hip bobbing up and down while walking
-                        astronautParts.torso.position.y = 0.95 + Math.abs(Math.sin(swingFreq * 2)) * 0.06;
-                    } else if (bones) {
-                        // Procedural skeletal walk animation for Nova's bones
-                        const swingFreq = time * (keys.shift ? 14 : 9.0);
-                        const swingAngle = 0.45;
-
-                        // Upper arms hang down naturally (Z angle) and swing forward/backward on Y and X
-                        bones.leftUpperArm.rotation.z = -1.25;
-                        bones.leftUpperArm.rotation.y = Math.sin(swingFreq) * swingAngle * 0.5;
-                        bones.leftUpperArm.rotation.x = 0.15 + Math.sin(swingFreq) * swingAngle * 0.25;
-
-                        bones.rightUpperArm.rotation.z = 1.25;
-                        bones.rightUpperArm.rotation.y = -Math.sin(swingFreq) * swingAngle * 0.5;
-                        bones.rightUpperArm.rotation.x = -0.15 - Math.sin(swingFreq) * swingAngle * 0.25;
-
-                        // BEND ELBOWS: Bip001 elbows are bent forward on Y-axis
-                        bones.leftForearm.rotation.y = 1.1; 
-                        bones.rightForearm.rotation.y = -1.1;
-
-                        // Hips (Thighs) swing back and forth
-                        bones.leftThigh.rotation.x = Math.sin(swingFreq) * swingAngle;
-                        bones.rightThigh.rotation.x = -Math.sin(swingFreq) * swingAngle;
-
-                        // Knees (Calves) bend naturally during back swing
-                        bones.leftCalf.rotation.x = (Math.sin(swingFreq - Math.PI / 2) + 1.0) * 0.35;
-                        bones.rightCalf.rotation.x = (Math.sin(swingFreq + Math.PI / 2) + 1.0) * 0.35;
-
-                        // Upper body spine bobbing up and down slightly
-                        characterGroup.position.y = currentBaseY + Math.abs(Math.sin(swingFreq * 2)) * 0.07;
-                    }
-                } else {
-                    if (idleAction && idleAction !== walkAction) {
-                        // A genuinely distinct idle/stand clip exists in the GLB — play it
-                        const targetAction = idleAction;
-                        if (currentAction !== targetAction) {
-                            currentAction?.fadeOut(0.25);
-                            targetAction.reset().fadeIn(0.25).play();
-                            currentAction = targetAction;
-                        }
-                        idleAction.paused = false;
-                    } else if (idleAction) {
-                        // No dedicated idle clip — idle and walk fall back to the same walking animation.
-                        // Rather than freezing on frame 0 (an awkward mid-stride pose), ease the walk
-                        // cycle's own playback speed down to a stop, so the character settles naturally
-                        // wherever its stride happened to be — like decelerating into a standstill.
-                        const targetAction = idleAction;
-                        if (currentAction !== targetAction) {
-                            currentAction?.fadeOut(0.25);
-                            targetAction.reset().fadeIn(0.25).play();
-                            currentAction = targetAction;
-                        }
-                        walkTimeScale = THREE.MathUtils.lerp(walkTimeScale, 0, 4 * delta);
-                        idleAction.timeScale = walkTimeScale;
-                        idleAction.paused = false;
-                    } else if (isProcedural && astronautParts) {
-                        // Soft, floating "astronaut weightless breathing" idle animation
-                        const breathFreq = time * 2.2;
-                        astronautParts.leftArm.rotation.x = Math.sin(breathFreq) * 0.08;
-                        astronautParts.rightArm.rotation.x = -Math.sin(breathFreq) * 0.08;
-
-                        // Revert legs to resting position
-                        astronautParts.leftLeg.rotation.x = THREE.MathUtils.lerp(astronautParts.leftLeg.rotation.x, 0, 5 * delta);
-                        astronautParts.rightLeg.rotation.x = THREE.MathUtils.lerp(astronautParts.rightLeg.rotation.x, 0, 5 * delta);
-
-                        astronautParts.torso.position.y = 0.95 + Math.sin(breathFreq) * 0.025;
-                    } else if (bones) {
-                        // Procedural skeletal standing/idle breathing pose for a clipless bone-rigged model
-                        const breathFreq = time * 2.2;
-
-                        // Upper arms relaxed, hanging down slightly
-                        bones.leftUpperArm.rotation.z = THREE.MathUtils.lerp(bones.leftUpperArm.rotation.z, -1.25, 4 * delta);
-                        bones.leftUpperArm.rotation.y = THREE.MathUtils.lerp(bones.leftUpperArm.rotation.y, 0.1, 4 * delta);
-                        bones.leftUpperArm.rotation.x = THREE.MathUtils.lerp(bones.leftUpperArm.rotation.x, 0.1 + Math.sin(breathFreq) * 0.04, 4 * delta);
-
-                        bones.rightUpperArm.rotation.z = THREE.MathUtils.lerp(bones.rightUpperArm.rotation.z, 1.25, 4 * delta);
-                        bones.rightUpperArm.rotation.y = THREE.MathUtils.lerp(bones.rightUpperArm.rotation.y, -0.1, 4 * delta);
-                        bones.rightUpperArm.rotation.x = THREE.MathUtils.lerp(bones.rightUpperArm.rotation.x, -0.1 - Math.sin(breathFreq) * 0.04, 4 * delta);
-
-                        // BEND ELBOWS (Bones forearm) relaxed bent stance
-                        bones.leftForearm.rotation.y = THREE.MathUtils.lerp(bones.leftForearm.rotation.y, 1.0 + Math.sin(breathFreq) * 0.03, 4 * delta);
-                        bones.rightForearm.rotation.y = THREE.MathUtils.lerp(bones.rightForearm.rotation.y, -1.0 - Math.sin(breathFreq) * 0.03, 4 * delta);
-
-                        // Legs returned to perfect rest positions
-                        bones.leftThigh.rotation.x = THREE.MathUtils.lerp(bones.leftThigh.rotation.x, 0, 4 * delta);
-                        bones.rightThigh.rotation.x = THREE.MathUtils.lerp(bones.rightThigh.rotation.x, 0, 4 * delta);
-                        bones.leftCalf.rotation.x = THREE.MathUtils.lerp(bones.leftCalf.rotation.x, 0, 4 * delta);
-                        bones.rightCalf.rotation.x = THREE.MathUtils.lerp(bones.rightCalf.rotation.x, 0, 4 * delta);
-
-                        // Body breathing bobbing
-                        characterGroup.position.y = THREE.MathUtils.lerp(characterGroup.position.y, currentBaseY + Math.sin(breathFreq) * 0.015, 4 * delta);
                     }
                 }
 
-                // Update the GLTF animation mixer if active
-                if (mixer) {
-                    mixer.update(delta * speedMultiplier);
+                if (!isWalking) {
+                    // No turn input this frame — decay the eased turn rate back to rest so the next
+                    // turn ramps up from a standstill instead of resuming from a stale leftover rate
+                    turnRate = THREE.MathUtils.lerp(turnRate, 0, 10 * delta);
                 }
 
                 // 4. Smooth Follow & Orbit Zoom Camera
@@ -1318,7 +1225,7 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
                 const charRot = characterGroup.rotation.y;
                 
                 // Camera radial distance (base is 8.15 units)
-                const r = 8.15 * zoomFactor;
+                const r = 6.8 * zoomFactor; // pulled in a touch — the chibi astronaut is small, so closer framing keeps her readable
                 const hAngle = charRot + Math.PI + orbitTheta; // add PI so we start behind the character
                 const vAngle = orbitPhi;
 
@@ -1330,7 +1237,7 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
                 camera.position.lerp(idealCameraPos, 10 * delta);
                 
                 const lookAtPos = characterGroup.position.clone();
-                lookAtPos.y += 1.3; // focus exactly at torso/face level
+                lookAtPos.y += 1.1; // focus on the chibi's big helmet/face
                 camera.lookAt(lookAtPos);
             }
 
@@ -1378,13 +1285,9 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
 
             {/* Walk Controls HUD Instruction (game-style keycaps) */}
             <div className="space-hud-bar">
-                <span>
-                    <span className="space-keycap">W</span><span className="space-keycap">A</span><span className="space-keycap">S</span><span className="space-keycap">D</span>
-                </span>
+                <DPad keys={DPAD_WASD} size="sm"/>
                 <span className="space-hud-sep">/</span>
-                <span>
-                    <span className="space-keycap">↑</span><span className="space-keycap">←</span><span className="space-keycap">↓</span><span className="space-keycap">→</span>
-                </span>
+                <DPad size="sm"/>
                 <span className="space-hud-accent">MOVE</span>
                 <span className="space-hud-divider">|</span>
                 <span className="space-keycap">SPACE</span>
@@ -1417,32 +1320,40 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
                     <div className="space-jump-label">JUMP</div>
                 </div>
 
-                {/* Virtual Joystick: gamepad-style base with glowing directional arrows */}
-                <div ref={joystickBaseRef} className="space-joystick-base">
-                    {/* Slowly rotating dashed radar ring */}
-                    <div className="space-radar-ring" />
-                    {/* Inner crosshair guide ring */}
-                    <div className="space-crosshair-ring" />
+                {/* Joystick column: a graphical up/left/right/down legend hovering above the stick itself */}
+                <div className="space-joystick-wrapper">
+                    <div className="space-dpad-legend">
+                        <DPad size="lg"/>
+                        <div className="space-dpad-legend-label">MOVE</div>
+                    </div>
 
-                    {/* Directional arrows on the rim: light up cyan when the stick pushes that way */}
-                    <div ref={arrowUpRef} className="space-joystick-arrow space-arrow-up">▲</div>
-                    <div ref={arrowDownRef} className="space-joystick-arrow space-arrow-down">▼</div>
-                    <div ref={arrowLeftRef} className="space-joystick-arrow space-arrow-left">◀</div>
-                    <div ref={arrowRightRef} className="space-joystick-arrow space-arrow-right">▶</div>
+                    {/* Virtual Joystick: gamepad-style base with glowing directional arrows */}
+                    <div ref={joystickBaseRef} className="space-joystick-base">
+                        {/* Slowly rotating dashed radar ring */}
+                        <div className="space-radar-ring" />
+                        {/* Inner crosshair guide ring */}
+                        <div className="space-crosshair-ring" />
 
-                    {/* Joystick Knob Handle: glossy thumbstick with grip lines */}
-                    <div
-                        ref={joystickHandleRef}
-                        className="space-joystick-handle"
-                        onPointerDown={handleJoystickStart}
-                        onPointerMove={handleJoystickMove}
-                        onPointerUp={handleJoystickEnd}
-                        onPointerCancel={handleJoystickEnd}
-                    >
-                        {/* Thumb grip lines */}
-                        <div className="space-grip-line" />
-                        <div className="space-grip-line wide" />
-                        <div className="space-grip-line" />
+                        {/* Directional arrows on the rim: light up cyan when the stick pushes that way */}
+                        <div ref={arrowUpRef} className="space-joystick-arrow space-arrow-up">▲</div>
+                        <div ref={arrowDownRef} className="space-joystick-arrow space-arrow-down">▼</div>
+                        <div ref={arrowLeftRef} className="space-joystick-arrow space-arrow-left">◀</div>
+                        <div ref={arrowRightRef} className="space-joystick-arrow space-arrow-right">▶</div>
+
+                        {/* Joystick Knob Handle: glossy thumbstick with grip lines */}
+                        <div
+                            ref={joystickHandleRef}
+                            className="space-joystick-handle"
+                            onPointerDown={handleJoystickStart}
+                            onPointerMove={handleJoystickMove}
+                            onPointerUp={handleJoystickEnd}
+                            onPointerCancel={handleJoystickEnd}
+                        >
+                            {/* Thumb grip lines */}
+                            <div className="space-grip-line" />
+                            <div className="space-grip-line wide" />
+                            <div className="space-grip-line" />
+                        </div>
                     </div>
                 </div>
             </div>
