@@ -30,6 +30,13 @@ const DPad = ({keys = DPAD_ARROWS, size = 'sm'}: {keys?: IDPadKeys; size?: 'sm' 
     </div>
 );
 
+// Enable Three.js loader-level resource caching
+THREE.Cache.enabled = true;
+
+// Module-level cache to persist loaded 3D models across React component remounts
+let cachedSkyScene: any = null;
+let cachedBuildingScene: any = null;
+
 const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
     const containerRef = useRef<HTMLDivElement | null>(null);
     const keysRef = useRef({ 
@@ -212,7 +219,7 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         renderer.setSize(container.clientWidth, container.clientHeight, false);
         renderer.shadowMap.enabled = true;
-        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.shadowMap.type = THREE.PCFShadowMap; // Optimized PCF shadow mapping (fast hardware-filtered edges)
         
         // Enable modern Three.js sRGB color space output and cinema tone mapping
         renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -239,12 +246,25 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
         dirLight.shadow.camera.right = 80;
         dirLight.shadow.camera.near = 0.1;
         dirLight.shadow.camera.far = 300;
-        dirLight.shadow.mapSize.width = 2048;
-        dirLight.shadow.mapSize.height = 2048;
+        dirLight.shadow.mapSize.width = 1024; // Optimized from 2048 to 1024 for 4x faster shadow rendering
+        dirLight.shadow.mapSize.height = 1024;
         dirLight.shadow.bias = -0.0005;
         scene.add(dirLight);
 
         // No flat ground or grid plane so that the building acts as a floating island in space!
+        // To prevent the starry sky from showing through tiny gaps/cracks between floor tiles,
+        // we add a solid dark backing plane slightly below the building (Y = -0.1).
+        // Since the playable area has a max radius of 58.0 and the building max dimension is 120.0 (radius 60.0),
+        // we use a circle of radius 60.0 so it never extends beyond the building boundaries or blocks stars outside.
+        const backingGeom = new THREE.CircleGeometry(60, 32);
+        backingGeom.rotateX(-Math.PI / 2);
+        const backingMaterial = new THREE.MeshBasicMaterial({
+            color: 0x000000, // pitch black for natural shadow crevices
+            side: THREE.DoubleSide
+        });
+        const backingMesh = new THREE.Mesh(backingGeom, backingMaterial);
+        backingMesh.position.set(0, -0.1, 0);
+        scene.add(backingMesh);
 
         const clock = new THREE.Clock();
         const loader = new GLTFLoader();
@@ -274,7 +294,8 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
         };
 
         // Load original Night Sky GLTF environment with critical fog & culling bugfixes
-        loader.load('/models/night_sky/scene.gltf', (gltf: any) => {
+        // Performance Optimization: Check if the sky dome is already cached in memory to load instantly without re-downloading/re-parsing!
+        const onSkyLoaded = (gltf: any) => {
             sky = gltf.scene;
             // Scale up sky dome safely within the camera's far clipping plane (500 units radius)
             sky.scale.setScalar(500);
@@ -321,11 +342,20 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
             // Mark complete only now that the dome is actually in the scene
             assetProgress.sky = 1;
             reportProgress();
-        }, trackProgress('sky'), (err: any) => {
-            console.error('Error loading night sky GLTF model:', err);
-            assetProgress.sky = 1; // don't let a failed asset stall the loading screen forever
-            reportProgress();
-        });
+        };
+
+        if (cachedSkyScene) {
+            onSkyLoaded({ scene: cachedSkyScene.clone() });
+        } else {
+            loader.load('/models/night_sky/scene.gltf', (gltf: any) => {
+                cachedSkyScene = gltf.scene;
+                onSkyLoaded({ scene: cachedSkyScene.clone() });
+            }, trackProgress('sky'), (err: any) => {
+                console.error('Error loading night sky GLTF model:', err);
+                assetProgress.sky = 1; // don't let a failed asset stall the loading screen forever
+                reportProgress();
+            });
+        }
 
         // 1. Procedural Twinkling Starfield Particle System
         const starCount = 3500;
@@ -603,7 +633,8 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
         });
 
         // Load the custom Future City GLB building model
-        loader.load('/models/future_city.glb', (gltf: any) => {
+        // Performance Optimization: Check if the building is already cached in memory to load instantly without re-downloading/re-parsing!
+        const onBuildingLoaded = (gltf: any) => {
             const building = gltf.scene;
             buildingGroup = building;
 
@@ -747,11 +778,20 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
             // Mark complete only now that the city is actually in the scene
             assetProgress.building = 1;
             reportProgress();
-        }, trackProgress('building'), (error: any) => {
-            console.warn('Error loading custom future_city.glb model:', error);
-            assetProgress.building = 1;
-            reportProgress();
-        });
+        };
+
+        if (cachedBuildingScene) {
+            onBuildingLoaded({ scene: cachedBuildingScene.clone() });
+        } else {
+            loader.load('/models/future_city.glb', (gltf: any) => {
+                cachedBuildingScene = gltf.scene;
+                onBuildingLoaded({ scene: cachedBuildingScene.clone() });
+            }, trackProgress('building'), (error: any) => {
+                console.warn('Error loading custom future_city.glb model:', error);
+                assetProgress.building = 1;
+                reportProgress();
+            });
+        }
 
         // 3. Floating Glowing Cosmic Crystals (Creates dynamic movement depth)
         const crystalGroup = new THREE.Group();
@@ -910,6 +950,19 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
         window.addEventListener('pointerup', handlePointerUp);
         container.addEventListener('wheel', handleWheel, { passive: false });
 
+        // Pre-allocated vectors, raycasters, and state variables for rendering performance optimization
+        const rayOrigin = new THREE.Vector3();
+        const rayDirection = new THREE.Vector3(0, -1, 0);
+        const collisionOrigin = new THREE.Vector3();
+        const collisionRaycaster = new THREE.Raycaster();
+        collisionRaycaster.far = 1.1;
+
+        let lastCharX = Infinity;
+        let lastCharZ = Infinity;
+        let cachedTargetY = 0;
+        let cachedHasGround = false;
+        let isGrounded = false;
+
         const render = () => {
             // Clamp to guard against huge spikes (tab backgrounded/throttled, GC pause, heavy
             // synchronous GLTF parsing on load) — THREE.Vector3.lerp doesn't clamp its alpha,
@@ -941,62 +994,80 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
                 let isWalking = false;
 
                 // Calculate current elevation on top of buildings (acting as our floating island)
-                let targetY = 0;
-                let hasGround = false;
-                if (buildingGroup) {
-                    const rayOrigin = new THREE.Vector3(characterGroup.position.x, 200, characterGroup.position.z);
-                    const rayDirection = new THREE.Vector3(0, -1, 0);
-                    raycaster.set(rayOrigin, rayDirection);
-                    
-                    // Recursively intersect with the entire building group
-                    const intersects = raycaster.intersectObject(buildingGroup, true);
-                    if (intersects.length > 0) {
-                        hasGround = true;
-                        // Find the intersection that is closest to the character's current height,
-                        // ignoring surfaces that are far above their torso (such as high ceilings/roofs)
-                        let bestY = 0;
-                        let minDiff = Infinity;
-                        const charY = characterGroup.position.y;
+                // Performance Optimization: Only perform the heavy recursive raycast against the high-poly building model (54MB)
+                // if the character has actually moved horizontally or is currently airborne (jumping/falling).
+                // If they are static and grounded, the floor height under them cannot change, so we can reuse the cached result!
+                const charPosChanged = Math.abs(characterGroup.position.x - lastCharX) > 0.0001 || 
+                                       Math.abs(characterGroup.position.z - lastCharZ) > 0.0001;
+                
+                const needsRaycast = charPosChanged || !isGrounded || lastCharX === Infinity;
 
-                        for (let i = 0; i < intersects.length; i++) {
-                            const intersectY = intersects[i].point.y;
-                            // Consider any surface below or slightly above the character's current position (waist/chest height buffer of +1.5)
-                            if (intersectY <= charY + 1.5) {
-                                const diff = Math.abs(intersectY - charY);
-                                if (diff < minDiff) {
-                                    minDiff = diff;
-                                    bestY = intersectY;
-                                }
-                            }
-                        }
+                if (needsRaycast) {
+                    lastCharX = characterGroup.position.x;
+                    lastCharZ = characterGroup.position.z;
+
+                    if (buildingGroup) {
+                        rayOrigin.set(characterGroup.position.x, 200, characterGroup.position.z);
+                        raycaster.set(rayOrigin, rayDirection);
                         
-                        if (minDiff !== Infinity) {
-                            targetY = bestY;
-                        } else {
-                            // If all intersections are above (e.g. initial spawn), fall back to the closest overall
-                            let closestY = 0;
-                            let closestDiff = Infinity;
+                        // Recursively intersect with the entire building group
+                        const intersects = raycaster.intersectObject(buildingGroup, true);
+                        if (intersects.length > 0) {
+                            cachedHasGround = true;
+                            // Find the intersection that is closest to the character's current height,
+                            // ignoring surfaces that are far above their torso (such as high ceilings/roofs)
+                            let bestY = 0;
+                            let minDiff = Infinity;
+                            const charY = characterGroup.position.y;
+
                             for (let i = 0; i < intersects.length; i++) {
                                 const intersectY = intersects[i].point.y;
-                                const diff = Math.abs(intersectY - charY);
-                                if (diff < closestDiff) {
-                                    closestDiff = diff;
-                                    closestY = intersectY;
+                                // Consider any surface below or slightly above the character's current position (waist/chest height buffer of +1.5)
+                                if (intersectY <= charY + 1.5) {
+                                    const diff = Math.abs(intersectY - charY);
+                                    if (diff < minDiff) {
+                                        minDiff = diff;
+                                        bestY = intersectY;
+                                    }
                                 }
                             }
-                            targetY = closestY;
+                            
+                            if (minDiff !== Infinity) {
+                                cachedTargetY = bestY;
+                            } else {
+                                // If all intersections are above (e.g. initial spawn), fall back to the closest overall
+                                let closestY = 0;
+                                let closestDiff = Infinity;
+                                for (let i = 0; i < intersects.length; i++) {
+                                    const intersectY = intersects[i].point.y;
+                                    const diff = Math.abs(intersectY - charY);
+                                    if (diff < closestDiff) {
+                                        closestDiff = diff;
+                                        closestY = intersectY;
+                                    }
+                                }
+                                cachedTargetY = closestY;
+                            }
+                        } else {
+                            cachedHasGround = false;
+                            cachedTargetY = 0;
                         }
+                    } else {
+                        // If the building is still loading, pretend we have ground at y = 0
+                        // so the character doesn't fall into the void before the island loads!
+                        cachedHasGround = true;
+                        cachedTargetY = 0;
                     }
-                } else {
-                    // If the building is still loading, pretend we have ground at y = 0
-                    // so the character doesn't fall into the void before the island loads!
-                    hasGround = true;
-                    targetY = 0;
                 }
+
+                const targetY = cachedTargetY;
+                const hasGround = cachedHasGround;
                 const currentBaseY = targetY + characterBaseY;
                 const gravity = 28; // standard gravity acceleration (units/s^2)
                 const jumpStrength = 10.5; // jumping initial velocity (units/s)
-                let isGrounded = false;
+                
+                // Reset isGrounded state for the current frame's evaluation (its value was preserved in parent scope to optimize raycasting)
+                isGrounded = false;
 
                 if (hasGround) {
                     const floorY = currentBaseY;
@@ -1039,6 +1110,13 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
                         verticalVelocity = 0;
                         isGrounded = false;
                     }
+                }
+
+                // Hard safety clamp: prevent the character from ever falling below Y = 0 (the absolute base of the city)
+                if (characterGroup.position.y < 0) {
+                    characterGroup.position.y = 0;
+                    verticalVelocity = 0;
+                    isGrounded = true;
                 }
 
                 const joystickActive = Math.abs(keys.joystickX) > 0.05 || Math.abs(keys.joystickY) > 0.05;
@@ -1095,14 +1173,12 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
                         moveDir.normalize();
 
                         // A. Check wall collision in the translation direction against the city buildings
+                        // Performance Optimization: Use pre-allocated collisionOrigin and collisionRaycaster objects to avoid frame allocations
                         if (buildingGroup) {
-                            const collisionOrigin = characterGroup.position.clone();
+                            collisionOrigin.copy(characterGroup.position);
                             collisionOrigin.y += 0.8; // waist height of 2-unit tall character
 
-                            const collisionRaycaster = new THREE.Raycaster();
                             collisionRaycaster.set(collisionOrigin, moveDir);
-                            collisionRaycaster.far = 1.1; // wall detection distance (slightly larger than character radius)
-
                             const wallIntersects = collisionRaycaster.intersectObject(buildingGroup, true);
                             if (wallIntersects.length > 0) {
                                 canTranslate = false; // block walking through walls/buildings!
