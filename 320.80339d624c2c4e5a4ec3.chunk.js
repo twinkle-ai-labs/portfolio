@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkhjkim1004_github_io=self.webpackChunkhjkim1004_github_io||[]).push([[320],{8320(s,e,i){i.r(e),i.d(e,{default:()=>a});var n=i(4848),h=i(5748),t=i(7467);const u=()=>null,a=()=>(0,n.jsxs)(n.Fragment,{children:[(0,n.jsx)(h.A,{}),(0,n.jsx)("main",{id:"content",className:"resume",children:(0,n.jsx)(u,{})}),(0,n.jsx)(t.A,{})]})}}]);
