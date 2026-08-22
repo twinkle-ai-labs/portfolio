@@ -44,7 +44,7 @@ const Root = () => {
 // the player perceives a single continuous loading screen rather than one loader replacing another.
 const SpaceRoot = () => <SpaceLoading/>;
 
-const GA_MEASUREMENT_ID = 'G-5M8ND449DZ';
+const GA_MEASUREMENT_ID = 'G-12M0W1PBET';
 
 declare global {
     interface Window {
