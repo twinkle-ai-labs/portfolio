@@ -55,7 +55,7 @@ const Header = (
                                            // Detect if the user is on the main landing page (local dev, production, or GitHub Pages subpath)
                                            const isHomePage = window.location.pathname === '/' || 
                                                               window.location.pathname === '/index.html' || 
-                                                              window.location.pathname === '/hjkim1004.github.io/' ||
+                                                              window.location.pathname === '/twinkle-ai-labs.github.io/' ||
                                                               window.location.pathname.endsWith('/index.html');
                                            
                                            if (isHomePage) {
