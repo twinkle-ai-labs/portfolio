@@ -36,7 +36,7 @@ export const links: IExternalLink[] = [
     {
         id: 'github',
         name: {ko: '깃허브', en: 'GitHub'},
-        link: 'https://github.com/hjkim1004',
+        link: 'https://github.com/twinkle-ai-labs',
         color: '#fff',
         icon: (<FaGithub/>),
     },

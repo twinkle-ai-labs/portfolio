@@ -64,7 +64,7 @@ const HomeSection = () => {
                             {t.hero.ctaProject}
                             <FaArrowDown/>
                         </Button>
-                        <a className="hero-secondary" href="https://github.com/hjkim1004" target="_blank"
+                        <a className="hero-secondary" href="https://github.com/twinkle-ai-labs" target="_blank"
                            rel="noreferrer">
                             <FaGithub/>
                             GitHub
