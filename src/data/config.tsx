@@ -32,7 +32,7 @@ const config: IConfig = {
         nickname: 'Twinkle',
         birth: '1997.08.06',
         tel: '010-5705-9594',
-        email: 'developer.heejeong@gmail.com',
+        email: 'twinkle.ai.labs@gmail.com',
         degree: 'Bachelor of Computer Engineering',
         job: {ko: '백엔드 개발자', en: 'Backend Developer'}
     }
