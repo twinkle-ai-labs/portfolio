@@ -3,3 +3,4 @@ User-agent: *
 Disallow:
 
 Sitemap: https://me.twinklelabs.kr/sitemap.xml
+Sitemap: https://me.twinklelabs.kr/python-coding-bible/sitemap.xml

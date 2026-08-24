@@ -89,7 +89,7 @@ module.exports = (env, argv) => {
             }),
             new HtmlWebpackPlugin({
                 template: "./template/index.html",
-                favicon: "./src/assets/images/favicon.svg",
+                favicon: "./template/favicon.png",
                 inject: "body",
                 minify:
                     process.env.NODE_ENV === "production"
@@ -116,6 +116,7 @@ module.exports = (env, argv) => {
                     {from: 'template/robots.txt', to: 'robots.txt'},
                     {from: 'template/sitemap.xml', to: 'sitemap.xml'},
                     {from: 'template/manifest.json', to: 'manifest.json'},
+                    {from: 'template/apple-touch-icon.png', to: 'apple-touch-icon.png'},
                     {from: 'template/404.html', to: '404.html'},
                     {from: 'template/og.png', to: 'og.png'},
                     {from: 'node_modules/pdfjs-dist/build/pdf.worker.min.mjs', to: 'pdf.worker.min.mjs'},
