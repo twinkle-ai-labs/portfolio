@@ -29,18 +29,14 @@
     <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
     <meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
 
-    <!-- Refresh -->
-    <meta http-equiv="refresh" content="6000">
-    <meta http-equiv="Cache-Control" content="max-age=31536000"/>
-
     <!-- Font -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 
     <!-- Canonical -->
     <link rel="canonical" href="<%= process.env.CUSTOM_URL %>">
-    <link rel="alternate" href="<%= process.env.URL %>">
     <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
@@ -55,12 +51,11 @@
     <meta property="og:site_name" content="<%= process.env.TITLE %>">
 
     <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="<%= process.env.TITLE_FULL %>">
-    <meta property="twitter:url" content="<%= process.env.CUSTOM_URL %>">
-    <meta property="twitter:image" content="<%= process.env.CUSTOM_URL %>og.png">
-    <meta property="twitter:image:alt" content="김희정 Product Engineer 포트폴리오">
-    <meta property="twitter:description" content="<%= process.env.DESCRIPTION %>">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<%= process.env.TITLE_FULL %>">
+    <meta name="twitter:image" content="<%= process.env.CUSTOM_URL %>og.png">
+    <meta name="twitter:image:alt" content="김희정 Product Engineer 포트폴리오">
+    <meta name="twitter:description" content="<%= process.env.DESCRIPTION %>">
 
     <script type="application/ld+json">
         {
