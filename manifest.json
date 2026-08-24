@@ -3,14 +3,20 @@
   "name": "김희정 포트폴리오 | Product Engineer",
   "icons": [
     {
-      "src": "favicon.svg",
-      "type": "image/svg+xml",
-      "sizes": "any",
+      "src": "favicon.png",
+      "type": "image/png",
+      "sizes": "64x64",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "apple-touch-icon.png",
+      "type": "image/png",
+      "sizes": "180x180",
       "purpose": "any"
     }
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#101119",
-  "background_color": "#101119"
+  "theme_color": "#110D19",
+  "background_color": "#110D19"
 }

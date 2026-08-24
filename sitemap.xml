@@ -6,8 +6,8 @@
         <priority>1.0</priority>
     </url>
     <url>
-        <loc>https://me.twinklelabs.kr/resume</loc>
+        <loc>https://me.twinklelabs.kr/python-coding-bible/</loc>
         <changefreq>monthly</changefreq>
-        <priority>0.6</priority>
+        <priority>0.8</priority>
     </url>
 </urlset>
