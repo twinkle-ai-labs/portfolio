@@ -6,10 +6,23 @@ import {raycastCity} from './city-raycast';
 // trusting the model's node names (which turned out to collapse to one bogus shared
 // position for every building here). Wherever a probe travels much farther than its
 // neighbors before hitting the building, that's an opening in the wall.
+// 건물 하나에서 뽑을 입구의 최대 개수.
+//
+// 실측하면 이 모델은 건물 9동에서 후보 76개가 나오는데, 그중 18개가 한 건물에 몰린다.
+// 한 동의 사방을 다 표시해 봐야 플레이어에게 주는 정보는 "여기 들어갈 수 있다" 하나뿐이라
+// 나머지는 화면만 어지럽힌다.
+const MAX_PER_BUILDING = 3;
+
+// 같은 건물 안에서 입구끼리 요구하는 최소 간격. 개구부 하나가 여러 탐침에 걸려
+// 두세 개로 쪼개지는 걸 막는다.
+const MIN_GAP_WITHIN_BUILDING = 8;
+
 export const detectEntrances = (building: any, spawnHeight: number): Array<InstanceType<typeof THREE.Vector3>> => {
     const probeRay = new THREE.Raycaster();
     const probeHeight = spawnHeight + 0.8; // roughly waist height, matching the walk-collision probe
     const entranceCandidates: InstanceType<typeof THREE.Vector3>[] = [];
+    // 건물별로 따로 담는다 — 마지막에 라운드로빈으로 섞어 내보내기 위해서다
+    const perBuilding: Array<Array<InstanceType<typeof THREE.Vector3>>> = [];
 
     const buildingRoots: any[] = [];
     building.traverse((child: any) => {
@@ -54,17 +67,32 @@ export const detectEntrances = (building: any, spawnHeight: number): Array<Insta
         const sorted = [...finiteDists].sort((a, b) => a - b);
         const baseline = sorted[Math.floor(sorted.length / 2)]; // median "solid wall" distance
 
+        const found: Array<InstanceType<typeof THREE.Vector3>> = [];
         samples.forEach((s) => {
+            if (found.length >= MAX_PER_BUILDING) return;
             if (s.dist !== null && s.dist > baseline + 3 && s.dist > baseline * 1.6) {
                 // Found a gap — drop the marker a little way inside the opening
                 const spot = s.point.clone().addScaledVector(s.dir, Math.min(s.dist * 0.5, 6));
-                const nearby = entranceCandidates.some((p) => p.distanceTo(spot) < 6);
-                if (!nearby) entranceCandidates.push(spot);
+                if (found.some((p) => p.distanceTo(spot) < MIN_GAP_WITHIN_BUILDING)) return;
+                // 이웃 건물이 이미 잡은 자리와 겹치면 버린다 (좁은 골목을 사이에 둔 두 동)
+                if (entranceCandidates.some((p) => p.distanceTo(spot) < 6)) return;
+                found.push(spot);
+                entranceCandidates.push(spot);
             }
         });
+        if (found.length > 0) perBuilding.push(found);
     });
 
-    return entranceCandidates;
+    // 건물 순서대로 이어 붙이면 앞쪽이 전부 한 건물 차지가 된다 — 실제로 첫 건물 하나가
+    // 후보 18개를 내놨다. 앞에서 N개만 쓰는 쪽(별 조각)이 섬 한구석에 몰리지 않도록,
+    // 각 건물의 첫 입구를 먼저 한 바퀴 돌고 그다음 두 번째를 도는 식으로 내보낸다.
+    const spread: Array<InstanceType<typeof THREE.Vector3>> = [];
+    for (let rank = 0; rank < MAX_PER_BUILDING; rank++) {
+        perBuilding.forEach((list) => {
+            if (list[rank]) spread.push(list[rank]);
+        });
+    }
+    return spread;
 };
 
 export interface EntranceBeacons {

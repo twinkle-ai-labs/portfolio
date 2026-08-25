@@ -115,6 +115,13 @@ export interface ITranslations {
         desc: string[];
         loading: string;
         loadingTips: string[];
+        guide: {
+            name: string;
+            next: string;
+            starLabel: string;
+            intro: string[];
+            complete: string[];
+        };
     };
     error: {
         badge: string;
@@ -266,8 +273,27 @@ const translations: Record<'ko' | 'en', ITranslations> = {
                     'Tip. W A S D 또는 화살표 키로 이동할 수 있어요.',
                     'Tip. Shift를 누르거나 조이스틱을 끝까지 밀면 달릴 수 있어요.',
                     'Tip. Space 또는 점프 버튼으로 뛰어오를 수 있어요.',
-                    'Tip. 반짝이는 파란 빛이 보이면, 그 건물은 안으로 들어갈 수 있어요.'
-                ]
+                    'Tip. 벽에 붙어 앞으로 계속 밀면 벽을 타고 올라갈 수 있어요.',
+                    'Tip. 벽에 매달린 채 Space를 누르면 벽을 차고 뛰어내려요.',
+                    'Tip. 하늘로 솟은 파란 빛기둥 아래에 별 조각이 있어요.',
+                    'Tip. 벽 너머로 보이는 빛기둥은 건물 안에 있다는 뜻 — 입구로 들어가 보세요.'
+                ],
+                guide: {
+                    name: '별이',
+                    next: '클릭 / Enter',
+                    starLabel: '별 조각',
+                    intro: [
+                        '안녕? 👋 Twinkle Space에 온 걸 환영해!',
+                        '나는 이 도시의 길잡이 별, 별이야. 도시 여기저기에 별 조각 {count}개가 흩어져 있어.',
+                        '하늘로 솟은 파란 빛기둥을 따라가 봐. 그 아래에 별 조각이 있어!',
+                        '몇 개는 건물 안에 숨어 있어. 벽을 뚫고 보이는 빛기둥이 그거야 — 입구를 찾아서 들어가면 돼. 그럼 잘 부탁해! ✨'
+                    ],
+                    complete: [
+                        '우와… 별 조각을 전부 모았어! 🎉',
+                        '고마워, 덕분에 도시가 한층 더 반짝이게 됐어.',
+                        '이제 마음껏 도시를 둘러봐. 건물 안에도 볼거리가 숨어 있을지 몰라! ✨'
+                    ]
+                }
             },
             error: {
                 badge: 'Error 404',
@@ -417,8 +443,27 @@ const translations: Record<'ko' | 'en', ITranslations> = {
                     'Tip. Move with W A S D or the arrow keys.',
                     'Tip. Hold Shift or push the joystick all the way to run.',
                     'Tip. Press Space or the jump button to leap.',
-                    'Tip. See a glowing blue light? That building has an interior you can walk into.'
-                ]
+                    'Tip. Push into a wall and keep holding forward to climb it.',
+                    'Tip. While hanging on a wall, press Space to kick off it.',
+                    'Tip. A star shard waits under every blue beam rising into the sky.',
+                    'Tip. A beam visible through a wall means the shard is indoors — find the entrance and step in.'
+                ],
+                guide: {
+                    name: 'Byeol',
+                    next: 'Click / Enter',
+                    starLabel: 'Star shards',
+                    intro: [
+                        'Hi there! 👋 Welcome to Twinkle Space!',
+                        "I'm Byeol, the guide star of this city. {count} star shards are scattered around town.",
+                        'Follow the blue beams of light rising into the sky — a shard waits under each one!',
+                        'A few are hidden indoors. Those are the beams you can see through walls — find the entrance and walk right in. Good luck! ✨'
+                    ],
+                    complete: [
+                        'Wow… you found every single star shard! 🎉',
+                        'Thank you — the city shines a little brighter because of you.',
+                        'Feel free to keep exploring. Who knows what else is hiding inside the buildings! ✨'
+                    ]
+                }
             },
             error: {
                 badge: 'Error 404',
