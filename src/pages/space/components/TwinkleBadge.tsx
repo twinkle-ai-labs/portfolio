@@ -28,7 +28,9 @@ const TwinkleBadge = () => {
                 position: 'fixed',
                 bottom: 24,
                 left: 24,
-                zIndex: 1000,
+                /* Space 오버레이 층 규약은 style.css 의 ".space-hud-bar" 위 주석 참고.
+                   대화창(860)보다 아래여야 합니다 — 1000이던 시절엔 대화창을 뚫고 올라왔습니다. */
+                zIndex: 830,
                 display: 'flex',
                 alignItems: 'center',
                 gap: 1.5,

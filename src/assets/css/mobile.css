@@ -463,3 +463,91 @@
         height: 48px !important;
     }
 }
+
+/* ==========================================================================
+   Space 가이드 대화창 (.space-dialogue)
+   조작 HUD와 자리를 다투는 유일한 오버레이라 브레이크포인트를 여기 모아 둡니다.
+
+   기본(넓은 화면)에서는 화면 하단 중앙, 오른쪽 조이스틱 클러스터 옆에 나란히 섭니다.
+   폭이 좁아지면 둘이 겹치므로 — 대화창을 조작부 "위"로 올려 세로로 비켜 세웁니다.
+   ========================================================================== */
+
+/* 조이스틱 클러스터(오른쪽 아래, 폭 230px 안팎)와 620px 대화창이 부딪히기 시작하는 지점 */
+@media (max-width: 1180px) {
+    .space-dialogue {
+        /* 조작 클러스터 위로 올라선다 — space-controls-cluster의 높이만큼 띄운다 */
+        bottom: clamp(180px, 30vmin, 240px);
+        width: min(560px, calc(100vw - 24px));
+    }
+}
+
+@media (max-width: 767px) {
+    .space-dialogue {
+        /* 조작 클러스터가 화면 아래 180px 남짓을 차지한다 — 그 위로 확실히 띄운다 */
+        bottom: clamp(196px, 34vmin, 232px);
+        width: calc(100vw - 20px);
+        gap: 12px;
+        padding: 13px 15px;
+        border-radius: 17px;
+    }
+
+    .space-dialogue-text {
+        /* 폭이 좁아 세 줄까지 흐르므로 미리 자리를 잡아 둔다 */
+        min-height: 4.5em;
+        line-height: 1.6;
+    }
+
+    .space-dialogue-footer {
+        margin-top: 6px;
+        padding-top: 6px;
+    }
+}
+
+@media (max-width: 480px) {
+    .space-dialogue {
+        padding: 12px 14px;
+    }
+
+    .space-dialogue-name {
+        font-size: 10px;
+        letter-spacing: 0.1em;
+    }
+
+    .space-dialogue-next {
+        font-size: 10px;
+    }
+}
+
+/* 가로로 눕힌 폰 — 세로 여유가 없어 대화창을 조작부 위로 올릴 자리가 안 나옵니다.
+   대신 폭을 줄여 왼쪽으로 붙이고, 대사 영역을 한 줄로 눌러 높이를 아낍니다. */
+@media (max-height: 560px) and (orientation: landscape) {
+    .space-dialogue {
+        left: clamp(12px, 3vw, 24px);
+        transform: none;
+        bottom: clamp(14px, 3vmin, 24px);
+        width: min(460px, calc(100vw - 260px));
+        padding: 10px 14px;
+        gap: 10px;
+    }
+
+    .space-dialogue-text {
+        min-height: 2.9em;
+        font-size: 12.5px;
+        line-height: 1.55;
+    }
+
+    .space-dialogue-avatar {
+        width: 34px;
+        height: 34px;
+    }
+
+    /* 등장 애니메이션도 translateX(-50%)를 빼야 위치가 튀지 않습니다 */
+    .space-dialogue {
+        animation-name: space-dialogue-pop-left;
+    }
+}
+
+@keyframes space-dialogue-pop-left {
+    from { opacity: 0; transform: translateY(12px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}

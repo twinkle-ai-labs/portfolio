@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import {AstronautRig} from './astronaut';
 import {raycastCity} from './city-raycast';
+import {createWallClimber} from './climbing';
 import {SpaceKeys} from './types';
 
 const walkSpeed = 7;
@@ -40,6 +41,12 @@ export const createCharacterController = (astronaut: AstronautRig, keys: SpaceKe
     let cachedTargetY = 0;
     let cachedHasGround = false;
     let isGrounded = false;
+
+    // 벽타기는 자체 상태(매달림 여부·붙잡기 대기시간·정면 탐침)를 들고 있어 별도 모듈로 뺐다.
+    const wallClimber = createWallClimber(characterGroup, keys);
+    // isGrounded는 프레임 앞부분에서 false로 초기화된 뒤 나중에 다시 채워진다. 벽 잡기 판정은
+    // 그 사이에 일어나므로 "직전 프레임에 땅에 있었나"를 따로 들고 있어야 한다.
+    let isGroundedLastFrame = false;
 
     const update = (delta: number, time: number, buildingGroup: any | null): { isWalking: boolean } => {
         let isWalking = false;
@@ -118,48 +125,65 @@ export const createCharacterController = (astronaut: AstronautRig, keys: SpaceKe
         // Reset isGrounded state for the current frame's evaluation (its value was preserved in parent scope to optimize raycasting)
         isGrounded = false;
 
-        if (hasGround) {
-            const floorY = currentBaseY;
-            // If character is at or below the floor level, and we aren't rising (verticalVelocity <= 0)
-            if (characterGroup.position.y <= floorY + 0.05 && verticalVelocity <= 0) {
-                characterGroup.position.y = floorY;
-                verticalVelocity = 0;
-                isGrounded = true;
-            }
-        }
+        // --- 벽타기 ------------------------------------------------------------------------
+        // 매달려 있는 동안의 수직 이동은 climbing.ts가 통째로 맡는다(중력 정지 포함).
+        // handled가 참이면 아래 중력·착지 코드는 건너뛴다.
+        const climb = wallClimber.update(delta, buildingGroup, {
+            verticalVelocity,
+            wasGrounded: isGroundedLastFrame,
+            hasGround,
+            floorY: currentBaseY
+        });
+        verticalVelocity = climb.verticalVelocity;
 
-        if (isGrounded) {
-            // Trigger jump!
-            if (keys.space) {
-                verticalVelocity = jumpStrength;
-                isGrounded = false;
-                keys.space = false; // consume jump trigger
-            }
+        if (climb.handled) {
+            isGrounded = climb.grounded;
         } else {
-            // We are in the air (either jumped, or walked off the island)
-            // Apply gravity
-            verticalVelocity -= gravity * delta;
-            characterGroup.position.y += verticalVelocity * delta;
-
-            // Check if we have landed back on the building floor while falling down
-            if (hasGround && verticalVelocity <= 0) {
+            if (hasGround) {
                 const floorY = currentBaseY;
-                if (characterGroup.position.y <= floorY) {
+                // If character is at or below the floor level, and we aren't rising (verticalVelocity <= 0)
+                if (characterGroup.position.y <= floorY + 0.05 && verticalVelocity <= 0) {
                     characterGroup.position.y = floorY;
                     verticalVelocity = 0;
                     isGrounded = true;
                 }
             }
 
-            // Fall trigger below -40 units -> respawn safely back on the island
-            if (characterGroup.position.y < -40) {
-                // Respawn slightly in the air above center (X=0, Z=0) so we fall cleanly onto the highest building surface
-                characterGroup.position.set(0, 15, 0);
-                characterGroup.rotation.set(0, 0, 0); // reset rotation to face forward
-                verticalVelocity = 0;
-                isGrounded = false;
+            if (isGrounded) {
+                // Trigger jump!
+                if (keys.space) {
+                    verticalVelocity = jumpStrength;
+                    isGrounded = false;
+                    keys.space = false; // consume jump trigger
+                }
+            } else {
+                // We are in the air (either jumped, or walked off the island)
+                // Apply gravity
+                verticalVelocity -= gravity * delta;
+                characterGroup.position.y += verticalVelocity * delta;
+
+                // Check if we have landed back on the building floor while falling down
+                if (hasGround && verticalVelocity <= 0) {
+                    const floorY = currentBaseY;
+                    if (characterGroup.position.y <= floorY) {
+                        characterGroup.position.y = floorY;
+                        verticalVelocity = 0;
+                        isGrounded = true;
+                    }
+                }
+
+                // Fall trigger below -40 units -> respawn safely back on the island
+                if (characterGroup.position.y < -40) {
+                    // Respawn slightly in the air above center (X=0, Z=0) so we fall cleanly onto the highest building surface
+                    characterGroup.position.set(0, 15, 0);
+                    characterGroup.rotation.set(0, 0, 0); // reset rotation to face forward
+                    verticalVelocity = 0;
+                    isGrounded = false;
+                }
             }
         }
+
+        isGroundedLastFrame = isGrounded;
 
         // Hard safety clamp: prevent the character from ever falling below Y = 0 (the absolute base of the city)
         if (characterGroup.position.y < 0) {
@@ -261,7 +285,28 @@ export const createCharacterController = (astronaut: AstronautRig, keys: SpaceKe
                 obj.rotation[axis] = THREE.MathUtils.lerp(obj.rotation[axis], target, factor);
             };
 
-            if (!isGrounded) {
+            if (wallClimber.isClimbing) {
+                // --- 벽타기: 두 팔을 번갈아 머리 위로 뻗고, 무릎은 벽에 붙여 접는다 ---
+                const reach = Math.sin(time * 6);
+                lerpTo(P.leftArm.shoulder, 'x', -2.25 + reach * 0.4);
+                lerpTo(P.rightArm.shoulder, 'x', -2.25 - reach * 0.4);
+                lerpTo(P.leftArm.shoulder, 'z', -0.18);
+                lerpTo(P.rightArm.shoulder, 'z', 0.18);
+                lerpTo(P.leftArm.elbow, 'x', -0.25);
+                lerpTo(P.rightArm.elbow, 'x', -0.25);
+
+                lerpTo(P.leftLeg.hip, 'x', -0.4 - reach * 0.3);
+                lerpTo(P.rightLeg.hip, 'x', -0.4 + reach * 0.3);
+                lerpTo(P.leftLeg.knee, 'x', 0.8);
+                lerpTo(P.rightLeg.knee, 'x', 0.8);
+
+                // 벽 쪽으로 살짝 기댄 상체
+                lerpTo(P.body, 'x', 0.14);
+                P.body.position.y = THREE.MathUtils.lerp(P.body.position.y, 0, ease);
+
+                // 매달려 있는 동안은 추진기를 끈다 — 날고 있는 게 아니다
+                P.flames.forEach((flame: any) => { flame.visible = false; });
+            } else if (!isGrounded) {
                 // --- Airborne: tucked jump pose, arms flared, thrusters firing ---
                 lerpTo(P.leftArm.shoulder, 'x', -0.7);
                 lerpTo(P.rightArm.shoulder, 'x', -0.7);

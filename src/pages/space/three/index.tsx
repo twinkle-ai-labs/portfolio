@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
 
@@ -13,7 +13,11 @@ import {createEntranceBeacons, detectEntrances} from './entrances';
 import {createCharacterController} from './character';
 import {createCameraRig} from './camera-rig';
 import {attachKeyboard} from './keyboard';
+import {createGuide} from './guide';
+import {createStarShards} from './starshards';
 import SpaceHud from './hud';
+import GuideDialogue, {GuideDialogueKey} from '@Pages/space/components/GuideDialogue';
+import StarCounter from '@Pages/space/components/StarCounter';
 
 interface IThreeSpaceProps {
     onLoaded?: () => void
@@ -26,6 +30,12 @@ interface IThreeSpaceProps {
 const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
     const containerRef = useRef<HTMLDivElement | null>(null);
     const keysRef = useRef(createInitialKeys());
+
+    // 가이드 대화창과 별 조각 카운터. 3D 월드(명령형)는 아래 effect 안에서
+    // setState만 호출해 이벤트를 알리고, 문구 선택(i18n)은 컴포넌트 쪽이 맡는다.
+    const [dialogueKey, setDialogueKey] = useState<GuideDialogueKey | null>(null);
+    const [stars, setStars] = useState({collected: 0, total: 0});
+    const closeDialogue = useCallback(() => setDialogueKey(null), []);
 
     useEffect(() => {
         const container = containerRef.current;
@@ -154,12 +164,22 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
         scene.add(astronaut.mesh);
         const characterController = createCharacterController(astronaut, keysRef.current);
 
+        // --- Guide star companion (procedural, follows the astronaut) ---------------------------
+        const guide = createGuide(scene);
+
+        // 로딩 화면이 걷히고 잠시 뒤 인사 대화를 연다 — 커튼 페이드와 겹치지 않게 한 박자 쉰다
+        let introTimer: ReturnType<typeof setTimeout> | null = null;
+        const openIntroSoon = () => {
+            introTimer = setTimeout(() => setDialogueKey('intro'), 900);
+        };
+
         // --- Fireflies (앵커 높이는 도시 로드 후 실제 바닥으로 스냅) ----------------------------
         const fireflies = createFireflies(scene);
 
         // --- Future City ------------------------------------------------------------------------
         let buildingGroup: any | null = null;
         let entranceBeacons: ReturnType<typeof createEntranceBeacons> | null = null;
+        let starShards: ReturnType<typeof createStarShards> | null = null;
 
         loadCityScene(loader, trackProgress('building'))
             .then((cityScene: any) => {
@@ -172,6 +192,13 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
 
                 const entranceSpots = detectEntrances(building, spawnHeight);
                 entranceBeacons = createEntranceBeacons(scene, entranceSpots);
+
+                // 별 조각은 실제 바닥 높이와 입구 위치를 알아야 놓을 수 있으므로 도시 로드 후에 심는다
+                starShards = createStarShards(scene, sampleGroundY, entranceSpots, (collected, total) => {
+                    setStars({collected, total});
+                    if (collected >= total) setDialogueKey('complete');
+                });
+                setStars({collected: 0, total: starShards.total});
 
                 scene.add(building);
 
@@ -193,6 +220,7 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
                 console.warn('Space assets still loading after 30s — revealing the scene anyway.');
                 loadedDispatched = true;
                 onLoaded?.();
+                openIntroSoon();
             }
         }, 30000);
 
@@ -225,6 +253,8 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
             starfield.update(time);
             fireflies.update(time);
             entranceBeacons?.update(time, astronaut.mesh.position);
+            guide.update(time, delta, astronaut.mesh.position);
+            starShards?.update(time, delta, astronaut.mesh.position);
 
             const {isWalking} = characterController.update(delta, time, buildingGroup);
             cameraRig.update(delta, astronaut.mesh, isWalking);
@@ -245,6 +275,7 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
                 if (framesSinceReady >= 3) {
                     loadedDispatched = true;
                     onLoaded?.();
+                    openIntroSoon();
                 }
             }
 
@@ -255,6 +286,7 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
 
         return () => {
             clearTimeout(loadTimer);
+            if (introTimer) clearTimeout(introTimer);
             window.cancelAnimationFrame(animationFrame);
             resizeObserver.disconnect();
             detachKeyboard();
@@ -274,6 +306,8 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
             starfield.dispose();
             fireflies.dispose();
             entranceBeacons?.dispose();
+            guide.dispose();
+            starShards?.dispose();
             renderer.dispose();
         };
     }, [onLoaded, onProgress]);
@@ -282,6 +316,8 @@ const ThreeSpace = ({onLoaded, onProgress}: IThreeSpaceProps) => {
         <>
             <div ref={containerRef} className="three-canvas" />
             <SpaceHud keysRef={keysRef}/>
+            <StarCounter collected={stars.collected} total={stars.total}/>
+            <GuideDialogue dialogueKey={dialogueKey} starTotal={stars.total} onClose={closeDialogue}/>
         </>
     );
 };
