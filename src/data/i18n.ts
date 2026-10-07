@@ -131,6 +131,26 @@ export interface ITranslations {
         home: string;
         space: string;
     };
+    /** /files — 키로 여는 문서함 */
+    files: {
+        badge: string;
+        title: string;
+        titleAccent: string;
+        desc: string;
+        keyLabel: string;
+        keyPlaceholder: string;
+        show: string;
+        hide: string;
+        note: string;
+        size: string;
+        updated: string;
+        download: string;
+        working: string;
+        done: string;
+        emptyKey: string;
+        wrongKey: string;
+        failed: string;
+    };
 }
 
 const translations: Record<'ko' | 'en', ITranslations> = {
@@ -303,6 +323,25 @@ const translations: Record<'ko' | 'en', ITranslations> = {
                 home: '홈으로 돌아가기',
                 space: 'Twinkle Space 둘러보기',
             },
+            files: {
+                badge: 'Files',
+                title: '키로 여는',
+                titleAccent: '문서함',
+                desc: '이력서와 포트폴리오는 암호화된 채 실려 있습니다. 전달받은 키를 넣으면 이 기기 안에서 풀려 내려받아집니다 — 키는 어디로도 보내지 않습니다.',
+                keyLabel: '키',
+                keyPlaceholder: '전달받은 키를 입력하세요',
+                show: '키 보이기',
+                hide: '키 숨기기',
+                note: '복호화는 브라우저 안에서만 일어납니다. 키가 틀리면 파일은 열리지 않습니다.',
+                size: '크기',
+                updated: '갱신',
+                download: '내려받기',
+                working: '여는 중…',
+                done: '내려받았습니다',
+                emptyKey: '먼저 키를 입력하세요.',
+                wrongKey: '키가 맞지 않습니다.',
+                failed: '파일을 가져오지 못했습니다. 잠시 뒤 다시 시도해 주세요.',
+            },
         },
     en: {
         nav: {
@@ -472,6 +511,25 @@ const translations: Record<'ko' | 'en', ITranslations> = {
                 desc: "The address you're looking for has moved, or never existed. Head back home — or take a walk through space instead.",
                 home: 'Back to home',
                 space: 'Explore Twinkle Space',
+            },
+            files: {
+                badge: 'Files',
+                title: 'Documents behind',
+                titleAccent: 'a key',
+                desc: 'The résumé and portfolio are stored encrypted. Enter the key you were given and they are decrypted on this device and downloaded — the key never leaves your browser.',
+                keyLabel: 'Key',
+                keyPlaceholder: 'Enter the key you were given',
+                show: 'Show key',
+                hide: 'Hide key',
+                note: 'Decryption happens only in your browser. With the wrong key, nothing opens.',
+                size: 'Size',
+                updated: 'Updated',
+                download: 'Download',
+                working: 'Opening…',
+                done: 'Downloaded',
+                emptyKey: 'Enter the key first.',
+                wrongKey: 'That key does not match.',
+                failed: 'Could not fetch the file. Please try again shortly.',
             },
         },
 };
