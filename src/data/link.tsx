@@ -2,7 +2,7 @@ import React, {ReactNode} from "react";
 import {SiVelog} from "react-icons/si";
 import {FaEnvelope, FaGithub} from "react-icons/fa";
 import {IoHome, IoIdCard, IoPersonCircle} from "react-icons/io5";
-import {FaBriefcase, FaCode} from "react-icons/fa6";
+import {FaBriefcase, FaCode, FaFolderOpen} from "react-icons/fa6";
 import config from "@Data/config";
 import {LocalizedText} from "@Utils/i18n";
 
@@ -47,4 +47,5 @@ export const menus: ILink[] = [
     {id: 'career', name: 'Experience', link: '/#s_career', icon: (<FaBriefcase />)},
     {id: 'project', name: 'Projects', link: '/#s_project', icon: (<IoIdCard />)},
     {id: 'skill', name: 'Skills', link: '/#s_skill', icon: (<FaCode />)},
+    {id: 'files', name: 'Files', link: '/files', icon: (<FaFolderOpen />)},
 ]

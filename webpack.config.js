@@ -111,7 +111,8 @@ module.exports = (env, argv) => {
                         to: 'models',
                         globOptions: {ignore: ['**/interior_7.glb']},
                     },
-                    {from: 'src/assets/pdf', to: 'pdf'},
+                    // 평문 PDF 는 싣지 않는다 — scripts/encrypt-files.mjs 가 봉한 .enc 와 manifest 만 나간다.
+                    {from: 'src/assets/files', to: 'files'},
                     {from: 'src/assets/images/star-bubble.png', to: 'logo.png'},
                     {from: 'template/robots.txt', to: 'robots.txt'},
                     {from: 'template/sitemap.xml', to: 'sitemap.xml'},
@@ -119,7 +120,6 @@ module.exports = (env, argv) => {
                     {from: 'template/apple-touch-icon.png', to: 'apple-touch-icon.png'},
                     {from: 'template/404.html', to: '404.html'},
                     {from: 'template/og.png', to: 'og.png'},
-                    {from: 'node_modules/pdfjs-dist/build/pdf.worker.min.mjs', to: 'pdf.worker.min.mjs'},
                 ],
             }),
             new CnameWebpackPlugin({

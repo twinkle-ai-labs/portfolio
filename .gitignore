@@ -23,3 +23,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 node_modules
+
+# 암호화 PDF 의 키 — 저장소에 올리지 않는다 (scripts/encrypt-files.mjs)
+.files-key
+# PDF 원본 — 저장소가 공개라 원본을 올리면 암호화가 뜻이 없다. 올라가는 건 src/assets/files/*.enc 뿐
+src/assets/pdf/

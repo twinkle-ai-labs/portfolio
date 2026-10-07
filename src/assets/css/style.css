@@ -4620,3 +4620,239 @@ span.pc {
         text-align: left;
     }
 }
+
+/* ==========================================================================
+   /files — 키로 여는 문서함. 404 와 같은 밤하늘 위에 서고, 카드와 입력은 이 집의 토큰을 쓴다.
+   ========================================================================== */
+#s_files {
+    min-height: 100vh;
+    padding: calc(var(--header-height) + 2rem) 0 clamp(3rem, 8vw, 6rem);
+}
+
+.files-shell {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: clamp(1.75rem, 4vw, 2.75rem);
+    width: min(56rem, 100% - clamp(2rem, 5vw, 8rem));
+    margin: 0 auto;
+}
+
+.files-head {
+    display: grid;
+    justify-items: center;
+    gap: 1.15rem;
+    text-align: center;
+}
+
+.files-head .error-title {
+    max-width: 24ch;
+}
+
+/* 키 — 한 줄 입력과 눈 단추. 글래스 판 위에 올려 카드와 층이 갈리게 한다. */
+.files-key {
+    display: grid;
+    gap: 0.6rem;
+    width: min(32rem, 100%);
+    margin: 0 auto;
+    padding: clamp(1rem, 2.5vw, 1.4rem);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+.files-key-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.files-key-row {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.files-key-input {
+    flex: 1;
+    min-width: 0;
+    min-height: 3rem;
+    padding: 0 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+    background: rgba(5, 6, 10, 0.55);
+    color: #ffffff;
+    font-size: 1rem;
+    font-family: var(--font-mono);
+    letter-spacing: 0.04em;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.files-key-input::placeholder {
+    color: rgba(255, 255, 255, 0.35);
+    font-family: var(--font-sans);
+    letter-spacing: -0.01em;
+}
+
+.files-key-input:focus-visible {
+    outline: none;
+    border-color: rgba(165, 180, 252, 0.7);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.25);
+}
+
+.files-key-toggle {
+    width: 3rem;
+    min-height: 3rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 1rem;
+    transition: border-color var(--transition-fast), background var(--transition-fast), color var(--transition-fast);
+}
+
+.files-key-toggle:hover,
+.files-key-toggle:focus-visible {
+    border-color: rgba(165, 180, 252, 0.55);
+    background: rgba(165, 180, 252, 0.12);
+    color: #c7d2fe;
+    outline: none;
+}
+
+.files-key-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.85rem;
+    line-height: 1.6;
+    word-break: keep-all;
+}
+
+.files-key-note svg {
+    flex: none;
+    margin-top: 0.2em;
+}
+
+/* 카드 — 폭이 좁아지면 한 줄로 내려간다. 미디어 쿼리 없이 auto-fit 으로. */
+.files-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    gap: clamp(0.9rem, 2vw, 1.25rem);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.files-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+    padding: clamp(1.1rem, 2.5vw, 1.5rem);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.045);
+    text-align: left;
+    transition: transform var(--transition-fast), border-color var(--transition-fast), background var(--transition-fast);
+}
+
+.files-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(165, 180, 252, 0.35);
+    background: rgba(165, 180, 252, 0.07);
+}
+
+.files-card-body {
+    display: grid;
+    gap: 0.45rem;
+}
+
+.files-card-name {
+    margin: 0;
+    color: #ffffff;
+    font-size: clamp(1.1rem, 1rem + 0.5vw, 1.3rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    word-break: keep-all;
+}
+
+.files-card-desc {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 0.92rem;
+    line-height: 1.6;
+    word-break: keep-all;
+}
+
+.files-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.25rem;
+    margin: 0.35rem 0 0;
+}
+
+.files-card-meta div {
+    display: flex;
+    gap: 0.45rem;
+    align-items: baseline;
+}
+
+.files-card-meta dt {
+    color: rgba(255, 255, 255, 0.42);
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.files-card-meta dd {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.86rem;
+    font-family: var(--font-mono);
+}
+
+.files-card-foot {
+    display: grid;
+    gap: 0.5rem;
+    margin-top: auto;
+}
+
+.files-card-foot .hero-primary,
+.files-card-foot .hero-secondary {
+    width: 100%;
+    min-height: 2.9rem;
+    font-size: 0.95rem !important;
+}
+
+.files-card-foot button:disabled {
+    cursor: progress;
+    opacity: 0.7;
+}
+
+.files-card-status {
+    min-height: 1.2em;
+    margin: 0;
+    font-size: 0.82rem;
+    line-height: 1.4;
+    text-align: center;
+    word-break: keep-all;
+}
+
+.files-card-status.error {
+    color: #fda4af;
+}
+
+.files-card-status.done {
+    color: var(--green);
+}
