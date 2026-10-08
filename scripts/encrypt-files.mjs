@@ -5,8 +5,8 @@
  *   node scripts/encrypt-files.mjs            # .files-key 파일에서 읽는다
  *
  * 원본은 src/assets/pdf/ 에 산다 — git 이 추적하지 않는다(.gitignore). 저장소가 공개라
- * 원본을 올리면 암호화는 뜻이 없다. 추적되는 것은 src/assets/files/ 의 .enc 뿐이고,
- * 웹팩이 그 폴더를 files/ 로 복사한다. 키가 없으면 어디서도 열리지 않는다.
+ * 원본을 올리면 암호화는 뜻이 없다. 추적되는 것은 src/assets/sealed/ 의 .enc 뿐이고,
+ * 웹팩이 그 폴더를 sealed/ 로 복사한다 — 라우트(/files)와 이름이 같으면 Pages 가 301 을 붙여 화면이 깨진다. 키가 없으면 어디서도 열리지 않는다.
  *
  * 한 키로 전부 연다(2026-10-06 Founder). 키는 저장소에 적지 않는다 — .files-key 도 ignore 다.
  *
@@ -25,7 +25,7 @@ import {fileURLToPath} from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const source = resolve(root, 'src/assets/pdf');
-const target = resolve(root, 'src/assets/files');
+const target = resolve(root, 'src/assets/sealed');
 const keyFile = resolve(root, '.files-key');
 
 const MAGIC = new TextEncoder().encode('TWKF');

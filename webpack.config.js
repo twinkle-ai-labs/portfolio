@@ -19,6 +19,8 @@ module.exports = (env, argv) => {
             path: path.resolve(__dirname, "dist"),
             filename: prod ? "[name].[contenthash].js" : "[name].bundle.js",
             chunkFilename: prod ? "[name].[contenthash].chunk.js" : "[name].chunk.js",
+            // 절대 경로 — 주소에 슬래시가 붙어도(/files/) 번들을 루트에서 찾게 한다. 사이트는 도메인 루트에 산다.
+            publicPath: "/",
             clean: true,
         },
         optimization: {
@@ -112,7 +114,9 @@ module.exports = (env, argv) => {
                         globOptions: {ignore: ['**/interior_7.glb']},
                     },
                     // 평문 PDF 는 싣지 않는다 — scripts/encrypt-files.mjs 가 봉한 .enc 와 manifest 만 나간다.
-                    {from: 'src/assets/files', to: 'files'},
+                    // 폴더 이름은 라우트(/files)와 **달라야 한다** — dist/files/ 가 있으면 GitHub Pages 가 /files 를
+                    // /files/ 로 301 보내고, 거기서 상대 경로 스크립트가 /files/runtime.js 로 풀려 화면이 검게 섰다(v1.1.1).
+                    {from: 'src/assets/sealed', to: 'sealed'},
                     {from: 'src/assets/images/star-bubble.png', to: 'logo.png'},
                     {from: 'template/robots.txt', to: 'robots.txt'},
                     {from: 'template/sitemap.xml', to: 'sitemap.xml'},

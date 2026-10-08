@@ -8,7 +8,7 @@
 npm start          # 개발 서버 (webpack-dev-server, 9000 포트)
 npm run build      # 프로덕션 번들 → dist/
 npx tsc --noEmit   # 타입 검사
-node scripts/encrypt-files.mjs   # src/assets/pdf/*.pdf 를 봉해 src/assets/files/ 에 (키는 .files-key)
+node scripts/encrypt-files.mjs   # src/assets/pdf/*.pdf 를 봉해 src/assets/sealed/ 에 (키는 .files-key)
 ```
 
 테스트 러너는 설정만 있고 실제 테스트는 없습니다. 변경 후에는
@@ -39,7 +39,7 @@ src/
                         modal · project
   pages/files/          /files — 키로 여는 문서함. FileVault 가 WebCrypto 로 브라우저 안에서 푼다
   data/
-    files.ts            /files 의 목록 — 이름·설명만. 크기·날짜는 assets/files/manifest.json
+    files.ts            /files 의 목록 — 이름·설명만. 크기·날짜는 assets/sealed/manifest.json
     i18n.ts             UI 문자열 카탈로그 (ko / en)
     config.tsx          프로필 · 사이트 메타
     career.tsx  project.tsx  link.tsx
@@ -51,7 +51,7 @@ src/
   store/slice/          redux — offset · language · drawer · modal · loading
   utils/crypto.ts       봉한 파일을 여는 쪽. 컨테이너 꼴은 scripts/encrypt-files.mjs 와 한 벌
   assets/pdf/           PDF 원본 — **git 밖**(.gitignore). 공개 저장소라 원본을 올리면 암호화가 뜻이 없다
-  assets/files/         봉한 .enc + manifest.json — 이것만 추적되고 dist/files/ 로 나간다
+  assets/sealed/         봉한 .enc + manifest.json — 이것만 추적되고 dist/sealed/ 로 나간다
 ```
 
 경로 별칭: `@Components` `@Layout` `@Pages` `@Data` `@Store` `@Style` `@Utils` `@Images`
@@ -107,6 +107,9 @@ PDF 는 **암호화된 채** 저장소와 배포물에 실린다. 열쇠는 비�
 * 키를 바꾸면 `.files-key` 를 고치고 전부 다시 봉한다 — 한 키로 전부 연다(Founder 결정).
 * 컨테이너 꼴(`TWKF` 머리 37바이트)은 스크립트와 `utils/crypto.ts` 가 한 벌이다 — 한쪽만 고치지 않는다.
 * 이 페이지는 `noindex` 다. 메뉴의 Files 가 유일한 입구다.
+* **배포물에 라우트와 같은 이름의 폴더를 두지 않는다.** v1.1.1 에서 `dist/files/` 가 `/files` 를 가렸다 — Pages 가
+  `/files/` 로 301 보내고 상대 경로 번들이 그 아래서 404 가 나 화면이 검게 섰다. 로컬 `serve -s` 는 301 을 안 해 못 잡는다.
+  그래서 봉한 파일은 `sealed/` 에 살고 `publicPath` 는 `/` 다.
 
 ### i18n
 
