@@ -8,6 +8,7 @@
 npm start          # 개발 서버 (webpack-dev-server, 9000 포트)
 npm run build      # 프로덕션 번들 → dist/
 npx tsc --noEmit   # 타입 검사
+node scripts/encrypt-files.mjs   # src/assets/pdf/*.pdf 를 봉해 src/assets/files/ 에 (키는 .files-key)
 ```
 
 테스트 러너는 설정만 있고 실제 테스트는 없습니다. 변경 후에는
@@ -36,7 +37,9 @@ src/
                         keyboard · assets(모델 프로미스 캐시) · hud.tsx
   components/           페이지 두 곳 이상이 쓰는 것만: layout/ · logo · language ·
                         modal · project
+  pages/files/          /files — 키로 여는 문서함. FileVault 가 WebCrypto 로 브라우저 안에서 푼다
   data/
+    files.ts            /files 의 목록 — 이름·설명만. 크기·날짜는 assets/files/manifest.json
     i18n.ts             UI 문자열 카탈로그 (ko / en)
     config.tsx          프로필 · 사이트 메타
     career.tsx  project.tsx  link.tsx
@@ -46,6 +49,9 @@ src/
     mobile.css          미디어 쿼리 (1200 / 900 / 767 / 480)
     transition.css
   store/slice/          redux — offset · language · drawer · modal · loading
+  utils/crypto.ts       봉한 파일을 여는 쪽. 컨테이너 꼴은 scripts/encrypt-files.mjs 와 한 벌
+  assets/pdf/           PDF 원본 — **git 밖**(.gitignore). 공개 저장소라 원본을 올리면 암호화가 뜻이 없다
+  assets/files/         봉한 .enc + manifest.json — 이것만 추적되고 dist/files/ 로 나간다
 ```
 
 경로 별칭: `@Components` `@Layout` `@Pages` `@Data` `@Store` `@Style` `@Utils` `@Images`
@@ -89,6 +95,19 @@ src/
 한국어로, **무엇이 아니라 왜**를 적습니다. 좌표 계산이나 캡 보정처럼
 "이 숫자가 왜 이 값인지" 코드만 봐서는 알 수 없는 곳에 남깁니다.
 
+### 문서함 (/files)
+
+PDF 는 **암호화된 채** 저장소와 배포물에 실린다. 열쇠는 비밀구절 하나(`.files-key`, ignore) 이고
+페이지에서 사람이 넣으면 브라우저 안에서 PBKDF2 → AES-256-GCM 으로 푼다. 서버도, 키가 가는 곳도 없다.
+
+* 원본은 `src/assets/pdf/` 에 두고 **커밋하지 않는다** — 2026-10-06 까지 평문 넷이 추적되고 있었다.
+  저장소가 공개라 원본이 올라가면 봉한 것이 뜻이 없다.
+* PDF 를 바꾸면 `node scripts/encrypt-files.mjs` 를 돌려 `.enc` 와 `manifest.json` 을 갱신하고 그것을 커밋한다.
+  새 PDF 는 `data/files.ts` 에 이름·설명 한 줄을 더한다.
+* 키를 바꾸면 `.files-key` 를 고치고 전부 다시 봉한다 — 한 키로 전부 연다(Founder 결정).
+* 컨테이너 꼴(`TWKF` 머리 37바이트)은 스크립트와 `utils/crypto.ts` 가 한 벌이다 — 한쪽만 고치지 않는다.
+* 이 페이지는 `noindex` 다. 메뉴의 Files 가 유일한 입구다.
+
 ### i18n
 
 새 문자열은 `ITranslations` 인터페이스 → `ko` → `en` 순으로 추가합니다.
@@ -125,8 +144,8 @@ i18n 에 중복해 적지 않습니다.
 
 ### 번들 크기
 
-`main` 481 KiB 로 webpack 권장치를 넘습니다(경고 2건). babylon(3D 배경)과
-pdf.js 가 대부분이며 의도된 상태입니다. 새로 경고가 늘었다면 그건 확인이 필요합니다.
+`main` 481 KiB 로 webpack 권장치를 넘습니다(경고 2건). 큰 덩이는 MUI 와 three-mesh-bvh 이며
+의도된 상태입니다. (pdf.js 는 2026-10-07 에 복사하던 워커까지 걷었다 — 어디서도 import 하지 않았다.) 새로 경고가 늘었다면 그건 확인이 필요합니다.
 
 ## 검증
 

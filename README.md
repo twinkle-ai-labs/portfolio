@@ -78,6 +78,7 @@ npm start          # 개발 서버 → http://localhost:9000
 | 명령어 | 설명 |
 | --- | --- |
 | `npm start` | 개발 서버 (HMR) |
+| `node scripts/encrypt-files.mjs` | `src/assets/pdf/*.pdf` 를 봉해 `/files` 에 싣는다 (키는 `.files-key`) |
 | `npm run build` | 프로덕션 번들 → `dist/` |
 | `npx tsc --noEmit` | 타입 검사 |
 
