@@ -1,0 +1,26 @@
+[
+  {
+    "file": "jobkorea-resume.pdf",
+    "bytes": 335173,
+    "sha256": "ad49bdca4d7c8636",
+    "updated": "2026-06-19"
+  },
+  {
+    "file": "portfolio-2.pdf",
+    "bytes": 1609396,
+    "sha256": "5b4c20658e85ef9b",
+    "updated": "2026-06-19"
+  },
+  {
+    "file": "portfolio.pdf",
+    "bytes": 1352787,
+    "sha256": "0c0a4cc483c9e59a",
+    "updated": "2026-08-24"
+  },
+  {
+    "file": "presentation.pdf",
+    "bytes": 1153021,
+    "sha256": "cc4f3db2e7c61512",
+    "updated": "2026-06-19"
+  }
+]
