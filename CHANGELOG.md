@@ -3,6 +3,18 @@
 이 제품의 판은 `package.json` 의 `version` 과 태그 `vX.Y.Z` 로 센다. 1.1.0 까지는 CHANGELOG 없이 나갔다 —
 그 판들의 내용은 `git log` 와 금고(`vault/products/Portfolio/`)가 갖고 있다.
 
+## [1.1.2] — 2026-10-08 · me.twinklelabs.kr
+
+### Fixed
+- `/files` 가 라이브에서 검게 서던 것 (`989e0d8`). v1.1.1 의 `dist/files/` 가 라우트 `/files` 를 가렸다 — GitHub Pages 는
+  폴더가 있으면 `/files` 를 `/files/` 로 301 보내고, 404.html 셈이 돌려 둔 그 주소에서 index.html 의 상대 경로 번들이
+  `/files/runtime.js` 로 풀려 404. `/space` 는 폴더가 없어 슬래시가 안 붙었을 뿐이다. 로컬 `serve -s` 는 301 을 안 해 못 잡았다
+
+### Changed
+- 봉한 `.enc` 와 `manifest.json` 의 자리 — `src/assets/files/` → `src/assets/sealed/`, 배포물은 `dist/sealed/`.
+  라우트와 이름이 겹치지 않는다. `scripts/encrypt-files.mjs` · `FileVault` 의 fetch 경로도 같이 갔다
+- `webpack.config.js` 의 `output.publicPath` 를 `/` 로 박았다 — 어느 깊이의 주소에서도 번들을 루트에서 찾는다
+
 ## [1.1.1] — 2026-10-08 · me.twinklelabs.kr
 
 ### Added
