@@ -39,7 +39,7 @@ const FileVault = () => {
     const [status, setStatus] = useState<Record<string, Status>>({});
 
     useEffect(() => {
-        fetch('/files/manifest.json')
+        fetch('/sealed/manifest.json')
             .then((res) => (res.ok ? res.json() : []))
             .then((rows: ManifestEntry[]) =>
                 setManifest(Object.fromEntries(rows.map((row) => [row.file, row]))))
@@ -53,7 +53,7 @@ const FileVault = () => {
         }
         setStatus((s) => ({...s, [file]: {kind: 'working'}}));
         try {
-            const res = await fetch(`/files/${encodeURIComponent(file)}.enc`);
+            const res = await fetch(`/sealed/${encodeURIComponent(file)}.enc`);
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const plain = await unseal(new Uint8Array(await res.arrayBuffer()), passphrase);
             saveAs(plain, file);

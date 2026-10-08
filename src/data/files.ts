@@ -1,7 +1,7 @@
 import {LocalizedText} from "@Utils/i18n";
 
 /**
- * /files 에서 내려받을 수 있는 문서. 파일은 src/assets/files/<file>.enc 로 봉한 채 실리고,
+ * /files 에서 내려받을 수 있는 문서. 파일은 src/assets/sealed/<file>.enc 로 봉한 채 실리고,
  * 크기·날짜는 같은 폴더의 manifest.json 이 안다(scripts/encrypt-files.mjs 가 쓴다).
  * 여기는 사람이 읽는 이름과 설명만 든다 — 새 PDF 를 더하면 여기에도 한 줄을 더한다.
  */
