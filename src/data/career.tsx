@@ -56,7 +56,7 @@ const careers: ICareer[] = [
         period: [new Date('2024.12.16'), new Date()],
         link: 'https://www.inavisystems.com/',
         dotColor: 'info',
-        position: {ko: 'Lead Backend Engineer · DevOps', en: 'Lead Backend Engineer · DevOps'},
+        position: {ko: 'Lead Backend Engineer', en: 'Lead Backend Engineer'},
         features: [
             {
                 ko: '신규 서비스의 서버·인프라 아키텍처 전주기 단독 설계 (Owner)',
