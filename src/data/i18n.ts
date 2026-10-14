@@ -17,7 +17,6 @@ export interface ITranslations {
         desc: string;
         ready: string[];
         ctaProject: string;
-        available: string;
     };
     stats: {
         years: string;
@@ -163,7 +162,6 @@ const translations: Record<'ko' | 'en', ITranslations> = {
             desc: '복잡한 비즈니스 로직을 견고한 데이터 모델과 유연한 API로 구체화하고, 자동화된 배포 파이프라인과 정교한 모니터링으로 서비스가 멈추지 않게 만듭니다.',
             ready: ['서버·인프라 아키텍처 설계', '클라우드 배포 자동화', '장애 대응 · 운영 관측', 'API 설계 및 성능 최적화'],
             ctaProject: '프로젝트 보기 🚀',
-            available: 'available for work',
         },
         stats: {
             years: 'YEARS · 실무 경력',
@@ -185,15 +183,15 @@ const translations: Record<'ko' | 'en', ITranslations> = {
             factCareer: '경력',
             factEducation: '학력',
             factCurrent: '현재',
-            factScope: '범위',
+            factScope: '도메인',
             careerValue: '만 5년',
             careerNote: '서버 · 인프라 · 운영',
             educationValue: '컴퓨터공학 학사',
             educationNote: '4년제 학사 학위',
             currentValue: '아이나비시스템즈',
             currentNote: 'Lead Backend Engineer',
-            scopeValue: '설계 → 배포 → 운영',
-            scopeNote: '전 구간 단독 수행',
+            scopeValue: '내비게이션 · 위치 기반',
+            scopeNote: '내비 서버 운영 · 스탬프 위치 인증 · 내비 로그 통계',
             certLabel: 'Certifications',
             certificates: ['리눅스마스터 2급', 'SQL 개발자', '정보처리기사'],
             tags: ['Backend Engineer', 'DevOps', '아키텍처 설계', 'Spring', 'Kotlin', 'AWS'],
@@ -341,7 +339,6 @@ const translations: Record<'ko' | 'en', ITranslations> = {
             desc: 'I turn complex business logic into solid data models and flexible APIs, and keep services running with automated deployment pipelines and precise monitoring.',
             ready: ['Server & infra architecture design', 'Cloud deployment automation', 'Incident response · observability', 'API design & performance tuning'],
             ctaProject: 'View Projects 🚀',
-            available: 'available for work',
         },
         stats: {
             years: 'YEARS OF EXPERIENCE',
@@ -363,15 +360,15 @@ const translations: Record<'ko' | 'en', ITranslations> = {
             factCareer: 'Experience',
             factEducation: 'Education',
             factCurrent: 'Current',
-            factScope: 'Scope',
+            factScope: 'Domain',
             careerValue: '5+ years',
             careerNote: 'Server · Infra · Ops',
             educationValue: 'B.S. in Computer Science',
             educationNote: "Four-year bachelor's degree",
             currentValue: 'INAVI Systems',
             currentNote: 'Lead Backend Engineer',
-            scopeValue: 'Design → Deploy → Operate',
-            scopeNote: 'Owned end to end',
+            scopeValue: 'Navigation · location-based',
+            scopeNote: 'Navi server ops · stamp location verification · navi log statistics',
             certLabel: 'Certifications',
             certificates: ['Linux Master Level 2', 'SQL Developer (SQLD)', 'Engineer Information Processing'],
             tags: ['Backend Engineer', 'DevOps', 'Architecture', 'Spring', 'Kotlin', 'AWS'],
