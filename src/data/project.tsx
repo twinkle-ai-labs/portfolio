@@ -135,7 +135,7 @@ const projects: IProject[] = [
         id: 'orda',
         title: {ko: '아이나비 스탬프 오르다', en: 'INAVI Stamp ORDA'},
         period: {ko: '2024.12 - 현재', en: '2024.12 - Present'},
-        role: {ko: 'Lead Server Developer', en: 'Lead Server Developer'},
+        role: {ko: 'Lead Backend Engineer', en: 'Lead Backend Engineer'},
         summary: {
             ko: '서버 인력이 없던 신규 스탬프 투어 서비스의 도메인·AWS 인프라·배포·관측을 혼자 설계하고 구축해, 회원 7만 명과 9개 기관의 투어 25건을 운영하는 서비스로 세웠습니다.',
             en: 'For a new stamp-tour service with no server engineer, I designed and built the domain, AWS infrastructure, delivery and observability alone, and ran it to 70K members and 25 tours for 9 organizations.',
@@ -925,7 +925,7 @@ const projects: IProject[] = [
         id: 'smart-library',
         title: {ko: '스마트도서관 시스템 고도화', en: 'Smart Library system modernization'},
         period: {ko: '2021.01 - 2022.06', en: '2021.01 - 2022.06'},
-        role: {ko: 'Full-stack Solution Architect', en: 'Full-stack Solution Architect'},
+        role: {ko: 'Full-Stack Engineer', en: 'Full-Stack Engineer'},
         summary: {
             ko: '소켓 미들웨어 병목으로 검색이 7.5초까지 걸리던 스마트도서관을 기기 DB 직접 라우팅 구조로 바꿔 p99 93ms 로 만들고, 파편화된 스택을 Java/Spring 하나로 모아 하이브리드 앱까지 정식 출시했습니다.',
             en: 'A smart library whose search took up to 7.5s behind a socket middleware: I rerouted the server straight to kiosk databases for a p99 of 93ms, unified the fragmented stack on Java/Spring, and shipped the hybrid app to both stores.',
