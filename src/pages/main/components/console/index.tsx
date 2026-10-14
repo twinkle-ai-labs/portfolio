@@ -1,19 +1,25 @@
 import React, {useEffect, useRef, useState} from "react";
 
 interface ILogLine {
-    time: string;
+    /** 어느 프로젝트의 사실인가 — 가짜 시각 대신 출처를 적습니다. */
+    tag: 'lib' | 'orda' | 'navi';
     level: 'INFO' | 'WARN' | 'DEPLOY' | 'OK';
     text: string;
 }
 
+/**
+ * 여기 적힌 줄은 전부 아래 프로젝트 카드 안에 근거가 있는 사실입니다.
+ * 2026-10-14 까지는 «12/12 instances» «4.2M rows» 처럼 어디에도 없는 숫자가 실제 로그처럼 흐르고 있었다 —
+ * 첫 화면에서 가장 구체적으로 보이는 값이 근거 없는 값이면 나머지 숫자까지 믿을 수 없게 된다.
+ */
 const LOG_LINES: ILogLine[] = [
-    {time: '09:12:04', level: 'DEPLOY', text: 'jenkins » orda-api v2.4.1 → prod (harbor)'},
-    {time: '09:12:11', level: 'OK', text: 'health-check passed · 12/12 instances'},
-    {time: '09:13:02', level: 'INFO', text: 'bigquery batch: 4.2M rows → stats.daily'},
-    {time: '09:13:40', level: 'WARN', text: 'p99 latency 812ms — tracing bottleneck'},
-    {time: '09:14:07', level: 'INFO', text: 'query plan rewritten · index hit 99.2%'},
-    {time: '09:14:09', level: 'OK', text: 'p99 7.5s → 93ms (≈80x faster)'},
-    {time: '09:15:00', level: 'INFO', text: 'grafana dashboard synced · alerts green'},
+    {tag: 'lib', level: 'WARN', text: 'search p99 7.5s — 3-tier socket middleware (Gandalf / Frodo)'},
+    {tag: 'lib', level: 'OK', text: 'RoutingDataSource → kiosk DBs direct · p99 93ms (≈80x) @ 100 vu/s'},
+    {tag: 'lib', level: 'DEPLOY', text: 'hybrid app → Play Store · App Store'},
+    {tag: 'orda', level: 'DEPLOY', text: 'orda-api → AWS via jenkins · harbor — infra solo-owned'},
+    {tag: 'orda', level: 'OK', text: '70K+ members · 25 tours · 9 organizations'},
+    {tag: 'navi', level: 'INFO', text: 'navi logs → bigquery daily partition → quartz batch → grafana'},
+    {tag: 'navi', level: 'INFO', text: 'on call: INAVI AIR · Toyota hybrid — prometheus → slack'},
 ];
 
 const LEVEL_CLASS: Record<ILogLine['level'], string> = {
@@ -46,14 +52,14 @@ const HeroConsole = () => {
         <div className="hero-console">
             <div className="hero-console-head">
                 <span className="hero-console-dot" aria-hidden="true"></span>
-                <span className="hero-console-title">hj@prod ~ tail -f service.log</span>
-                <span className="hero-console-uptime">uptime 99.9%</span>
+                <span className="hero-console-title">hj ~ cat highlights.log</span>
+                <span className="hero-console-uptime">2020 → now</span>
             </div>
 
             <div className="hero-console-body" ref={bodyRef}>
-                {LOG_LINES.slice(0, visibleCount).map((line) => (
-                    <p className="hero-console-line" key={line.time}>
-                        <span className="log-time">{line.time}</span>
+                {LOG_LINES.slice(0, visibleCount).map((line, index) => (
+                    <p className="hero-console-line" key={index}>
+                        <span className="log-tag">{line.tag}</span>
                         <span className={`log-level ${LEVEL_CLASS[line.level]}`}>{line.level}</span>
                         <span className="log-text">{line.text}</span>
                     </p>
@@ -79,23 +85,23 @@ const HeroConsole = () => {
                     />
                 </svg>
                 <div className="hero-console-chart-meta">
-                    <span>p99 latency</span>
+                    <span>lib · search p99</span>
                     <strong>7.5s → 93ms</strong>
                 </div>
             </div>
 
             <div className="hero-console-metrics">
                 <div>
-                    <strong>12/12</strong>
-                    <span>instances up</span>
+                    <strong>80x</strong>
+                    <span>search p99 · lib</span>
                 </div>
                 <div>
-                    <strong>4.2M</strong>
-                    <span>rows/day batch</span>
+                    <strong>70K+</strong>
+                    <span>members · orda</span>
                 </div>
                 <div>
-                    <strong>0</strong>
-                    <span>alerts firing</span>
+                    <strong>25</strong>
+                    <span>tours run · orda</span>
                 </div>
             </div>
         </div>

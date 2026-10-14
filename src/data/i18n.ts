@@ -56,10 +56,6 @@ export interface ITranslations {
         certificates: string[];
         /** 머리글 바로 아래에 붙는 역할·기술 태그 */
         tags: string[];
-        /** 섹션 안의 하위 블록 — 무엇을 믿는가 */
-        philosophyEyebrow: string;
-        philosophyTitle: string[];
-        philosophyDesc: string;
         /** 섹션 안의 하위 블록 — 어떻게 일하는가 (DevOps 도식이 왜 있는지 알려 줍니다) */
         howEyebrow: string;
         howTitle: string;
@@ -93,6 +89,10 @@ export interface ITranslations {
         title: string[];
         subtitle: string;
         keyAchievements: string;
+        /** 메인 카드 겉면의 세 줄 라벨 */
+        storyProblem: string;
+        storyAction: string;
+        storyResult: string;
         techStack: string;
         close: string;
         prev: string;
@@ -212,9 +212,6 @@ const translations: Record<'ko' | 'en', ITranslations> = {
             certLabel: 'Certifications',
             certificates: ['리눅스마스터 2급', 'SQL 개발자', '정보처리기사'],
             tags: ['Backend Engineer', 'DevOps', '아키텍처 설계', 'Spring', 'Kotlin', 'AWS'],
-            philosophyEyebrow: 'Engineering Philosophy',
-            philosophyTitle: ['보이지 않는 곳의 완성도가', '서비스의 수준을 결정합니다'],
-            philosophyDesc: '돌아가는 코드를 넘어, 비즈니스가 커져도 흔들리지 않는 구조를 만듭니다.',
             howEyebrow: 'How Do I Work',
             howTitle: '설계부터 개선까지, 전 구간을 직접 맡습니다',
             capabilities: [
@@ -254,6 +251,9 @@ const translations: Record<'ko' | 'en', ITranslations> = {
             title: ['직접 설계하고', '끝까지 책임진 프로젝트'],
             subtitle: '서버 1인 개발, 통계 파이프라인 구축, 스마트도서관 시스템 고도화까지 — 제품 흐름에 깊게 관여한 경험만 골랐습니다.',
             keyAchievements: 'Key Achievements',
+            storyProblem: '문제',
+            storyAction: '한 일',
+            storyResult: '결과',
             techStack: 'Tech Stack',
             close: '프로젝트 상세 닫기',
             prev: '이전 프로젝트',
@@ -401,9 +401,6 @@ const translations: Record<'ko' | 'en', ITranslations> = {
             certLabel: 'Certifications',
             certificates: ['Linux Master Level 2', 'SQL Developer (SQLD)', 'Engineer Information Processing'],
             tags: ['Backend Engineer', 'DevOps', 'Architecture', 'Spring', 'Kotlin', 'AWS'],
-            philosophyEyebrow: 'Engineering Philosophy',
-            philosophyTitle: ['The quality of what you cannot see', 'defines the quality of the service'],
-            philosophyDesc: 'Beyond code that merely runs, I build structures that hold steady as the business grows.',
             howEyebrow: 'How Do I Work',
             howTitle: 'From design to improvement — I own every stage',
             capabilities: [
@@ -443,6 +440,9 @@ const translations: Record<'ko' | 'en', ITranslations> = {
             title: ['Projects I designed', 'and owned to the end'],
             subtitle: 'Solo server development, statistics pipelines, smart library modernization — only the work where I was deeply involved in the product flow.',
             keyAchievements: 'Key Achievements',
+            storyProblem: 'Problem',
+            storyAction: 'What I did',
+            storyResult: 'Result',
             techStack: 'Tech Stack',
             close: 'Close project details',
             prev: 'Previous project',
