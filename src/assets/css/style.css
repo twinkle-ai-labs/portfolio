@@ -991,8 +991,9 @@ span.pc {
     }
 }
 
-.log-time {
+.log-tag {
     flex: 0 0 auto;
+    min-width: 3.4em;
     color: rgba(255, 255, 255, 0.3);
 }
 
@@ -1442,8 +1443,8 @@ span.pc {
 }
 
 /*
- * 섹션 안의 하위 블록 (무엇을 믿는가 · 어떻게 일하는가).
- * 각자 소제목을 달아, 아래 내용이 왜 거기 있는지 스스로 설명하게 합니다.
+ * 섹션 안의 하위 블록 (어떻게 일하는가).
+ * 소제목을 달아, 아래 내용이 왜 거기 있는지 스스로 설명하게 합니다.
  */
 .profile-block {
     margin-top: var(--profile-gap);
@@ -1468,23 +1469,6 @@ span.pc {
     font-weight: 800;
     line-height: 1.3;
     letter-spacing: -0.02em;
-    word-break: keep-all;
-}
-
-.profile-block-title em {
-    background: var(--grad-accent);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
-    font-style: normal;
-}
-
-.profile-block-desc {
-    margin-top: 0.85rem;
-    color: var(--muted);
-    font-size: clamp(0.97rem, 0.88rem + 0.4vw, 1.06rem);
-    line-height: 1.75;
     word-break: keep-all;
 }
 
@@ -2307,65 +2291,47 @@ span.pc {
     word-break: keep-all;
 }
 
-.project-impact {
+/* 카드 겉면의 세 줄 — 문제 · 한 일 · 결과. 라벨 열은 «What I did» 가 한 줄에 들어가는 폭입니다. */
+.project-story {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.85rem;
     flex: 1;
-    margin-top: 0;
+    margin: 0;
     padding: 1.2rem 1.25rem;
     border-radius: 20px;
     background: var(--blue-soft);
     border: 1px solid var(--blue-line);
-    color: var(--ink);
-    font-size: 0.86rem;
-    font-weight: 500;
-    line-height: 1.5;
 }
 
-.project-impact span {
+.project-story > div {
+    display: grid;
+    grid-template-columns: 4.6rem minmax(0, 1fr);
+    align-items: start;
+    gap: 0.6rem;
+}
+
+.project-story dt {
+    padding-top: 0.2rem;
     color: var(--blue-deep);
-    font-size: 0.73rem;
+    font-size: 0.7rem;
     font-weight: 700;
     letter-spacing: 0.07em;
     text-transform: uppercase;
-    margin-bottom: 2px;
 }
 
-.project-impact ul {
+.project-story dd {
     margin: 0;
-    padding-left: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.7rem;
-    list-style-type: none;
-}
-
-.project-impact li {
-    display: grid;
-    grid-template-columns: 1.1rem minmax(0, 1fr);
-    align-items: start;
-    gap: 0.55rem;
     color: var(--ink-soft);
-    font-size: 0.92rem;
+    font-size: 0.9rem;
     font-weight: 500;
     line-height: 1.55;
     word-break: keep-all;
 }
 
-.project-impact li svg {
-    width: 1.1rem;
-    height: 1.1rem;
-    margin-top: 0.18rem;
-    padding: 0.22rem;
-    border: 1px solid var(--blue-line);
-    border-radius: 50%;
-    background: var(--surface);
-    color: var(--blue);
-}
-
-.project-impact li strong {
-    color: var(--ink-soft);
+/* 결과 줄만 잉크를 세웁니다 — 세 줄 중 읽는 이가 가져갈 것은 이 줄이다. */
+.project-story .is-result dd {
+    color: var(--ink);
     font-weight: 600;
 }
 

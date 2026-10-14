@@ -65,16 +65,10 @@ const ProfileSection = () => {
                     </div>
                 </div>
 
-                {/* 2) 무엇을 믿는가 */}
-                <section className="profile-block">
-                    <p className="profile-block-eyebrow">{t.philosophyEyebrow}</p>
-                    <h3 className="profile-block-title">
-                        {t.philosophyTitle[0]}<br className="mobile"/> <em>{t.philosophyTitle[1]}</em>
-                    </h3>
-                    <p className="profile-block-desc">{t.philosophyDesc}</p>
-                </section>
-
-                {/* 3) 어떻게 일하는가 — 왼쪽은 머리글 + 흐름(∞), 오른쪽은 그 흐름에서 맡는 일 */}
+                {/*
+                  2) 어떻게 일하는가 — 왼쪽은 머리글 + 흐름(∞), 오른쪽은 그 흐름에서 맡는 일.
+                  «무엇을 믿는가» 블록은 2026-10-14 에 걷었다 — 그 한 문장이 아래 «견고한 백엔드» 카드와 같은 말이었다.
+                */}
                 <section className="profile-block">
                     <div className="profile-flow">
                         <div className="profile-flow-lead">

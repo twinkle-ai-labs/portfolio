@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import projects, {projectHighlights} from "@Data/project";
-import {FaCheck} from "react-icons/fa6";
 import ProjectModal from "@Components/project/modal";
 import translations from "@Data/i18n";
 import {useLocale} from "@Utils/i18n";
@@ -42,17 +41,21 @@ const ProjectSection = () => {
                                 <p>{tr(project.summary)}</p>
                             </div>
                             <div className="project-card-detail">
-                                <div className="project-impact">
-                                    <span>🏆 {t.keyAchievements}</span>
-                                    <ul>
-                                        {project.features.map((feat, fIdx) => (
-                                            <li key={project.id + 'feat' + fIdx}>
-                                                <FaCheck/>
-                                                <strong>{tr(feat)}</strong>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
+                                {/* 겉면은 세 줄로 끝납니다 — 문제 · 한 일 · 결과. 기술명은 아래 칩이 맡습니다. */}
+                                <dl className="project-story">
+                                    <div>
+                                        <dt>{t.storyProblem}</dt>
+                                        <dd>{tr(project.story.problem)}</dd>
+                                    </div>
+                                    <div>
+                                        <dt>{t.storyAction}</dt>
+                                        <dd>{tr(project.story.action)}</dd>
+                                    </div>
+                                    <div className="is-result">
+                                        <dt>{t.storyResult}</dt>
+                                        <dd>{tr(project.story.result)}</dd>
+                                    </div>
+                                </dl>
                             </div>
                             <ul className="project-stack">
                                 {project.stacks.map((stack) => (

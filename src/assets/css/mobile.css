@@ -239,6 +239,12 @@
                 "stack";
     }
 
+    /* 한 열이 되면 라벨 열이 본문 폭을 먹으므로 라벨을 본문 위로 올립니다. */
+    .project-story > div {
+        grid-template-columns: 1fr;
+        gap: 0.25rem;
+    }
+
     .project-card-top {
         flex-direction: row;
         align-items: center;

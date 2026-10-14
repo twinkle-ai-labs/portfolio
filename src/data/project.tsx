@@ -89,6 +89,12 @@ export type ProjectBlock =
     | { kind: 'metrics'; label?: LocalizedText; items: IProjectMetric[] }
     | { kind: 'note'; title: LocalizedText; desc: LocalizedText };
 
+export interface IProjectStory {
+    problem: LocalizedText;
+    action: LocalizedText;
+    result: LocalizedText;
+}
+
 export interface IProjectChapter {
     id: string;
     /** 상단 탭에 노출되는 짧은 라벨 */
@@ -110,8 +116,8 @@ export interface IProject {
     /** 모달 헤더의 요약 지표 */
     metrics: IProjectMetric[];
     impact: LocalizedText[];
-    /** 메인 카드용 짧은 하이라이트 */
-    features: LocalizedText[];
+    /** 메인 카드 겉면 — 무엇이 문제였고, 무엇을 했고, 그래서 무엇이 달라졌나. 기술명은 stacks 에만 둡니다. */
+    story: IProjectStory;
     /** 기술명은 고유명사라 번역하지 않습니다. */
     stacks: string[];
     icon: ReactNode;
@@ -131,8 +137,8 @@ const projects: IProject[] = [
         period: {ko: '2024.12 - 현재', en: '2024.12 - Present'},
         role: {ko: 'Lead Server Developer', en: 'Lead Server Developer'},
         summary: {
-            ko: '크로스 도메인 협업 속에서 클라우드 네이티브 서버 아키텍처 및 전용 인프라의 전주기를 단독 설계하고 구축했습니다.',
-            en: 'Working across domains, I single-handedly designed and built the full lifecycle of a cloud-native server architecture and its dedicated infrastructure.',
+            ko: '서버 인력이 없던 신규 스탬프 투어 서비스의 도메인·AWS 인프라·배포·관측을 혼자 설계하고 구축해, 회원 7만 명과 9개 기관의 투어 25건을 운영하는 서비스로 세웠습니다.',
+            en: 'For a new stamp-tour service with no server engineer, I designed and built the domain, AWS infrastructure, delivery and observability alone, and ran it to 70K members and 25 tours for 9 organizations.',
         },
         metrics: [
             {value: '70K+', label: {ko: '서비스 회원', en: 'Registered members'}},
@@ -162,15 +168,20 @@ const projects: IProject[] = [
                 en: 'Operated a service of ~70K members and ran 25 tours for municipalities and public agencies',
             },
         ],
-        features: [
-            {ko: 'AWS Cloud 및 인프라 아키텍처링 단독 전담', en: 'Sole owner of AWS cloud and infrastructure architecture'},
-            {ko: 'Kotlin / Spring Boot 기반 고성능 서버 구축', en: 'High-performance server built on Kotlin / Spring Boot'},
-            {ko: 'Docker, Harbor, Jenkins CI/CD 자동화 수립', en: 'CI/CD automation with Docker, Harbor and Jenkins'},
-            {
-                ko: 'Filebeat / Prometheus / Grafana 실시간 장애 관측',
-                en: 'Real-time incident observability via Filebeat / Prometheus / Grafana'
+        story: {
+            problem: {
+                ko: '서버 인력이 없는 신규 프로덕트 — 기획·디자인·모바일·어드민이 동시에 움직이는데 서버와 인프라를 맡을 사람이 없었습니다.',
+                en: 'A new product with no server engineer: planning, design, mobile and admin were all moving at once, and nobody owned the server or infrastructure.',
             },
-        ],
+            action: {
+                ko: '도메인 모델부터 AWS 토폴로지, Jenkins·Harbor 배포, Prometheus·Grafana 관측까지 혼자 설계·구축하고, 투어 규칙을 데이터로 다루는 구조를 세웠습니다.',
+                en: 'Designed and built everything alone, from the domain model to the AWS topology, Jenkins/Harbor delivery and Prometheus/Grafana observability, and modeled tour rules as data.',
+            },
+            result: {
+                ko: '회원 7만 명, 9개 기관의 투어·미션 25건 운영. 주최 기관마다 규칙이 달라도 신규 투어 개설에 서버 배포가 필요 없습니다.',
+                en: '70K members and 25 tours and missions for 9 organizations. New tours open without a server deploy, even though every host has different rules.',
+            },
+        },
         stacks: ['Kotlin', 'Spring Boot', 'AWS', 'Jenkins', 'Filebeat', 'Slack', 'Prometheus', 'Grafana'],
         icon: <SiKotlin/>,
         chapters: [
@@ -595,8 +606,8 @@ const projects: IProject[] = [
         period: {ko: '2025.03 - 현재', en: '2025.03 - Present'},
         role: {ko: 'Lead Backend Engineer (Owner)', en: 'Lead Backend Engineer (Owner)'},
         summary: {
-            ko: '아이나비 에어·토요타 하이브리드 등 내비게이션 서비스의 서버 운영·유지보수를 전담하는 동시에, 다수 서비스에서 인입되는 방대한 사용자 로그를 수집·정제해 대시보드에 공급하는 통합통계 시스템을 신규로 설계·개발했습니다.',
-            en: 'While owning server operations and maintenance for navigation services such as INAVI AIR and Toyota hybrid, I designed and built a new unified statistics system that collects and refines huge volumes of user logs and feeds them to dashboards.',
+            ko: '아이나비 에어·토요타 하이브리드 등 내비게이션 서버 운영을 전담하면서, 서비스마다 흩어져 수작업으로 뽑던 지표를 BigQuery → 배치 → Grafana 한 줄의 통합통계 시스템으로 바꿨습니다.',
+            en: 'While owning server operations for navigation services such as INAVI AIR and Toyota hybrid, I replaced hand-pulled, per-service metrics with one unified statistics pipeline from BigQuery through batches to Grafana.',
         },
         metrics: [
             {value: {ko: '2종+', en: '2+'}, label: {ko: '운영 내비게이션 서비스', en: 'Navigation services operated'}},
@@ -622,21 +633,20 @@ const projects: IProject[] = [
                 en: 'Built the MySQL statistics engine and wired it to real-time Grafana dashboards',
             },
         ],
-        features: [
-            {
-                ko: '내비게이션 서비스(아이나비 에어, 토요타 하이브리드 등) 서버 운영·유지보수',
-                en: 'Server operations for navigation services (INAVI AIR, Toyota hybrid and more)',
+        story: {
+            problem: {
+                ko: '내비게이션 서비스마다 로그 형태와 적재 위치가 달라, 통합 지표를 뽑을 때마다 수작업 추출을 반복해야 했습니다.',
+                en: 'Each navigation service logged in a different shape and place, so every unified metric meant another round of manual extraction.',
             },
-            {ko: 'GCP BigQuery 기반 일 단위 대량 로그 수집 파이프라인 신규 구축', en: 'New daily bulk log pipeline on GCP BigQuery'},
-            {
-                ko: 'Spring Batch / Quartz 기반 통계 배치 정밀 자동화',
-                en: 'Precise statistics batch automation with Spring Batch / Quartz'
+            action: {
+                ko: '내비 서버 운영·장애 대응을 전담하면서, 수집·배치·조회 컨텍스트를 분리한 통합통계 시스템을 BigQuery 일 단위 파티션과 Quartz 배치, MySQL 집계, Grafana 로 새로 세웠습니다.',
+                en: 'While owning navigation server operations and incident response, I built a unified statistics system with separate collection, batch and query contexts on daily BigQuery partitions, Quartz batches, MySQL aggregates and Grafana.',
             },
-            {
-                ko: 'MySQL 통계 적재 엔진 및 Grafana 실시간 분석 대시보드',
-                en: 'MySQL statistics engine and real-time Grafana dashboards'
+            result: {
+                ko: '수작업 집계가 사라지고 경영 지표를 대시보드에서 상시 확인합니다. 집계 로직을 고쳐도 수집·조회 계층은 배포하지 않습니다.',
+                en: 'Manual aggregation is gone and business metrics are always on a dashboard. Changing aggregation logic no longer redeploys the collection or query layers.',
             },
-        ],
+        },
         stacks: ['Java/Kotlin', 'Spring Boot', 'BigQuery', 'Batch', 'Quartz', 'Grafana', 'GCP'],
         icon: <FaChartLine/>,
         chapters: [
@@ -917,8 +927,8 @@ const projects: IProject[] = [
         period: {ko: '2021.01 - 2022.06', en: '2021.01 - 2022.06'},
         role: {ko: 'Full-stack Solution Architect', en: 'Full-stack Solution Architect'},
         summary: {
-            ko: '무인 도서 대출·반납 기기, 중앙 서버, 관리자 도구, 모바일 앱을 하나의 운영 플랫폼으로 연결하고 서비스 전반의 검색·동기화·이용자 경험을 고도화했습니다.',
-            en: 'I connected self-service loan kiosks, the central server, admin tools and the mobile app into one operating platform, and modernized search, synchronization and the overall user experience.',
+            ko: '소켓 미들웨어 병목으로 검색이 7.5초까지 걸리던 스마트도서관을 기기 DB 직접 라우팅 구조로 바꿔 p99 93ms 로 만들고, 파편화된 스택을 Java/Spring 하나로 모아 하이브리드 앱까지 정식 출시했습니다.',
+            en: 'A smart library whose search took up to 7.5s behind a socket middleware: I rerouted the server straight to kiosk databases for a p99 of 93ms, unified the fragmented stack on Java/Spring, and shipped the hybrid app to both stores.',
         },
         metrics: [
             {value: '80x', label: {ko: '검색 응답 개선', en: 'Search response improvement'}, delta: 'p99 7.5s → 93ms'},
@@ -940,17 +950,20 @@ const projects: IProject[] = [
                 en: 'Improved admin tooling and the hybrid mobile app to strengthen field operations and user access',
             },
         ],
-        features: [
-            {ko: '무인 도서 대출·반납 서비스 운영 플랫폼 통합', en: 'Unified the self-service loan and return operating platform'},
-            {
-                ko: '기기 데이터 동기화 및 외부 도서 정보 연계 구조 고도화',
-                en: 'Modernized device data sync and external book data integration'
+        story: {
+            problem: {
+                ko: '기기 DB 를 3-Tier 소켓 미들웨어로 묶어 조회하던 구조에서 연결 유실·스레드 락·검색 지연이 반복됐고 검색 p99 가 7.5초였습니다. 스택도 Node·Angular·Go 로 파편화돼 있었습니다.',
+                en: 'Kiosk databases were queried through a 3-tier socket middleware that kept dropping connections and locking threads; search p99 was 7.5s, and the stack was scattered across Node, Angular and Go.',
             },
-            {
-                ko: '관리자 프로그램과 모바일 앱 중심의 운영·사용자 경험 개선',
-                en: 'Improved operations and user experience across the admin program and mobile app'
+            action: {
+                ko: 'Spring RoutingDataSource 로 서버가 각 기기 DB 에 직접 붙게 바꿔 미들웨어를 걷어내고, 스택을 Java/Spring 으로 모았으며, 앱의 도서 조회 동선을 4단계에서 2단계로 줄였습니다.',
+                en: 'Routed the server straight to each kiosk database with Spring RoutingDataSource and removed the middleware, unified the stack on Java/Spring, and cut the app\'s browsing flow from four steps to two.',
             },
-        ],
+            result: {
+                ko: '검색 p99 7.5s → 93ms (약 80배, 100 vu/s 부하에서 검증). 유지보수 단위 3 → 1, 앱은 Play Store·App Store 정식 출시.',
+                en: 'Search p99 7.5s → 93ms (~80x, verified at 100 vu/s). Maintenance units 3 → 1, and the app shipped to both Play Store and App Store.',
+            },
+        },
         stacks: ['Java', 'Spring MVC/Boot', 'MyBatis/JPA', 'MS-SQL', 'Android', 'iOS'],
         icon: <FaMobileScreenButton/>,
         thumbnail: {
