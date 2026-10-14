@@ -16,10 +16,10 @@ const LOG_LINES: ILogLine[] = [
     {tag: 'lib', level: 'WARN', text: 'search p99 7.5s — 3-tier socket middleware (Gandalf / Frodo)'},
     {tag: 'lib', level: 'OK', text: 'RoutingDataSource → kiosk DBs direct · p99 93ms (≈80x) @ 100 vu/s'},
     {tag: 'lib', level: 'DEPLOY', text: 'hybrid app → Play Store · App Store'},
-    {tag: 'orda', level: 'DEPLOY', text: 'orda-api → AWS via jenkins · harbor — infra solo-owned'},
-    {tag: 'orda', level: 'OK', text: '70K+ members · 25 tours · 9 organizations'},
-    {tag: 'navi', level: 'INFO', text: 'navi logs → bigquery daily partition → quartz batch → grafana'},
-    {tag: 'navi', level: 'INFO', text: 'on call: INAVI AIR · Toyota hybrid — prometheus → slack'},
+    {tag: 'orda', level: 'DEPLOY', text: 'orda-api → AWS · 2 prod servers · jenkins → harbor'},
+    {tag: 'orda', level: 'WARN', text: '03-01 09:00 mission open — 700 req/min, RDS saturated'},
+    {tag: 'orda', level: 'OK', text: 'tour-list query 208ms → 30ms · push split delivery · 71K members'},
+    {tag: 'navi', level: 'INFO', text: 'AIR + Toyota logs → bigquery 35 tables → 22 @Scheduled jobs → grafana'},
 ];
 
 const LEVEL_CLASS: Record<ILogLine['level'], string> = {
@@ -96,12 +96,12 @@ const HeroConsole = () => {
                     <span>search p99 · lib</span>
                 </div>
                 <div>
-                    <strong>70K+</strong>
+                    <strong>71K</strong>
                     <span>members · orda</span>
                 </div>
                 <div>
-                    <strong>25</strong>
-                    <span>tours run · orda</span>
+                    <strong>216K</strong>
+                    <span>participations · orda</span>
                 </div>
             </div>
         </div>

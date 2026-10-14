@@ -8,7 +8,8 @@ export interface ICountUp {
 }
 
 const CountUp = ({value, prefix = '', suffix = '', duration = 1400}: ICountUp) => {
-    const [display, setDisplay] = useState(0);
+    /* 첫 그림부터 최종 값을 둔다 — 텍스트로 읽히거나 스크립트가 늦게 설 때 0 이 보이지 않게. 애니메이션은 보일 때 0 부터 다시 센다. */
+    const [display, setDisplay] = useState(value);
     const ref = useRef<HTMLSpanElement>(null);
     const played = useRef(false);
 

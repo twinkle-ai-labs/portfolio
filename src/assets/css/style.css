@@ -832,18 +832,6 @@ span.pc {
     }
 }
 
-.hero-status {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.55rem;
-    margin-bottom: 1.1rem;
-    color: rgba(255, 255, 255, 0.55);
-    font-family: var(--font-mono);
-    font-size: 0.78rem;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-}
 
 .hero-kicker {
     display: block;
@@ -1214,24 +1202,7 @@ span.pc {
     outline-offset: 3px;
 }
 
-.hero-panel-status {
-    position: relative;
-    width: 8px;
-    height: 8px;
-    flex: 0 0 auto;
-    border-radius: 50%;
-    background: #4ade80;
-    box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.18);
-}
 
-.hero-panel-status::before {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    background: #4ade80;
-    content: '';
-    animation: pulse-dot 1.8s ease-out infinite;
-}
 
 @keyframes pulse-dot {
     0% {
