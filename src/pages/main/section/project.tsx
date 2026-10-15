@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import projects, {projectHighlights} from "@Data/project";
+import projects from "@Data/project";
 import ProjectModal from "@Components/project/modal";
 import translations from "@Data/i18n";
 import {useLocale} from "@Utils/i18n";
@@ -19,14 +19,6 @@ const ProjectSection = () => {
                 <p className="section-subtitle">{t.subtitle}</p>
             </div>
             <div className="section-content">
-                <ul className="project-highlight-list">
-                    {projectHighlights.map((item) => (
-                        <li key={item.label}>
-                            <span>{item.icon}</span>
-                            {item.label}
-                        </li>
-                    ))}
-                </ul>
                 <div className="project-grid">
                     {projects.map((project, index) => (
                         <button className="project-card" id={"project-" + project.id} key={project.id}
@@ -38,6 +30,15 @@ const ProjectSection = () => {
                             <div className="project-card-body">
                                 <div className="project-meta">{tr(project.period)} · {tr(project.role)}</div>
                                 <h3>{tr(project.title)}</h3>
+                                {/* 훑어 읽는 사람이 가져갈 숫자 둘 — 모달 머리의 지표 중 앞 둘 */}
+                                <ul className="project-card-metrics">
+                                    {project.metrics.slice(0, 2).map((metric) => (
+                                        <li key={project.id + tr(metric.label)}>
+                                            <strong>{tr(metric.value)}</strong>
+                                            <span>{tr(metric.label)}</span>
+                                        </li>
+                                    ))}
+                                </ul>
                                 <p>{tr(project.summary)}</p>
                             </div>
                             <div className="project-card-detail">
