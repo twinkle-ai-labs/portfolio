@@ -15,7 +15,6 @@ export interface ITranslations {
     hero: {
         kicker: string;
         desc: string;
-        ready: string[];
         ctaProject: string;
     };
     stats: {
@@ -160,7 +159,6 @@ const translations: Record<'ko' | 'en', ITranslations> = {
         hero: {
             kicker: 'Backend Engineer',
             desc: '복잡한 비즈니스 로직을 견고한 데이터 모델과 유연한 API로 구체화하고, 자동화된 배포 파이프라인과 정교한 모니터링으로 서비스가 멈추지 않게 만듭니다.',
-            ready: ['서버·인프라 아키텍처 설계', '클라우드 배포 자동화', '장애 대응 · 운영 관측', 'API 설계 및 성능 최적화'],
             ctaProject: '프로젝트 보기 🚀',
         },
         stats: {
@@ -337,7 +335,6 @@ const translations: Record<'ko' | 'en', ITranslations> = {
         hero: {
             kicker: 'Backend Engineer',
             desc: 'I turn complex business logic into solid data models and flexible APIs, and keep services running with automated deployment pipelines and precise monitoring.',
-            ready: ['Server & infra architecture design', 'Cloud deployment automation', 'Incident response · observability', 'API design & performance tuning'],
             ctaProject: 'View Projects 🚀',
         },
         stats: {

@@ -44,9 +44,6 @@ const HomeSection = () => {
                     <p className="hero-desc">
                         {t.hero.desc}
                     </p>
-                    <ul className="hero-ready-list">
-                        {t.hero.ready.map((item) => <li key={item}>{item}</li>)}
-                    </ul>
                     <div className="hero-actions">
                         <Button
                             className="hero-primary"
