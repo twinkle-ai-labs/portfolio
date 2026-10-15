@@ -1111,34 +1111,8 @@ span.pc {
     letter-spacing: 0.02em;
 }
 
-.hero-ready-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: clamp(1rem, 2.4vw, 1.4rem);
-}
 
-.hero-ready-list li {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.45rem 0.85rem 0.45rem 0.7rem;
-    border: 1px solid rgba(165, 180, 252, 0.3);
-    border-radius: 999px;
-    background: rgba(165, 180, 252, 0.09);
-    color: #c7d2fe;
-    font-size: 0.84rem;
-    font-weight: 600;
-}
 
-.hero-ready-list li::before {
-    display: inline-block;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--grad-accent);
-    content: '';
-}
 
 .hero-actions {
     display: flex;
