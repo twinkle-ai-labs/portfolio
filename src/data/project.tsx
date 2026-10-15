@@ -135,7 +135,7 @@ const projects: IProject[] = [
         id: 'orda',
         title: {ko: '아이나비 스탬프 오르다', en: 'INAVI Stamp ORDA'},
         period: {ko: '2024.12 - 현재', en: '2024.12 - Present'},
-        role: {ko: 'Lead Backend Engineer', en: 'Lead Backend Engineer'},
+        role: {ko: 'Backend Engineer · 서버 단독', en: 'Backend Engineer · sole server owner'},
         summary: {
             ko: '내비게이션 회사의 위치 기반 스탬프 · 미션 서비스. 백엔드와 인프라를 혼자 세워 2025년 2월부터 운영 중입니다.',
             en: 'A location-based stamp and mission service at a navigation company. I built the backend and infrastructure alone and have run it since February 2025.',
