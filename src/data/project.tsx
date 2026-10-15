@@ -1,7 +1,6 @@
 import {ReactNode} from "react";
-import {SiDocker, SiGrafana, SiKotlin, SiSpringboot} from "react-icons/si";
+import {SiDocker, SiKotlin} from "react-icons/si";
 import {
-    FaAws,
     FaChartLine,
     FaCloud,
     FaDatabase,
@@ -138,8 +137,8 @@ const projects: IProject[] = [
         period: {ko: '2024.12 - 현재', en: '2024.12 - Present'},
         role: {ko: 'Lead Backend Engineer', en: 'Lead Backend Engineer'},
         summary: {
-            ko: '서버 인력이 없던 신규 스탬프 투어 서비스의 백엔드를 혼자 세웠습니다 — GPS·코스·NFC·QR 위치 인증과 선착순·스탬프의 동시성 제어부터 AWS 인프라·배포·관측까지. 회원 7.1만 명, 누적 참여 21.6만 회를 운영하며 장애 두 번을 원인부터 닫았습니다.',
-            en: 'I built the backend of a new stamp-tour service alone, from GPS, course, NFC and QR stamp verification and the concurrency control around first-come rewards to the AWS infrastructure, delivery and observability. It runs at 71K members and 216K cumulative participations, and two outages were closed from the root cause.',
+            ko: '내비게이션 회사의 위치 기반 스탬프 · 미션 서비스. 백엔드와 인프라를 혼자 세워 2025년 2월부터 운영 중입니다.',
+            en: 'A location-based stamp and mission service at a navigation company. I built the backend and infrastructure alone and have run it since February 2025.',
         },
         metrics: [
             {value: {ko: '7.1만', en: '71K'}, label: {ko: '가입 회원', en: 'Registered members'}},
@@ -171,19 +170,19 @@ const projects: IProject[] = [
         ],
         story: {
             problem: {
-                ko: '서버 인력이 없는 신규 프로덕트였습니다. 기획·디자인·모바일·어드민이 동시에 움직이는데, 현장 위치 인증과 선착순 리워드처럼 틀리면 돈이 나가는 규칙을 맡을 사람이 없었습니다.',
-                en: 'A new product with no server engineer. Planning, design, mobile and admin were all moving at once, and nobody owned the rules that cost money when wrong: on-site location verification and first-come rewards.',
+                ko: '서버 인력이 없는 신규 서비스. 위치 인증과 선착순 리워드처럼 틀리면 돈이 나가는 규칙을 맡을 사람이 없었다.',
+                en: 'A new service with no server engineer, and nobody to own the rules that cost money when wrong: location verification and first-come rewards.',
             },
             action: {
-                ko: '도메인과 스키마(3 스키마 · 133 테이블)를 혼자 설계했습니다. 스탬프는 ST_Distance_Sphere 반경·코스 매칭률·NFC·QR 로 인증하고, 선착순 재고는 FOR UPDATE 행 잠금과 신청 행 분리, 투어 정원은 조건부 UPDATE 와 유니크 키로 초과를 막았습니다. 그 위에 AWS 인프라·Jenkins/Harbor 배포·Prometheus/Grafana 관측을 세웠습니다.',
-                en: 'Designed the domain and schema (3 schemas, 133 tables) alone. Stamps verify by ST_Distance_Sphere radius, course match rate, NFC and QR; first-come stock uses FOR UPDATE row locks with separate claim rows; tour capacity uses a conditional UPDATE plus unique keys. On top of that I built the AWS infrastructure, Jenkins/Harbor delivery and Prometheus/Grafana observability.',
+                ko: '백엔드를 혼자 설계 — GPS · 코스 · NFC · QR 위치 인증, FOR UPDATE + 유니크 키의 동시성 제어, 그 위에 AWS 인프라 · 배포 · 관측.',
+                en: 'Designed the backend alone: GPS, course, NFC and QR verification, concurrency control with FOR UPDATE plus unique keys, and the AWS infrastructure, delivery and observability on top.',
             },
             result: {
-                ko: '회원 7.1만 명 · 누적 참여 21.6만 회 · 9개 기관 투어 운영. 3/1 장애는 쿼리 튜닝(평균 208ms → 30ms)과 푸시 분할 발송으로, 10/1 자정 장애는 1초 캐시·데드락 제거·DB 타임아웃 4단계로 닫았습니다. 테스트 1,431건.',
-                en: '71K members, 216K cumulative participations, tours for 9 organizations. The 3/1 outage was closed with query tuning (avg 208ms → 30ms) and split push delivery; the 10/1 midnight outage with 1-second caches, deadlock removal and four-tier DB timeouts. 1,431 tests.',
+                ko: '회원 7.1만 · 누적 참여 21.6만 회. 장애 둘을 원인부터 닫았다 — 쿼리 208ms → 30ms, 데드락 제거, DB 타임아웃 4단계.',
+                en: '71K members, 216K participations. Two outages closed from the root cause: query 208ms → 30ms, deadlock removed, four-tier DB timeouts.',
             },
         },
-        stacks: ['Kotlin', 'Spring Boot', 'MyBatis', 'MySQL · RDS', 'Caffeine', 'AWS', 'Jenkins', 'Harbor', 'Prometheus', 'Grafana'],
+        stacks: ['Kotlin', 'Spring Boot', 'MyBatis', 'MySQL · RDS', 'AWS', 'Prometheus · Grafana'],
         icon: <SiKotlin/>,
         chapters: [
             {
@@ -765,8 +764,8 @@ const projects: IProject[] = [
         period: {ko: '2025.01 - 현재', en: '2025.01 - Present'},
         role: {ko: 'Backend Engineer · 통계 Owner', en: 'Backend Engineer · stats owner'},
         summary: {
-            ko: '아이나비 에어·토요타 하이브리드 등 내비게이션 서버 운영을 전담하면서, 서비스마다 흩어져 수작업으로 뽑던 지표를 BigQuery → 배치 → Grafana 한 줄의 통합통계 시스템으로 바꿨습니다.',
-            en: 'While owning server operations for navigation services such as INAVI AIR and Toyota hybrid, I replaced hand-pulled, per-service metrics with one unified statistics pipeline from BigQuery through batches to Grafana.',
+            ko: '내비 서버 운영을 맡으면서, 흩어진 로그 통계를 서버 하나의 파이프라인으로 모았습니다.',
+            en: 'While running the navigation servers, I pulled scattered log statistics into one server\'s pipeline.',
         },
         metrics: [
             {value: '2', label: {ko: '운영 내비 서비스 (AIR · Toyota)', en: 'Navigation services (AIR · Toyota)'}},
@@ -794,19 +793,19 @@ const projects: IProject[] = [
         ],
         story: {
             problem: {
-                ko: 'AIR 와 Toyota 의 로그가 BigQuery 프로젝트 둘, 데이터셋 셋에 흩어져 있고, 통계는 Python 수집기 일곱 개가 제각각 뽑고 있었습니다. 지표 하나를 더하려면 수집기를 하나 더 써야 했습니다.',
-                en: 'AIR and Toyota logs were scattered across two BigQuery projects and three datasets, and seven separate Python collectors each pulled their own statistics. Adding one metric meant writing one more collector.',
+                ko: 'AIR · Toyota 로그가 BigQuery 프로젝트 둘에 흩어져 있고, Python 수집기 일곱 개가 제각각 통계를 뽑았다.',
+                en: 'AIR and Toyota logs sat across two BigQuery projects, and seven Python collectors each pulled their own statistics.',
             },
             action: {
-                ko: '내비 서버를 운영하면서(탐색 프로토콜 대응 · 로그 연동 · 핫픽스) 통계 서버를 Kotlin 으로 새로 세웠습니다. 헥사고날 계층 위에 AIR · Toyota 모듈을 두고, BigQuery 35 테이블을 INFORMATION_SCHEMA 파티션 범위로 읽어 @Scheduled 잡 22개가 MySQL 집계 테이블에 적재하고, Grafana 대시보드 4개와 운영 MCP 서버가 그 위에 섭니다.',
-                en: 'While running the navigation servers (routing protocol updates, log integration, hotfixes) I built a new statistics server in Kotlin: AIR and Toyota modules over hexagonal layers, 35 BigQuery tables read by partition range from INFORMATION_SCHEMA, 22 @Scheduled jobs loading MySQL aggregate tables, and four Grafana dashboards plus an ops MCP server on top.',
+                ko: '통계 서버를 Kotlin 으로 새로 — 헥사고날 계층 위 AIR · Toyota 모듈, BigQuery 35 테이블 → @Scheduled 22 잡 → MySQL → Grafana 4.',
+                en: 'A new Kotlin statistics server: AIR and Toyota modules on hexagonal layers, 35 BigQuery tables → 22 @Scheduled jobs → MySQL → 4 Grafana boards.',
             },
             result: {
-                ko: '레거시 수집기 일곱 개를 걷고 서버 하나로 모았습니다. 월간 집계는 매일 그 달을 다시 적재해 늦게 온 로그를 반영하고, 날짜 파티션 없이 쌓인 행은 경보로 잡습니다. Testcontainers 테스트 21건.',
-                en: 'Seven legacy collectors are gone, replaced by one server. Monthly aggregates reload the whole month every day so late logs are counted, and rows that arrive without a date partition raise an alert. 21 Testcontainers tests.',
+                ko: '수집기 일곱을 서버 하나로. 늦은 로그는 월간 재적재로, 날짜 없는 행은 경보로. 내비 서버 운영은 그 옆에서 계속.',
+                en: 'Seven collectors became one server. Late logs are caught by monthly reloads, dateless rows by an alert. Navigation server ops continued alongside.',
             },
         },
-        stacks: ['Kotlin', 'Spring Boot', 'JPA', 'BigQuery', 'MySQL', 'Grafana', 'GCP', 'Spring AI MCP'],
+        stacks: ['Kotlin', 'Spring Boot', 'BigQuery', 'MySQL', 'Grafana', 'GCP'],
         icon: <FaChartLine/>,
         chapters: [
             {
@@ -1138,8 +1137,8 @@ const projects: IProject[] = [
         period: {ko: '2021.01 - 2022.06', en: '2021.01 - 2022.06'},
         role: {ko: 'Full-Stack Engineer', en: 'Full-Stack Engineer'},
         summary: {
-            ko: '소켓 미들웨어 병목으로 검색이 7.5초까지 걸리던 스마트도서관을 기기 DB 직접 라우팅 구조로 바꿔 p99 93ms 로 만들고, 파편화된 스택을 Java/Spring 하나로 모아 하이브리드 앱까지 정식 출시했습니다.',
-            en: 'A smart library whose search took up to 7.5s behind a socket middleware: I rerouted the server straight to kiosk databases for a p99 of 93ms, unified the fragmented stack on Java/Spring, and shipped the hybrid app to both stores.',
+            ko: '무인 도서관 기기 · 서버 · 앱을 한 플랫폼으로 묶고 검색 병목을 걷어낸 고도화.',
+            en: 'Modernization that tied kiosks, server and app into one platform and removed the search bottleneck.',
         },
         metrics: [
             {value: '80x', label: {ko: '검색 응답 개선', en: 'Search response improvement'}, delta: 'p99 7.5s → 93ms'},
@@ -1163,19 +1162,19 @@ const projects: IProject[] = [
         ],
         story: {
             problem: {
-                ko: '기기 DB 를 3-Tier 소켓 미들웨어로 묶어 조회하던 구조에서 연결 유실·스레드 락·검색 지연이 반복됐고 검색 p99 가 7.5초였습니다. 스택도 Node·Angular·Go 로 파편화돼 있었습니다.',
-                en: 'Kiosk databases were queried through a 3-tier socket middleware that kept dropping connections and locking threads; search p99 was 7.5s, and the stack was scattered across Node, Angular and Go.',
+                ko: '소켓 미들웨어 뒤에서 검색 p99 가 7.5초. 연결 유실과 스레드 락이 반복됐고 스택은 Node · Angular · Go 로 갈라져 있었다.',
+                en: 'Search p99 was 7.5s behind a socket middleware that kept dropping connections and locking threads; the stack was split across Node, Angular and Go.',
             },
             action: {
-                ko: 'Spring RoutingDataSource 로 서버가 각 기기 DB 에 직접 붙게 바꿔 미들웨어를 걷어내고, 스택을 Java/Spring 으로 모았으며, 앱의 도서 조회 동선을 4단계에서 2단계로 줄였습니다.',
-                en: 'Routed the server straight to each kiosk database with Spring RoutingDataSource and removed the middleware, unified the stack on Java/Spring, and cut the app\'s browsing flow from four steps to two.',
+                ko: 'Spring RoutingDataSource 로 기기 DB 에 직접 붙여 미들웨어를 걷고, 스택을 Java/Spring 하나로 모으고, 하이브리드 앱을 두 스토어에 출시.',
+                en: 'Routed straight to kiosk databases with Spring RoutingDataSource and removed the middleware, unified the stack on Java/Spring, shipped the hybrid app to both stores.',
             },
             result: {
-                ko: '검색 p99 7.5s → 93ms (약 80배, 100 vu/s 부하에서 검증). 유지보수 단위 3 → 1, 앱은 Play Store·App Store 정식 출시.',
-                en: 'Search p99 7.5s → 93ms (~80x, verified at 100 vu/s). Maintenance units 3 → 1, and the app shipped to both Play Store and App Store.',
+                ko: 'p99 7.5s → 93ms (약 80배 · 100 vu/s 검증). 유지보수 단위 3 → 1, 조회 단계 4 → 2.',
+                en: 'p99 7.5s → 93ms (~80x, verified at 100 vu/s). Maintenance units 3 → 1, browsing steps 4 → 2.',
             },
         },
-        stacks: ['Java', 'Spring MVC/Boot', 'MyBatis/JPA', 'MS-SQL', 'Android', 'iOS'],
+        stacks: ['Java', 'Spring', 'MyBatis / JPA', 'MS-SQL', 'Android · iOS'],
         icon: <FaMobileScreenButton/>,
         thumbnail: {
             src: SmartLibraryDeviceImg,
@@ -1601,13 +1600,5 @@ const projects: IProject[] = [
     },
 ];
 
-export const projectHighlights = [
-    {label: 'Cloud / DevOps', icon: <FaAws/>},
-    {label: 'Spring Backend', icon: <SiSpringboot/>},
-    {label: 'Container Deploy', icon: <SiDocker/>},
-    {label: 'Data Pipeline', icon: <FaDatabase/>},
-    {label: 'Monitoring', icon: <SiGrafana/>},
-    {label: 'Architecture', icon: <FaLayerGroup/>},
-];
 
 export default projects;

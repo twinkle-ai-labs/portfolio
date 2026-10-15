@@ -158,7 +158,7 @@ const translations: Record<'ko' | 'en', ITranslations> = {
         },
         hero: {
             kicker: 'Backend Engineer',
-            desc: '복잡한 비즈니스 로직을 견고한 데이터 모델과 유연한 API로 구체화하고, 자동화된 배포 파이프라인과 정교한 모니터링으로 서비스가 멈추지 않게 만듭니다.',
+            desc: '내비게이션 회사에서 위치 기반 서비스의 백엔드를 혼자 세워 회원 7.1만 명까지 운영했습니다. 장애 두 번을 원인부터 닫았고, 검색 p99 를 7.5초에서 93ms 로 내린 적이 있습니다. 여기 적힌 숫자는 전부 코드와 보고서에 있는 것입니다.',
             ctaProject: '프로젝트 보기 🚀',
         },
         stats: {
@@ -177,7 +177,7 @@ const translations: Record<'ko' | 'en', ITranslations> = {
             eyebrow: 'Profile',
             /* [0] 은 역할, 강조되는 이름은 config 의 프로필에서 가져옵니다. */
             title: ['백엔드 엔지니어'],
-            subtitle: '설계부터 운영까지 서버의 전 구간을 맡아 온 5년차 백엔드 엔지니어입니다.',
+            subtitle: '내비게이션 회사에서 위치 기반 서비스의 백엔드를 혼자 세운 5년차 백엔드 엔지니어입니다.',
             factCareer: '경력',
             factEducation: '학력',
             factCurrent: '현재',
@@ -230,7 +230,7 @@ const translations: Record<'ko' | 'en', ITranslations> = {
         project: {
             eyebrow: 'Projects',
             title: ['직접 설계하고', '끝까지 책임진 프로젝트'],
-            subtitle: '서버 1인 개발, 통계 파이프라인 구축, 스마트도서관 시스템 고도화까지 — 제품 흐름에 깊게 관여한 경험만 골랐습니다.',
+            subtitle: '셋 다 «문제 → 한 일 → 결과»로 적었습니다. 카드를 누르면 설계 · 장애 · 코드 근거가 열립니다.',
             keyAchievements: 'Key Achievements',
             storyProblem: '문제',
             storyAction: '한 일',
@@ -334,7 +334,7 @@ const translations: Record<'ko' | 'en', ITranslations> = {
         },
         hero: {
             kicker: 'Backend Engineer',
-            desc: 'I turn complex business logic into solid data models and flexible APIs, and keep services running with automated deployment pipelines and precise monitoring.',
+            desc: 'At a navigation company I built the backend of a location-based service alone and ran it to 71K members. I closed two outages from the root cause, and once took a search p99 from 7.5s to 93ms. Every number here comes from code or an incident report.',
             ctaProject: 'View Projects 🚀',
         },
         stats: {
@@ -353,7 +353,7 @@ const translations: Record<'ko' | 'en', ITranslations> = {
             eyebrow: 'Profile',
             /* [0] 은 역할, 강조되는 이름은 config 의 프로필에서 가져옵니다. */
             title: ['Backend Engineer'],
-            subtitle: 'A backend engineer of five years, owning servers end to end — from design through operation.',
+            subtitle: 'A backend engineer of five years who built a location-based service\'s backend alone at a navigation company.',
             factCareer: 'Experience',
             factEducation: 'Education',
             factCurrent: 'Current',
@@ -406,7 +406,7 @@ const translations: Record<'ko' | 'en', ITranslations> = {
         project: {
             eyebrow: 'Projects',
             title: ['Projects I designed', 'and owned to the end'],
-            subtitle: 'Solo server development, statistics pipelines, smart library modernization — only the work where I was deeply involved in the product flow.',
+            subtitle: 'Each one reads problem → what I did → result. Open a card for the design, the outages and the code behind it.',
             keyAchievements: 'Key Achievements',
             storyProblem: 'Problem',
             storyAction: 'What I did',
