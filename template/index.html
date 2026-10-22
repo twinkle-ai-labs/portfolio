@@ -129,6 +129,20 @@
         })();
     </script>
 
+    <!-- 우리 계측 — 쿠키 없는 핑 하나. 위의 denied 네 칸 때문에 GA4 는 이 사이트의 사용자를 세지 않는다
+         (2026-10-22 에 Observatory 에서 0 으로 봤다). 배너를 세우지 않기로 한 결정은 지키고, 그 대신
+         Twinkle API 의 계측 방(/beacon)에 집 · 경로 · 리퍼러만 보낸다. 서버가 적는 것은 날 · 집 · 경로 ·
+         유입 호스트 · 나라 · 기기 · 그날만 유효한 해시 — IP 도 UA 도 쿠키도 남지 않는다.
+         보내는 때는 AnalyticsTracker 가 경로마다 정한다(gtag 의 page_view 와 같은 자리). -->
+    <script>
+        window.__twinkleBeacon = function () {
+            try {
+                navigator.sendBeacon('https://api.twinklelabs.kr/beacon/v1/hit',
+                    JSON.stringify({ host: location.hostname, path: location.pathname, referrer: document.referrer }));
+            } catch (e) {}
+        };
+    </script>
+
     <!-- Start Single Page Apps for GitHub Pages -->
     <script type="text/javascript">
         // Single Page Apps for GitHub Pages
