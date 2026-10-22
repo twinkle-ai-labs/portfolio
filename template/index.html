@@ -91,7 +91,12 @@
         }
     </script>
 
-    <!-- GA4 — **쿠키 없이** 센다. twinklelabs.kr 아래 네 집이 모두 이 방식이다.
+    <!-- GA4 — 광고 칸은 닫고, 통계 칸만 연다 (2026-10-22 · Founder «GA 정상화»).
+         네 칸 전부 denied 면 GA4 는 핑을 보고서에 싣지 않아 사용자 · 페이지뷰가 0 이었다(Observatory 에서 봤다).
+         analytics_storage 하나만 granted — GA4 의 자체 쿠키로 보통처럼 센다. 광고 세 칸은 그대로 denied.
+         ↩ 아래는 그때의 글이다 — 왜 denied 였는지가 남아야 다시 같은 자리를 파지 않는다.
+
+         GA4 — **쿠키 없이** 센다. twinklelabs.kr 아래 네 집이 모두 이 방식이다.
 
          동의 배너를 세우지 않기로 했다. 그래서 Consent Mode v2 의 네 칸을 모두
          denied 로 못 박은 채 시작한다 — 그러면 gtag 는 쿠키를 심지 않고 저장소를
@@ -115,7 +120,7 @@
             ad_storage: 'denied',
             ad_user_data: 'denied',
             ad_personalization: 'denied',
-            analytics_storage: 'denied'
+            analytics_storage: 'granted'
         });
         gtag('set', 'ads_data_redaction', true);
         gtag('js', new Date());
