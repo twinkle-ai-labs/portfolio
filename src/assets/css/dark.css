@@ -114,27 +114,7 @@ body[data-theme="dark"] .career-card-head {
     border-color: var(--line);
 }
 
-body[data-theme="dark"] .project-impact {
-    border-color: var(--blue-line);
-    background: var(--blue-soft);
-    color: var(--ink);
-}
-
-body[data-theme="dark"] .project-impact span {
-    color: var(--blue-deep);
-}
-
-body[data-theme="dark"] .project-impact li {
-    color: var(--ink-soft);
-}
-
-body[data-theme="dark"] .project-impact li svg {
-    border-color: var(--blue-line);
-    background: rgba(165, 180, 252, 0.1);
-    color: var(--blue);
-}
-
-/* .project-stack li 는 style.css 의 토큰(--blue-soft 등)이 다크 값을 그대로 따라오므로 덮어쓰지 않습니다. */
+/* .project-story 와 .project-stack li 는 style.css 의 토큰(--blue-soft 등)이 다크 값을 그대로 따라오므로 덮어쓰지 않습니다. */
 body[data-theme="dark"] .skill-tags li:hover,
 body[data-theme="dark"] .flop-item a:hover {
     background: rgba(165, 180, 252, 0.14);

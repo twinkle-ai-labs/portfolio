@@ -32,10 +32,6 @@ const HomeSection = () => {
             </div>
             <div className="hero-shell">
                 <div className="hero-copy">
-                    <div className="hero-status">
-                        <span className="hero-panel-status" aria-hidden="true"></span>
-                        {t.hero.available}
-                    </div>
                     <div className="hero-kicker">{t.hero.kicker}</div>
                     <h1 className="hero-title">
                         {/* 인사말은 언어마다 문장 구조가 달라 이름만 갈아끼울 수 없습니다 */}
@@ -48,9 +44,6 @@ const HomeSection = () => {
                     <p className="hero-desc">
                         {t.hero.desc}
                     </p>
-                    <ul className="hero-ready-list">
-                        {t.hero.ready.map((item) => <li key={item}>{item}</li>)}
-                    </ul>
                     <div className="hero-actions">
                         <Button
                             className="hero-primary"

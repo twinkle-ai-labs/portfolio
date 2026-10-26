@@ -1,7 +1,6 @@
 import {ReactNode} from "react";
-import {SiDocker, SiGrafana, SiKotlin, SiSpringboot} from "react-icons/si";
+import {SiDocker, SiKotlin} from "react-icons/si";
 import {
-    FaAws,
     FaChartLine,
     FaCloud,
     FaDatabase,
@@ -13,6 +12,7 @@ import {
     FaRocket,
     FaTableColumns,
     FaTowerObservation,
+    FaTriangleExclamation,
     FaUsers,
 } from "react-icons/fa6";
 
@@ -89,6 +89,12 @@ export type ProjectBlock =
     | { kind: 'metrics'; label?: LocalizedText; items: IProjectMetric[] }
     | { kind: 'note'; title: LocalizedText; desc: LocalizedText };
 
+export interface IProjectStory {
+    problem: LocalizedText;
+    action: LocalizedText;
+    result: LocalizedText;
+}
+
 export interface IProjectChapter {
     id: string;
     /** 상단 탭에 노출되는 짧은 라벨 */
@@ -110,8 +116,8 @@ export interface IProject {
     /** 모달 헤더의 요약 지표 */
     metrics: IProjectMetric[];
     impact: LocalizedText[];
-    /** 메인 카드용 짧은 하이라이트 */
-    features: LocalizedText[];
+    /** 메인 카드 겉면 — 무엇이 문제였고, 무엇을 했고, 그래서 무엇이 달라졌나. 기술명은 stacks 에만 둡니다. */
+    story: IProjectStory;
     /** 기술명은 고유명사라 번역하지 않습니다. */
     stacks: string[];
     icon: ReactNode;
@@ -129,49 +135,54 @@ const projects: IProject[] = [
         id: 'orda',
         title: {ko: '아이나비 스탬프 오르다', en: 'INAVI Stamp ORDA'},
         period: {ko: '2024.12 - 현재', en: '2024.12 - Present'},
-        role: {ko: 'Lead Server Developer', en: 'Lead Server Developer'},
+        role: {ko: 'Backend Engineer · 서버 단독', en: 'Backend Engineer · sole server owner'},
         summary: {
-            ko: '크로스 도메인 협업 속에서 클라우드 네이티브 서버 아키텍처 및 전용 인프라의 전주기를 단독 설계하고 구축했습니다.',
-            en: 'Working across domains, I single-handedly designed and built the full lifecycle of a cloud-native server architecture and its dedicated infrastructure.',
+            ko: '내비게이션 회사의 위치 기반 스탬프 · 미션 서비스. 백엔드와 인프라를 혼자 세워 2025년 2월부터 운영 중입니다.',
+            en: 'A location-based stamp and mission service at a navigation company. I built the backend and infrastructure alone and have run it since February 2025.',
         },
         metrics: [
-            {value: '70K+', label: {ko: '서비스 회원', en: 'Registered members'}},
-            {value: '25', label: {ko: '운영 투어 · 미션', en: 'Tours & missions run'}},
-            {value: '9', label: {ko: '주최 기관 · 지자체', en: 'Partner organizations'}},
-            {value: '100%', label: {ko: '서버·인프라 단독 설계', en: 'Solo-owned architecture'}},
+            {value: {ko: '7.1만', en: '71K'}, label: {ko: '가입 회원', en: 'Registered members'}},
+            {value: {ko: '21.6만', en: '216K'}, label: {ko: '누적 투어 · 미션 참여', en: 'Tour & mission participations'}},
+            {value: {ko: '3.6만/월', en: '36K/mo'}, label: {ko: '월 최대 미션 참여', en: 'Peak monthly participants'}},
+            {value: '1,632', label: {ko: '단독 커밋 (전체 1,693)', en: 'Own commits (of 1,693)'}},
         ],
         impact: [
             {
-                ko: '서버 아키텍처 단독 설계 및 핵심 비즈니스 도메인 수립 완료',
-                en: 'Designed the server architecture alone and established the core business domain',
+                ko: '스탬프 위치 인증 설계 — MySQL ST_Distance_Sphere 반경 판정, 코스 매칭률, NFC·QR 키. 반경·시간·방식은 스탬프마다 데이터로',
+                en: 'Designed stamp verification: MySQL ST_Distance_Sphere radius checks, course match rate, NFC and QR keys, with radius, hours and method stored per stamp',
             },
             {
-                ko: 'EC2, RDS, S3, ALB, Route53, Lambda 등 AWS 클라우드 인프라 토폴로지 설계',
-                en: 'Designed the AWS topology across EC2, RDS, S3, ALB, Route 53 and Lambda',
+                ko: '동시성 제어 — 선착순 재고는 FOR UPDATE 행 잠금 + 신청 행 분리, 투어 정원은 조건부 UPDATE + 유니크 키, 스탬프 중복은 잠금 + 유니크 키의 이중 방어',
+                en: 'Concurrency control: FOR UPDATE on reward stock with separate claim rows, conditional UPDATE plus unique keys for tour capacity, lock plus unique key against duplicate stamps',
             },
             {
-                ko: 'Jenkins, Harbor 기반의 빌드/배포 파이프라인 자동화 구현',
-                en: 'Automated the build and deployment pipeline with Jenkins and Harbor',
+                ko: '3 스키마 133 테이블을 MyBatis 로 설계, 컨트롤러 53개 · 엔드포인트 211개, 테스트 1,431건(Testcontainers · 동시성 통합 테스트 포함)',
+                en: 'Designed 133 tables across 3 schemas on MyBatis, 53 controllers and 211 endpoints, 1,431 tests including Testcontainers and concurrency integration tests',
             },
             {
-                ko: 'Filebeat 및 Prometheus/Grafana 기반 실시간 장애 선제 관측 체계 구축',
-                en: 'Built proactive real-time observability with Filebeat and Prometheus/Grafana',
+                ko: '장애 둘을 원인부터 닫음 — 3/1 RDS 포화(쿼리 208ms → 30ms, 푸시 분할 발송), 10/1 자정 커넥션 풀 소진(1초 캐시, 데드락 제거, DB 타임아웃 4단계)',
+                en: 'Closed two outages from the root cause: RDS saturation on 3/1 (query 208ms → 30ms, split push delivery) and midnight pool exhaustion on 10/1 (1-second caches, deadlock removal, four-tier DB timeouts)',
             },
             {
-                ko: '회원 약 7만 명 규모 서비스 운영 · 지자체 및 공공기관 투어 25건 운영',
-                en: 'Operated a service of ~70K members and ran 25 tours for municipalities and public agencies',
+                ko: 'AWS 인프라 · Jenkins/Harbor 배포 · Prometheus/Grafana 관측을 혼자 세우고 상용 2대를 운영',
+                en: 'Built the AWS infrastructure, Jenkins/Harbor delivery and Prometheus/Grafana observability alone and ran two production servers',
             },
         ],
-        features: [
-            {ko: 'AWS Cloud 및 인프라 아키텍처링 단독 전담', en: 'Sole owner of AWS cloud and infrastructure architecture'},
-            {ko: 'Kotlin / Spring Boot 기반 고성능 서버 구축', en: 'High-performance server built on Kotlin / Spring Boot'},
-            {ko: 'Docker, Harbor, Jenkins CI/CD 자동화 수립', en: 'CI/CD automation with Docker, Harbor and Jenkins'},
-            {
-                ko: 'Filebeat / Prometheus / Grafana 실시간 장애 관측',
-                en: 'Real-time incident observability via Filebeat / Prometheus / Grafana'
+        story: {
+            problem: {
+                ko: '서버 인력이 없는 신규 서비스. 위치 인증과 선착순 리워드처럼 틀리면 돈이 나가는 규칙을 맡을 사람이 없었다.',
+                en: 'A new service with no server engineer, and nobody to own the rules that cost money when wrong: location verification and first-come rewards.',
             },
-        ],
-        stacks: ['Kotlin', 'Spring Boot', 'AWS', 'Jenkins', 'Filebeat', 'Slack', 'Prometheus', 'Grafana'],
+            action: {
+                ko: '백엔드를 혼자 설계 — GPS · 코스 · NFC · QR 위치 인증, FOR UPDATE + 유니크 키의 동시성 제어, 그 위에 AWS 인프라 · 배포 · 관측.',
+                en: 'Designed the backend alone: GPS, course, NFC and QR verification, concurrency control with FOR UPDATE plus unique keys, and the AWS infrastructure, delivery and observability on top.',
+            },
+            result: {
+                ko: '회원 7.1만 · 누적 참여 21.6만 회. 장애 둘을 원인부터 닫았다 — 쿼리 208ms → 30ms, 데드락 제거, DB 타임아웃 4단계.',
+                en: '71K members, 216K participations. Two outages closed from the root cause: query 208ms → 30ms, deadlock removed, four-tier DB timeouts.',
+            },
+        },
+        stacks: ['Kotlin', 'Spring Boot', 'MyBatis', 'MySQL · RDS', 'AWS', 'Prometheus · Grafana'],
         icon: <SiKotlin/>,
         chapters: [
             {
@@ -255,211 +266,77 @@ const projects: IProject[] = [
                 ],
             },
             {
-                id: 'infra',
-                label: {ko: '인프라', en: 'Infra'},
-                title: {ko: 'AWS 클라우드 인프라 토폴로지', en: 'AWS cloud infrastructure topology'},
-                icon: <FaCloud/>,
+                /* 근거: server-orda-stamp — StampEarnRule.kt · StampMapper.kt · RewardMapper.kt · TourMapper.kt · RewardApplyTxService.kt · TourStartService.kt · StampEarnConcurrencyTests.kt */
+                id: 'design',
+                label: {ko: '설계', en: 'Design'},
+                title: {ko: '위치 인증과 동시성 — 틀리면 돈이 나가는 두 규칙', en: 'Location verification and concurrency — the two rules that cost money when wrong'},
+                icon: <FaMapLocationDot/>,
                 lead: {
-                    ko: '비즈니스 성장 속도에 맞춰 단순하게 유지할 수 있는 최소 구성으로 설계했습니다.',
-                    en: 'I designed the smallest configuration that could stay simple as the business grew.',
+                    ko: '스탬프는 현장에서만 찍혀야 하고, 선착순 리워드는 재고보다 한 장도 더 나가면 안 됩니다. 둘 다 DB 가 마지막 방어선입니다.',
+                    en: 'A stamp must only be earned on site, and a first-come reward must never exceed its stock by a single unit. For both, the database is the last line of defense.',
                 },
                 blocks: [
-                    {
-                        kind: 'media',
-                        media: {
-                            node: <AwsTopologyDiagram/>,
-                            alt: {
-                                ko: 'AWS 기반 오르다 인프라 토폴로지 다이어그램',
-                                en: 'Diagram of the ORDA infrastructure topology on AWS'
-                            },
-                            frame: 'plain',
-                            size: 'full',
-                        },
-                    },
                     {
                         kind: 'bullets',
                         items: [
                             {
-                                text: {ko: 'Edge — 도메인과 트래픽 진입 정리', en: 'Edge — organizing domains and traffic entry'},
+                                text: {ko: '위치 인증 네 가지 — 방식과 임계치는 스탬프마다 데이터로', en: 'Four verification methods, with method and thresholds stored per stamp'},
                                 children: [
                                     {
-                                        ko: 'Route 53으로 서비스 도메인과 환경별 레코드 관리',
-                                        en: 'Managed service domains and per-environment records in Route 53'
+                                        ko: 'GPS: MySQL ST_Distance_Sphere 로 거리를 재고 스탬프별 gps_radius 와 비교. 운영 시간은 자정 넘김까지 SQL CASE 로 판정. 앱 쪽 하버사인은 같은 반지름을 써서 SQL 결과와 맞춘다',
+                                        en: 'GPS: distance from MySQL ST_Distance_Sphere against the stamp\'s own gps_radius; operating hours judged in a SQL CASE including past-midnight windows; the app-side haversine uses the same radius so results agree',
                                     },
                                     {
-                                        ko: 'ALB에서 HTTPS 종단 처리 및 헬스체크 기반 라우팅',
-                                        en: 'Terminated HTTPS at the ALB and routed on health checks'
+                                        ko: '코스: WGS84 좌표열의 매칭률이 스탬프별 course_rate 이상일 때만. NFC·QR: 등록된 키와 일치해야 하고 QR 키는 유니크',
+                                        en: 'Course: WGS84 track match rate must reach the stamp\'s course_rate; NFC and QR: must match the registered key, QR keys unique',
+                                    },
+                                    {
+                                        ko: '다른 투어의 스탬프 ID 로 적립하는 경로를 쿼리 조건으로 막고, 좌표 열에는 SPATIAL INDEX',
+                                        en: 'The query itself blocks earning with another tour\'s stamp ID, and the position column carries a SPATIAL INDEX',
                                     },
                                 ],
                             },
                             {
-                                text: {
-                                    ko: 'Application — 컨테이너 기반 API 계층',
-                                    en: 'Application — a container-based API layer'
-                                },
+                                text: {ko: '동시성 — 잠금 하나로 끝내지 않고 유니크 키를 뒤에 세운다', en: 'Concurrency — never a lock alone; a unique key stands behind it'},
                                 children: [
                                     {
-                                        ko: 'EC2 위 Docker 런타임으로 Kotlin/Spring Boot API 구동',
-                                        en: 'Ran the Kotlin/Spring Boot API on a Docker runtime on EC2'
+                                        ko: '선착순 재고: 재고 행을 FOR UPDATE 로 잠가 remain_cnt 를 깎고, 신청은 복합 PK 행에 ON DUPLICATE KEY 로. 외부 결제 호출은 잠금 밖으로 — claim → 구매 → complete 세 단계',
+                                        en: 'First-come stock: lock the stock row with FOR UPDATE and decrement remain_cnt; claims go to a composite-PK row with ON DUPLICATE KEY. External payment calls stay outside the lock — claim → purchase → complete',
                                     },
                                     {
-                                        ko: '이미지 리사이징 등 비동기 후처리는 Lambda로 분리',
-                                        en: 'Split async post-processing such as image resizing into Lambda'
-                                    },
-                                ],
-                            },
-                            {
-                                text: {
-                                    ko: 'Data — 영속 계층과 정적 자산 분리',
-                                    en: 'Data — separating persistence from static assets'
-                                },
-                                children: [
-                                    {
-                                        ko: 'RDS에 트랜잭션 데이터, S3에 스탬프·이미지 자산 적재',
-                                        en: 'Transactional data in RDS, stamp and image assets in S3'
+                                        ko: '투어 정원: UPDATE … WHERE total_user_count < limit_cnt 한 문장, 0행이면 롤백. 같은 회원의 중복 참여는 유니크 키의 DuplicateKeyException 으로',
+                                        en: 'Tour capacity: a single UPDATE … WHERE total_user_count < limit_cnt, rolled back on zero rows. Duplicate participation by the same member surfaces as a unique-key DuplicateKeyException',
                                     },
                                     {
-                                        ko: '백업·스냅샷 주기를 운영 기준에 맞춰 정의',
-                                        en: 'Set backup and snapshot cadence against operational requirements'
+                                        ko: '스탬프 중복: FOR UPDATE + UQ_MEMBER_TOUR_STAMP 이중 방어. 통합 테스트는 5 스레드가 동시에 찍어 적립 행이 1건임을 확인한다',
+                                        en: 'Duplicate stamps: FOR UPDATE plus UQ_MEMBER_TOUR_STAMP. The integration test fires 5 threads at once and asserts exactly one earned row',
+                                    },
+                                    {
+                                        ko: '지갑 출금: 행 잠금 + balance ≥ amount 조건. 다중 인스턴스 배치: 만료 시각과 holder 조건을 건 DB 리스 락 — 두 인스턴스 테스트로 한 쪽만 도는 것을 확인',
+                                        en: 'Wallet withdrawals: row lock plus a balance ≥ amount guard. Multi-instance batches: a DB lease lock keyed on expiry and holder — a two-instance test proves only one runs',
                                     },
                                 ],
                             },
                         ],
                     },
                 ],
-            },
-            {
-                id: 'cicd',
-                label: {ko: '배포', en: 'Delivery'},
-                title: {ko: '빌드 · 배포 파이프라인 자동화', en: 'Build and deployment pipeline automation'},
-                icon: <SiDocker/>,
-                lead: {
-                    ko: '수동 배포를 없애고 커밋에서 배포까지 하나의 흐름으로 이어지도록 만들었습니다.',
-                    en: 'I eliminated manual deploys and connected commit to release as a single flow.',
-                },
-                blocks: [
+                aside: [
                     {
-                        kind: 'media',
-                        media: {
-                            node: <CicdPipelineDiagram/>,
-                            alt: {
-                                ko: 'Jenkins와 Harbor 기반 배포 파이프라인 다이어그램',
-                                en: 'Diagram of the Jenkins and Harbor deployment pipeline'
-                            },
-                            frame: 'plain',
-                            size: 'full',
+                        kind: 'note',
+                        title: {ko: '잠금에서 배운 것', en: 'What the locks taught me'},
+                        desc: {
+                            ko: '«투어 시작하기»의 FOR UPDATE 읽기는 첫 참여자의 빈 결과에 갭 잠금을 걸어 동시 요청에서 데드락이 났습니다(10/1). 잠금 읽기를 걷고 조건부 UPDATE 와 유니크 키만 남겼습니다 — 빈 결과를 잠그는 것은 아무것도 지키지 않습니다.',
+                            en: 'The FOR UPDATE read in "start tour" put a gap lock on a first participant\'s empty result and deadlocked under concurrent requests (10/1). I removed the locking read and kept only the conditional UPDATE and the unique key — locking an empty result protects nothing.',
                         },
                     },
                     {
-                        kind: 'bullets',
+                        kind: 'metrics',
+                        label: {ko: '규모', en: 'Scale'},
                         items: [
-                            {
-                                text: {ko: 'Jenkins 기반 빌드 자동화', en: 'Build automation on Jenkins'},
-                                children: [
-                                    {
-                                        ko: '브랜치 전략에 맞춘 자동 빌드·테스트 트리거 구성',
-                                        en: 'Wired automatic build and test triggers to the branch strategy'
-                                    },
-                                    {
-                                        ko: '환경별(dev/prod) 파라미터 분리로 잘못된 배포 차단',
-                                        en: 'Separated dev/prod parameters to block mistaken deployments'
-                                    },
-                                ],
-                            },
-                            {
-                                text: {ko: 'Harbor 사설 레지스트리 운영', en: 'Running a private Harbor registry'},
-                                children: [
-                                    {
-                                        ko: '이미지 태깅 규칙을 정해 롤백 지점을 명확히 확보',
-                                        en: 'Defined image tagging rules so rollback points stay unambiguous'
-                                    },
-                                    {
-                                        ko: '외부 레지스트리 의존 없이 내부에서 이미지 수명 관리',
-                                        en: 'Managed image lifecycle in-house without external registry dependencies'
-                                    },
-                                ],
-                            },
-                            {
-                                text: {ko: '배포 리스크 축소', en: 'Reducing deployment risk'},
-                                children: [
-                                    {
-                                        ko: '헬스체크 통과 후 트래픽을 넘기는 무중단 롤아웃 적용',
-                                        en: 'Adopted zero-downtime rollout that shifts traffic only after health checks pass'
-                                    },
-                                    {
-                                        ko: '배포 결과를 Slack으로 통보해 실패를 즉시 인지',
-                                        en: 'Reported deployment results to Slack so failures surface immediately'
-                                    },
-                                ],
-                            },
-                        ],
-                    },
-                ],
-            },
-            {
-                id: 'observability',
-                label: {ko: '관측', en: 'Observability'},
-                title: {ko: '장애 선제 대응을 위한 관측 체계', en: 'Observability built for proactive incident response'},
-                icon: <FaTowerObservation/>,
-                lead: {
-                    ko: '상용 릴리즈 이후 문제가 커지기 전에 발견할 수 있는 생태계를 목표로 했습니다.',
-                    en: 'After the production release, the goal was an environment that catches problems before they grow.',
-                },
-                blocks: [
-                    {
-                        kind: 'media',
-                        media: {
-                            node: <ObservabilityDiagram/>,
-                            alt: {
-                                ko: 'Filebeat, Prometheus, Grafana 기반 관측 체계 다이어그램',
-                                en: 'Diagram of the observability stack on Filebeat, Prometheus and Grafana',
-                            },
-                            frame: 'plain',
-                            size: 'full',
-                        },
-                    },
-                    {
-                        kind: 'bullets',
-                        items: [
-                            {
-                                text: {ko: '로그와 메트릭을 분리해 수집', en: 'Collecting logs and metrics separately'},
-                                children: [
-                                    {
-                                        ko: 'Filebeat로 애플리케이션 로그를 수집해 장애 원인 추적 경로 확보',
-                                        en: 'Shipped application logs with Filebeat to keep a root-cause trail'
-                                    },
-                                    {
-                                        ko: 'Exporter로 CPU·메모리·디스크 등 시스템 자원 메트릭 수집',
-                                        en: 'Collected CPU, memory and disk metrics through exporters'
-                                    },
-                                ],
-                            },
-                            {
-                                text: {ko: '임계치 기반 선제 알림', en: 'Threshold-based proactive alerting'},
-                                children: [
-                                    {
-                                        ko: 'Prometheus 알림 룰로 위험 구간을 사전에 정의',
-                                        en: 'Defined danger zones up front as Prometheus alert rules'
-                                    },
-                                    {
-                                        ko: 'Slack 채널 연동으로 담당자가 즉시 인지하도록 구성',
-                                        en: 'Routed alerts to Slack so the on-call engineer knows right away'
-                                    },
-                                ],
-                            },
-                            {
-                                text: {ko: 'Grafana 대시보드 상시 운영', en: 'Always-on Grafana dashboards'},
-                                children: [
-                                    {
-                                        ko: '서비스 지표와 자원 지표를 한 화면에서 확인',
-                                        en: 'Service and resource metrics visible on one screen'
-                                    },
-                                    {
-                                        ko: '릴리즈 전후 비교가 가능한 패널 구성으로 회귀 감지',
-                                        en: 'Panels that compare before and after a release to catch regressions'
-                                    },
-                                ],
-                            },
+                            {value: '133', label: {ko: '테이블 · 3 스키마', en: 'Tables · 3 schemas'}},
+                            {value: '211', label: {ko: 'API 엔드포인트', en: 'API endpoints'}},
+                            {value: '1,431', label: {ko: '테스트', en: 'Tests'}},
+                            {value: '21', label: {ko: 'Caffeine 캐시', en: 'Caffeine caches'}},
                         ],
                     },
                 ],
@@ -550,6 +427,298 @@ const projects: IProject[] = [
                 ],
             },
             {
+                /* 근거: 서비스 장애 보고서 (2026-03-06). 수치는 보고서의 것만 쓴다. */
+                id: 'incident',
+                label: {ko: '장애', en: 'Incident'},
+                title: {ko: '미션 오픈 정각의 접속 급증 — 장애 두 번', en: 'Traffic spikes at mission launch — two outages'},
+                icon: <FaTriangleExclamation/>,
+                lead: {
+                    ko: '2026-03-01 09:00, 화성시 미션 오픈과 동시에 접속이 분당 700회 이상으로 뛰며 RDS 가 포화됐습니다. 원인은 트래픽 자체가 아니라 메인 화면의 투어 목록 쿼리였습니다.',
+                    en: 'At 09:00 on 2026-03-01 a Hwaseong mission opened and requests jumped past 700 per minute, saturating RDS. The real cause was not the traffic but the tour-list query on the main screen.',
+                },
+                blocks: [
+                    {
+                        kind: 'flow',
+                        label: {ko: '타임라인', en: 'Timeline'},
+                        steps: [
+                            {
+                                title: {ko: '09:00 · 발생', en: '09:00 · Onset'},
+                                desc: {
+                                    ko: '미션 오픈 정각에 초기 접속이 분당 700회 이상으로 급증. 앱 접속 불가, 메인 화면 투어 조회 실패. 영향 예상 대상 3,749명.',
+                                    en: 'Initial requests spiked past 700 per minute at launch. The app could not connect and the main screen failed to load tours. An estimated 3,749 users were affected.',
+                                },
+                            },
+                            {
+                                title: {ko: '09:19 · 인지와 재기동', en: '09:19 · Detected, restarted'},
+                                desc: {
+                                    ko: '인지 후 내부 전파와 긴급 재기동. 장애 지속. 09:47 인스턴스 1대 증설, 09:57 에도 지속 — 병목은 WAS 가 아니었습니다.',
+                                    en: 'Escalated internally and restarted. Still down. Added an instance at 09:47, still down at 09:57 — the bottleneck was not the app server.',
+                                },
+                            },
+                            {
+                                title: {ko: '10:20 · RDS 증설로 복구', en: '10:20 · Recovered by scaling RDS'},
+                                desc: {
+                                    ko: 'RDS 를 c2m16 → c8m64 로 올려 정상화. 11:30 트래픽이 안정된 뒤 증설한 인스턴스 제거.',
+                                    en: 'Scaled RDS from c2m16 to c8m64 and the service recovered. Removed the extra instance at 11:30 once traffic settled.',
+                                },
+                            },
+                            {
+                                title: {ko: '03-03 · 원인 쿼리 튜닝', en: '03-03 · Tuned the root-cause query'},
+                                desc: {
+                                    ko: '투어 목록 조회가 전체 사용자의 참여 이력을 훑고 있었습니다. UV 산정 로직을 고쳐 평균 응답 208ms → 30ms.',
+                                    en: 'The tour-list query was scanning every user\'s participation history. Rewrote the UV calculation: average response 208ms → 30ms.',
+                                },
+                            },
+                            {
+                                title: {ko: '03-04 · 유입을 고르게', en: '03-04 · Flattening the inflow'},
+                                desc: {
+                                    ko: '홍보 푸시가 사용자를 한 시각에 모으지 않도록 분할 발송 스케줄링을 넣고, RDS 를 c4m32 로 내렸습니다. 03-05 전체 푸시를 그 위에서 발송.',
+                                    en: 'Added scheduled, split push delivery so promotions no longer herd users into one minute, then stepped RDS down to c4m32. Sent the full push on 03-05 over that setup.',
+                                },
+                            },
+                        ],
+                    },
+                    {
+                        kind: 'metrics',
+                        label: {ko: '검증', en: 'Verified'},
+                        items: [
+                            {value: '30ms', label: {ko: '투어 목록 평균 응답', en: 'Tour-list average response'}, delta: '208ms → 30ms'},
+                            {value: {ko: '700회/분', en: '700/min'}, label: {ko: '오픈 정각 유입', en: 'Requests at launch'}},
+                            {value: 'c4m32', label: {ko: 'RDS 최종 사양', en: 'Final RDS size'}, delta: 'c2m16 → c8m64 → c4m32'},
+                            {value: '3,749', label: {ko: '영향 예상 대상', en: 'Users affected'}},
+                        ],
+                    },
+                ],
+                aside: [
+                    {
+                        kind: 'note',
+                        title: {ko: '남은 것', en: 'What remained'},
+                        desc: {
+                            ko: '정합성을 위해 쓰던 FOR UPDATE 를 걷는 작업, 로그 보관 주기 90일 → 30일, 그리고 20~30초 만에 성공하는 쿼리는 알림이 울리지 않는다는 문제 — DB 타임아웃 정책이 뒤따랐습니다.',
+                            en: 'Removing the FOR UPDATE used for consistency, cutting log retention from 90 to 30 days, and the fact that a query succeeding in 20–30 seconds never fires an alert — a DB timeout policy followed.',
+                        },
+                    },
+                    {
+                        kind: 'note',
+                        title: {ko: '두 번째 — 10/1 자정', en: 'The second one — midnight, 10/1'},
+                        desc: {
+                            ko: '화성시 미션이 자정에 열리자 /init 회원이 전날 102명에서 5,895명으로 뛰었고, 커넥션 획득 실패 59만 건 · 데드락 15건 · 동시 요청 4,075건으로 Tomcat 스레드 상한(4,096)에 닿아 OOM 이 났습니다. 조치는 회원 무관 조회의 1초 캐시(투어 전체 1.1ms + 지역 0.6ms + 집계 3.6ms), 같은 키에 몰린 요청이 한 번의 적재를 나눠 받는 SharedLoadCaffeineCache, 투어 시작의 데드락 제거, (회원, 일시) 인덱스, DB 타임아웃 4단계(잠금 10초 < 문장 15초 < 소켓 30초 < 트랜잭션 60초). 부하 재현 검증은 아직 하지 않았습니다 — 그래서 «검증 완료»라고 적지 않습니다.',
+                            en: 'When a Hwaseong mission opened at midnight, /init members jumped from 102 the day before to 5,895; 599,987 connection acquisition failures, 15 deadlocks and 4,075 concurrent requests hit the Tomcat thread cap (4,096) and the JVM ran out of memory. Fixes: 1-second caches for member-independent reads (all tours 1.1ms + regions 0.6ms + aggregates 3.6ms), a SharedLoadCaffeineCache so requests piling onto one key share a single load, the start-tour deadlock removal, a (member, timestamp) index, and four-tier DB timeouts (lock 10s < statement 15s < socket 30s < transaction 60s). Load reproduction has not been run yet — which is why this is not marked verified.',
+                        },
+                    },
+                ],
+            },
+            {
+                id: 'infra',
+                label: {ko: '인프라', en: 'Infra'},
+                title: {ko: 'AWS 클라우드 인프라 토폴로지', en: 'AWS cloud infrastructure topology'},
+                icon: <FaCloud/>,
+                lead: {
+                    ko: '비즈니스 성장 속도에 맞춰 단순하게 유지할 수 있는 최소 구성으로 설계했습니다.',
+                    en: 'I designed the smallest configuration that could stay simple as the business grew.',
+                },
+                blocks: [
+                    {
+                        kind: 'media',
+                        media: {
+                            node: <AwsTopologyDiagram/>,
+                            alt: {
+                                ko: 'AWS 기반 오르다 인프라 토폴로지 다이어그램',
+                                en: 'Diagram of the ORDA infrastructure topology on AWS'
+                            },
+                            frame: 'plain',
+                            size: 'full',
+                        },
+                    },
+                    {
+                        kind: 'bullets',
+                        items: [
+                            {
+                                text: {ko: 'Edge — 도메인과 트래픽 진입 정리', en: 'Edge — organizing domains and traffic entry'},
+                                children: [
+                                    {
+                                        ko: 'Route 53으로 서비스 도메인과 환경별 레코드 관리',
+                                        en: 'Managed service domains and per-environment records in Route 53'
+                                    },
+                                    {
+                                        ko: 'ALB에서 HTTPS 종단 처리 및 헬스체크 기반 라우팅',
+                                        en: 'Terminated HTTPS at the ALB and routed on health checks'
+                                    },
+                                ],
+                            },
+                            {
+                                text: {
+                                    ko: 'Application — API 계층',
+                                    en: 'Application — the API layer'
+                                },
+                                children: [
+                                    {
+                                        ko: '상용 EC2 2대에서 Kotlin/Spring Boot API 구동 — HikariCP 100 · Tomcat 스레드 4,096. 개발 서버는 Docker 이미지',
+                                        en: 'The Kotlin/Spring Boot API runs on two production EC2 instances — HikariCP 100, Tomcat threads 4,096. The dev server runs the Docker image'
+                                    },
+                                    {
+                                        ko: '이미지 리사이징 등 비동기 후처리는 Lambda로 분리',
+                                        en: 'Split async post-processing such as image resizing into Lambda'
+                                    },
+                                ],
+                            },
+                            {
+                                text: {
+                                    ko: 'Data — 영속 계층과 정적 자산 분리',
+                                    en: 'Data — separating persistence from static assets'
+                                },
+                                children: [
+                                    {
+                                        ko: 'RDS에 트랜잭션 데이터, S3에 스탬프·이미지 자산 적재',
+                                        en: 'Transactional data in RDS, stamp and image assets in S3'
+                                    },
+                                    {
+                                        ko: 'RDS 는 Aurora 클러스터 — 3/1 장애 뒤 c2m16 → c4m32, 10/1 뒤 DB 타임아웃 4단계(잠금 10초 < 문장 15초 < 소켓 30초 < 트랜잭션 60초)',
+                                        en: 'RDS is an Aurora cluster — c2m16 → c4m32 after the 3/1 outage, four-tier DB timeouts after 10/1 (lock 10s < statement 15s < socket 30s < transaction 60s)'
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                id: 'cicd',
+                label: {ko: '배포', en: 'Delivery'},
+                title: {ko: '빌드 · 배포 파이프라인 자동화', en: 'Build and deployment pipeline automation'},
+                icon: <SiDocker/>,
+                lead: {
+                    ko: '커밋에서 테스트·이미지·레지스트리·개발 서버까지를 Jenkins 한 흐름으로 묶었습니다. 상용은 서버 2대에 사람이 올립니다.',
+                    en: 'Commit through tests, image, registry and the dev server runs as one Jenkins flow. Production is two servers that a person deploys to.',
+                },
+                blocks: [
+                    {
+                        kind: 'media',
+                        media: {
+                            node: <CicdPipelineDiagram/>,
+                            alt: {
+                                ko: 'Jenkins와 Harbor 기반 배포 파이프라인 다이어그램',
+                                en: 'Diagram of the Jenkins and Harbor deployment pipeline'
+                            },
+                            frame: 'plain',
+                            size: 'full',
+                        },
+                    },
+                    {
+                        kind: 'bullets',
+                        items: [
+                            {
+                                text: {ko: 'Jenkins 기반 빌드 자동화', en: 'Build automation on Jenkins'},
+                                children: [
+                                    {
+                                        ko: '브랜치 전략에 맞춘 자동 빌드·테스트 트리거 구성',
+                                        en: 'Wired automatic build and test triggers to the branch strategy'
+                                    },
+                                    {
+                                        ko: '환경별(dev/prod) 파라미터 분리로 잘못된 배포 차단',
+                                        en: 'Separated dev/prod parameters to block mistaken deployments'
+                                    },
+                                ],
+                            },
+                            {
+                                text: {ko: 'Harbor 사설 레지스트리 운영', en: 'Running a private Harbor registry'},
+                                children: [
+                                    {
+                                        ko: '이미지 태깅 규칙을 정해 롤백 지점을 명확히 확보',
+                                        en: 'Defined image tagging rules so rollback points stay unambiguous'
+                                    },
+                                    {
+                                        ko: '외부 레지스트리 의존 없이 내부에서 이미지 수명 관리',
+                                        en: 'Managed image lifecycle in-house without external registry dependencies'
+                                    },
+                                ],
+                            },
+                            {
+                                text: {ko: '배포 리스크 축소', en: 'Reducing deployment risk'},
+                                children: [
+                                    {
+                                        ko: '테스트 → Qodana 정적 분석 → 이미지 빌드 → Harbor 푸시 → 개발 서버 SSH 배포. 상용 2대는 jar 를 올려 한 대씩 재기동 — 롤링 스크립트는 아직 없다',
+                                        en: 'Tests → Qodana static analysis → image build → Harbor push → SSH deploy to dev. Production is two servers that get the jar and restart one at a time — no rolling script yet'
+                                    },
+                                    {
+                                        ko: '배포 결과를 Slack 채널로 통보해 실패를 즉시 인지',
+                                        en: 'Reported deployment results to a Slack channel so failures surface immediately'
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                id: 'observability',
+                label: {ko: '관측', en: 'Observability'},
+                title: {ko: '장애 선제 대응을 위한 관측 체계', en: 'Observability built for proactive incident response'},
+                icon: <FaTowerObservation/>,
+                lead: {
+                    ko: '예외 로그는 Logstash 파일을 거쳐 Slack 으로, 메트릭은 Prometheus 로. 10/1 자정 장애 뒤에 Prometheus·Grafana 스택을 세웠습니다.',
+                    en: 'Exception logs reach Slack through Logstash files; metrics go to Prometheus. The Prometheus and Grafana stack went up after the 10/1 midnight outage.',
+                },
+                blocks: [
+                    {
+                        kind: 'media',
+                        media: {
+                            node: <ObservabilityDiagram/>,
+                            alt: {
+                                ko: 'Logstash 로그, Prometheus, Grafana 기반 관측 체계 다이어그램',
+                                en: 'Diagram of the observability stack on Logstash logs, Prometheus and Grafana',
+                            },
+                            frame: 'plain',
+                            size: 'full',
+                        },
+                    },
+                    {
+                        kind: 'bullets',
+                        items: [
+                            {
+                                text: {ko: '로그와 메트릭을 분리해 수집', en: 'Collecting logs and metrics separately'},
+                                children: [
+                                    {
+                                        ko: '예외 로그는 Logstash 파일(시간 단위 롤링 · 비동기 appender)로 남겨 Slack 채널까지 흐른다',
+                                        en: 'Exception logs land in Logstash files (hourly rolling, async appender) and flow on to a Slack channel'
+                                    },
+                                    {
+                                        ko: 'Actuator + Micrometer 로 HTTP · JVM · HikariCP 메트릭을 Prometheus 가 15초마다 긁는다',
+                                        en: 'Actuator and Micrometer expose HTTP, JVM and HikariCP metrics that Prometheus scrapes every 15 seconds'
+                                    },
+                                ],
+                            },
+                            {
+                                text: {ko: '임계치 규칙 4종', en: 'Four threshold rules'},
+                                children: [
+                                    {
+                                        ko: '인스턴스 다운 2분 · 5xx 비율 5% 초과 5분 · Hikari 대기 커넥션 3분 · 힙 90% 10분',
+                                        en: 'Instance down for 2 min, 5xx ratio over 5% for 5 min, pending Hikari connections for 3 min, heap above 90% for 10 min'
+                                    },
+                                    {
+                                        ko: '규칙은 평가되지만 Alertmanager 는 아직 붙이지 않았다 — 발송은 다음 일이다',
+                                        en: 'The rules are evaluated, but Alertmanager is not wired yet — delivery is the next step'
+                                    },
+                                ],
+                            },
+                            {
+                                text: {ko: 'Grafana 대시보드와 지연 분석', en: 'Grafana dashboards and latency analysis'},
+                                children: [
+                                    {
+                                        ko: 'HTTP · JVM · Hikari · 로그 네 묶음의 대시보드 하나',
+                                        en: 'One dashboard in four groups: HTTP, JVM, Hikari and logs'
+                                    },
+                                    {
+                                        ko: '로그에서 API 별 호출 수 · 평균 · p90 · p95 · p99 · 1초 초과 건수를 표로 내는 스크립트 — 10/1 장애의 1위 쿼리를 이것으로 찾았다',
+                                        en: 'A script that tables per-API call counts, average, p90, p95, p99 and over-1s counts from logs — it found the top query of the 10/1 outage'
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
                 id: 'result',
                 label: {ko: '성과', en: 'Outcome'},
                 title: {ko: '운영 성과와 남은 것', en: 'What it achieved and what remains'},
@@ -592,52 +761,51 @@ const projects: IProject[] = [
     {
         id: 'navigation-statistics',
         title: {ko: '내비게이션 서비스 운영 & 통합통계 시스템', en: 'Navigation service operations & unified statistics system'},
-        period: {ko: '2025.03 - 현재', en: '2025.03 - Present'},
-        role: {ko: 'Lead Backend Engineer (Owner)', en: 'Lead Backend Engineer (Owner)'},
+        period: {ko: '2025.01 - 현재', en: '2025.01 - Present'},
+        role: {ko: 'Backend Engineer · 통계 Owner', en: 'Backend Engineer · stats owner'},
         summary: {
-            ko: '아이나비 에어·토요타 하이브리드 등 내비게이션 서비스의 서버 운영·유지보수를 전담하는 동시에, 다수 서비스에서 인입되는 방대한 사용자 로그를 수집·정제해 대시보드에 공급하는 통합통계 시스템을 신규로 설계·개발했습니다.',
-            en: 'While owning server operations and maintenance for navigation services such as INAVI AIR and Toyota hybrid, I designed and built a new unified statistics system that collects and refines huge volumes of user logs and feeds them to dashboards.',
+            ko: '내비 서버 운영을 맡으면서, 흩어진 로그 통계를 서버 하나의 파이프라인으로 모았습니다.',
+            en: 'While running the navigation servers, I pulled scattered log statistics into one server\'s pipeline.',
         },
         metrics: [
-            {value: {ko: '2종+', en: '2+'}, label: {ko: '운영 내비게이션 서비스', en: 'Navigation services operated'}},
-            {value: {ko: '일 단위', en: 'Daily'}, label: {ko: 'BigQuery 파티션 집계', en: 'BigQuery partition aggregation'}},
-            {value: '3 Context', label: {ko: 'DDD 도메인 분리', en: 'DDD bounded contexts'}},
-            {value: 'Grafana', label: {ko: '실시간 지표 표출', en: 'Real-time metric reporting'}},
+            {value: '2', label: {ko: '운영 내비 서비스 (AIR · Toyota)', en: 'Navigation services (AIR · Toyota)'}},
+            {value: '35', label: {ko: 'BigQuery 원천 테이블 · 3 데이터셋', en: 'BigQuery source tables · 3 datasets'}},
+            {value: '22', label: {ko: '@Scheduled 집계 잡 · MySQL 테이블', en: '@Scheduled jobs · MySQL tables'}},
+            {value: '4', label: {ko: 'Grafana 대시보드', en: 'Grafana dashboards'}},
         ],
         impact: [
             {
-                ko: '아이나비 에어, 토요타 하이브리드 등 내비게이션 서비스 서버 운영 및 유지보수 전담',
-                en: 'Owned server operations and maintenance for INAVI AIR, Toyota hybrid and other navigation services',
+                ko: 'iNavi AIR · Toyota 내비 서버 운영 — 탐색 프로토콜 v2.2.9(위수지역 회피) 대응, 로그 API 연동, 오퍼월 중복지급 방어, 핫픽스',
+                en: 'Ran the iNavi AIR and Toyota navigation servers: routing protocol v2.2.9 (military-zone avoidance), log API integration, offerwall double-payment guard, hotfixes',
             },
             {
-                ko: '도메인 수집·정기 배치·사용자 조회 맥락 격리 (DDD 설계)로 통합통계 시스템 신규 개발',
-                en: 'Built the unified statistics system with collection, batch and query contexts isolated by DDD',
+                ko: 'Toyota API 로그 → BigQuery 적재 경로 구축 — 응답 AOP 가 JSON 한 줄로 남기고, 새벽 cron 이 GCS 를 거쳐 bq load. 날짜를 주면 재적재',
+                en: 'Built the Toyota API log path into BigQuery: a response AOP writes one JSON line per call, a nightly cron loads it through GCS with bq load, and a date argument reloads a day',
             },
             {
-                ko: 'BigQuery 일 단위 파티션 설계 및 Quartz 기반 정기 배치 자동화',
-                en: 'Designed daily BigQuery partitions and automated scheduled batches with Quartz',
+                ko: '통합통계 서버를 Kotlin 으로 새로 설계 — 헥사고날 계층(domain · application · infrastructure · presentation) 위에 AIR · Toyota 모듈, 도메인 6개',
+                en: 'Designed the unified statistics server in Kotlin: hexagonal layers (domain, application, infrastructure, presentation) with AIR and Toyota modules over six domains',
             },
             {
-                ko: 'MySQL 통계 적재 엔진 및 Grafana 실시간 분석 대시보드 시각화 연동',
-                en: 'Built the MySQL statistics engine and wired it to real-time Grafana dashboards',
+                ko: 'BigQuery 35 테이블 → @Scheduled 잡 22개 → MySQL 집계 22 테이블 → Grafana 대시보드 4개 + 운영 대시보드 + MCP 서버(도구 6)',
+                en: '35 BigQuery tables → 22 @Scheduled jobs → 22 MySQL aggregate tables → 4 Grafana dashboards, an ops dashboard and an MCP server with 6 tools',
             },
         ],
-        features: [
-            {
-                ko: '내비게이션 서비스(아이나비 에어, 토요타 하이브리드 등) 서버 운영·유지보수',
-                en: 'Server operations for navigation services (INAVI AIR, Toyota hybrid and more)',
+        story: {
+            problem: {
+                ko: 'AIR · Toyota 로그가 BigQuery 프로젝트 둘에 흩어져 있고, Python 수집기 일곱 개가 제각각 통계를 뽑았다.',
+                en: 'AIR and Toyota logs sat across two BigQuery projects, and seven Python collectors each pulled their own statistics.',
             },
-            {ko: 'GCP BigQuery 기반 일 단위 대량 로그 수집 파이프라인 신규 구축', en: 'New daily bulk log pipeline on GCP BigQuery'},
-            {
-                ko: 'Spring Batch / Quartz 기반 통계 배치 정밀 자동화',
-                en: 'Precise statistics batch automation with Spring Batch / Quartz'
+            action: {
+                ko: '통계 서버를 Kotlin 으로 새로 — 헥사고날 계층 위 AIR · Toyota 모듈, BigQuery 35 테이블 → @Scheduled 22 잡 → MySQL → Grafana 4.',
+                en: 'A new Kotlin statistics server: AIR and Toyota modules on hexagonal layers, 35 BigQuery tables → 22 @Scheduled jobs → MySQL → 4 Grafana boards.',
             },
-            {
-                ko: 'MySQL 통계 적재 엔진 및 Grafana 실시간 분석 대시보드',
-                en: 'MySQL statistics engine and real-time Grafana dashboards'
+            result: {
+                ko: '수집기 일곱을 서버 하나로. 늦은 로그는 월간 재적재로, 날짜 없는 행은 경보로. 내비 서버 운영은 그 옆에서 계속.',
+                en: 'Seven collectors became one server. Late logs are caught by monthly reloads, dateless rows by an alert. Navigation server ops continued alongside.',
             },
-        ],
-        stacks: ['Java/Kotlin', 'Spring Boot', 'BigQuery', 'Batch', 'Quartz', 'Grafana', 'GCP'],
+        },
+        stacks: ['Kotlin', 'Spring Boot', 'BigQuery', 'MySQL', 'Grafana', 'GCP'],
         icon: <FaChartLine/>,
         chapters: [
             {
@@ -705,20 +873,20 @@ const projects: IProject[] = [
                         kind: 'note',
                         title: {ko: '해결해야 했던 문제', en: 'The problem I had to solve'},
                         desc: {
-                            ko: '서비스마다 로그 형태와 적재 위치가 달라 통합 지표를 뽑는 데 매번 수작업이 필요했습니다. 이를 자동화된 단일 파이프라인으로 대체했습니다.',
-                            en: 'Each service had its own log shape and storage location, so every unified metric took manual work. I replaced that with one automated pipeline.',
+                            ko: '로그가 BigQuery 프로젝트 둘, 데이터셋 셋에 흩어져 있고 Python 수집기 일곱 개가 제각각 통계를 뽑았습니다. 이것을 서버 하나의 파이프라인으로 대체했습니다.',
+                            en: 'Logs sat across two BigQuery projects and three datasets, and seven Python collectors each pulled their own numbers. I replaced that with one server\'s pipeline.',
                         },
                     },
                 ],
             },
             {
                 id: 'domain',
-                label: {ko: '도메인', en: 'Domain'},
-                title: {ko: 'DDD 기반 컨텍스트 분리 설계', en: 'Context separation by DDD'},
+                label: {ko: '구조', en: 'Structure'},
+                title: {ko: '헥사고날 계층과 시스템 모듈', en: 'Hexagonal layers and system modules'},
                 icon: <FaDiagramProject/>,
                 lead: {
-                    ko: '수집·배치·조회가 서로의 변경에 끌려가지 않도록 맥락을 분리했습니다.',
-                    en: 'I separated the contexts so collection, batch and query would not drag each other along on every change.',
+                    ko: '도메인은 포트만 알고, AIR 와 Toyota 는 같은 계층 위의 모듈입니다. 잡 하나를 더하는 일은 Reader · Job · Entity 한 벌을 더하는 일로 끝납니다.',
+                    en: 'The domain knows only its ports, and AIR and Toyota are modules on the same layers. Adding a job means adding one Reader, Job and Entity set.',
                 },
                 blocks: [
                     {
@@ -726,8 +894,8 @@ const projects: IProject[] = [
                         media: {
                             node: <DomainContextDiagram/>,
                             alt: {
-                                ko: '수집, 배치, 조회 컨텍스트 분리 구조 다이어그램',
-                                en: 'Diagram of the separated collection, batch and query contexts'
+                                ko: '헥사고날 계층과 AIR · Toyota 시스템 모듈 구조 다이어그램',
+                                en: 'Diagram of the hexagonal layers and the AIR and Toyota system modules'
                             },
                             frame: 'plain',
                             size: 'full',
@@ -737,50 +905,41 @@ const projects: IProject[] = [
                         kind: 'bullets',
                         items: [
                             {
-                                text: {
-                                    ko: 'Collection Context — 인입 책임만 담당',
-                                    en: 'Collection context — responsible only for ingestion'
-                                },
+                                text: {ko: 'Domain — 도메인 6개와 포트', en: 'Domain — six domains and their ports'},
                                 children: [
                                     {
-                                        ko: '서비스별 로그 스키마 검증 후 원본 그대로 적재',
-                                        en: 'Validates per-service log schemas and stores the raw payload as is'
+                                        ko: 'lifecycle · map · rank · route · search · service. 각 도메인은 Port 인터페이스만 알고 BigQuery 도 MySQL 도 모른다',
+                                        en: 'lifecycle, map, rank, route, search, service. Each domain knows only its Port interface, neither BigQuery nor MySQL',
                                     },
                                     {
-                                        ko: '수집 실패가 집계 로직에 전파되지 않도록 경계 설정',
-                                        en: 'Draws a boundary so ingestion failures never reach aggregation logic'
+                                        ko: '경로 도메인의 재탐색 판정은 BigQuery Geography 로 — ST_DISTANCE 가 100m 를 넘고 앞뒤 300초가 떨어진 점을 이탈로 센다. 출퇴근 피크(07–09 · 16–19시)를 따로 가른다',
+                                        en: 'Route re-search detection runs on BigQuery Geography: a point counts as a deviation when ST_DISTANCE exceeds 100m with 300s on either side; commute peaks (07–09, 16–19) are split out',
                                     },
                                 ],
                             },
                             {
-                                text: {
-                                    ko: 'Batch Context — 집계 규칙의 단일 소유',
-                                    en: 'Batch context — single owner of aggregation rules'
-                                },
+                                text: {ko: 'Application — 청크 동기화와 배치 러너', en: 'Application — chunked sync and the batch runner'},
                                 children: [
                                     {
-                                        ko: '일·월 단위 집계 정의를 한 곳에서 관리',
-                                        en: 'Keeps daily and monthly aggregation definitions in one place'
+                                        ko: 'BigQuery 는 6개월 단위로 읽고 MySQL 은 500행 청크로 쓴다. 청크 하나가 실패해도 다음 청크로 간다',
+                                        en: 'BigQuery is read in six-month windows and MySQL written in 500-row chunks; a failed chunk does not stop the next',
                                     },
                                     {
-                                        ko: '재집계가 필요할 때 특정 기간만 안전하게 재실행',
-                                        en: 'Re-runs only the affected period safely when a recount is needed'
+                                        ko: '전체 동기화는 범위 검증 뒤에야 TRUNCATE 한다 — 조회가 실패해도 테이블이 빈 채로 남지 않게. 실행 결과는 batch_run 에 남긴다',
+                                        en: 'A full sync TRUNCATEs only after the range is validated, so a failed read never leaves an empty table. Every run is recorded in batch_run',
                                     },
                                 ],
                             },
                             {
-                                text: {
-                                    ko: 'Query Context — 조회 성능에 최적화',
-                                    en: 'Query context — optimized for read performance'
-                                },
+                                text: {ko: 'Infrastructure · Presentation', en: 'Infrastructure and presentation'},
                                 children: [
                                     {
-                                        ko: '집계 결과만 별도 저장소에 두어 조회 부하를 분리',
-                                        en: 'Keeps only aggregated results in a separate store to isolate read load'
+                                        ko: '시스템마다 BigQuery 클라이언트와 Reader 를 따로 두고(서비스 계정이 다르다), 저장은 JPA 로. 일간 테이블의 PK 는 날짜라 재적재가 merge 가 된다',
+                                        en: 'Each system has its own BigQuery client and Readers (separate service accounts); persistence is JPA. Daily tables key on the date, so a reload is a merge',
                                     },
                                     {
-                                        ko: '대시보드 요구가 바뀌어도 수집·배치에 영향 없음',
-                                        en: 'Dashboard changes leave collection and batch untouched'
+                                        ko: 'Thymeleaf 운영 대시보드(Caffeine 1시간 캐시)와 Spring AI MCP 서버 — 토큰 해시로 인증하는 도구 6개(목록 · 조회 · 요약 · 동기화 상태 · 동기화 실행)',
+                                        en: 'A Thymeleaf ops dashboard (1-hour Caffeine cache) and a Spring AI MCP server with six token-authenticated tools (list, read, summary, sync status, run sync)',
                                     },
                                 ],
                             },
@@ -790,8 +949,8 @@ const projects: IProject[] = [
                         kind: 'note',
                         title: {ko: '설계 기준', en: 'The design principle'},
                         desc: {
-                            ko: '도메인 간 응집도는 높이고 결합도는 낮춰, 한 컨텍스트의 변경이 다른 컨텍스트의 배포를 요구하지 않도록 했습니다.',
-                            en: 'High cohesion within domains and low coupling between them, so a change in one context never forces a deploy of another.',
+                            ko: '시스템이 하나 더 늘어도 계층은 늘지 않고 모듈이 하나 는다. 수동 동기화는 compareAndSet 으로 한 번에 하나만 돌고, 겹치면 409 로 답한다.',
+                            en: 'One more system adds a module, not a layer. Manual sync runs one at a time behind compareAndSet and answers 409 when it overlaps.',
                         },
                     },
                 ],
@@ -823,39 +982,91 @@ const projects: IProject[] = [
                         label: {ko: '처리 단계별 설계 포인트', en: 'Design decisions at each stage'},
                         steps: [
                             {
-                                title: {ko: '1. 대량 로그 인입', en: '1. Bulk log intake'},
+                                title: {ko: '1. 로그 인입 — 원천 35 테이블', en: '1. Log intake — 35 source tables'},
                                 desc: {
-                                    ko: '다수 내비게이션 서비스에서 발생하는 사용자 로그를 유실 없이 받아내는 것을 1순위 기준으로 삼았습니다.',
-                                    en: 'Receiving user logs from many navigation services without loss was the first priority.',
+                                    ko: 'AIR 앱·SDK 로그는 데이터셋 둘(13 + 13 테이블). Toyota 는 API 응답 AOP 가 JSON 한 줄로 남기고 새벽 3:35 cron 이 GCS 를 거쳐 bq load 로 9 테이블에 적재 — 이 경로를 직접 세웠습니다. 테이블 이름은 event_<op>_a / _x 로 같은 꼴.',
+                                    en: 'AIR app and SDK logs live in two datasets (13 + 13 tables). For Toyota, a response AOP writes one JSON line per call and a 03:35 cron loads it via GCS with bq load into 9 tables — a path I built. Tables share the event_<op>_a / _x naming.',
                                 },
                             },
                             {
-                                title: {ko: '2. BigQuery 일 단위 파티션', en: '2. Daily BigQuery partitions'},
+                                title: {ko: '2. 파티션 범위 — INFORMATION_SCHEMA', en: '2. Partition range — INFORMATION_SCHEMA'},
                                 desc: {
-                                    ko: '날짜 파티션 구조로 스캔 범위를 좁혀 집계 비용과 시간을 함께 줄였습니다.',
-                                    en: 'Date partitioning narrows the scan range, cutting both aggregation cost and time.',
+                                    ko: 'INFORMATION_SCHEMA.PARTITIONS 에서 min/max 날짜를 읽어 동기화 범위를 정하고, 모든 쿼리는 log_dt BETWEEN 으로 파티션만 훑습니다. 날짜 없이 쌓인 __NULL__ 파티션이 범위를 무너뜨린 적이 있어 그 행은 경보로 잡습니다.',
+                                    en: 'The sync window comes from min/max dates in INFORMATION_SCHEMA.PARTITIONS, and every query scans only partitions via log_dt BETWEEN. A __NULL__ partition once broke the window, so rows without a date now raise an alert.',
                                 },
                             },
                             {
-                                title: {ko: '3. Quartz 정기 배치', en: '3. Scheduled Quartz batches'},
+                                title: {ko: '3. @Scheduled 잡 22개', en: '3. 22 @Scheduled jobs'},
                                 desc: {
-                                    ko: '스케줄 기반으로 일·월 집계를 자동 수행하고, 실패 구간만 선별 재처리할 수 있게 구성했습니다.',
-                                    en: 'Daily and monthly aggregation runs on a schedule, with selective reprocessing of only the failed window.',
+                                    ko: 'AIR 일간 9개(06:10) · Toyota 일간 9개(06:30) · 월간 4개(07:00). 월간 잡은 매일 그 달 전체를 다시 적재해 늦게 온 로그를 반영합니다. 실행 결과는 batch_run 에.',
+                                    en: 'Nine AIR daily jobs (06:10), nine Toyota daily jobs (06:30), four monthly jobs (07:00). Monthly jobs reload the whole month every day so late logs are counted. Runs are logged to batch_run.',
                                 },
                             },
                             {
-                                title: {ko: '4. MySQL 통계 적재', en: '4. Loading into MySQL'},
+                                title: {ko: '4. MySQL 집계 — air · toyota 스키마', en: '4. MySQL aggregates — air and toyota schemas'},
                                 desc: {
-                                    ko: '조회 전용 집계 테이블에 결과를 적재해 대시보드가 원본을 직접 때리지 않도록 했습니다.',
-                                    en: 'Results land in read-only aggregate tables so dashboards never hit the raw source.',
+                                    ko: '스키마 둘에 집계 테이블 11 + 11. 기간 동기화는 그 기간을 지우고 다시 넣고, 일간 테이블은 날짜가 PK 라 재적재가 merge 입니다.',
+                                    en: 'Two schemas with 11 + 11 aggregate tables. A range sync deletes and reinserts that range; daily tables key on the date, so a reload is a merge.',
                                 },
                             },
                             {
-                                title: {ko: '5. Grafana 지표 표출', en: '5. Reporting in Grafana'},
+                                title: {ko: '5. Grafana 4 · 운영 대시보드 · MCP', en: '5. Four Grafana boards, an ops dashboard and MCP'},
                                 desc: {
-                                    ko: '경영 지표와 서비스 지표를 동일한 대시보드에서 실시간으로 확인할 수 있게 연동했습니다.',
-                                    en: 'Business and service metrics became visible in real time on the same dashboard.',
+                                    ko: 'AIR·Toyota 일간·월간 대시보드 넷이 MySQL 을 직접 봅니다. 자체 운영 대시보드는 1시간 캐시, MCP 서버는 토큰 인증 도구 6개로 동기화 상태를 묻고 실행합니다.',
+                                    en: 'Four AIR and Toyota daily and monthly boards read MySQL directly. The ops dashboard caches for an hour, and the MCP server exposes six token-authenticated tools to query sync status and trigger runs.',
                                 },
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                /* 근거: air · server-routelib2 · server-toyota-hbnavi · server-traffic-trafficadminv2 · server-united-navi 의 사용자 커밋 */
+                id: 'operations',
+                label: {ko: '내비 운영', en: 'Navi ops'},
+                title: {ko: '내비 서버에서 한 일 — 배경이지 성과가 아니다', en: 'Work on the navigation servers — background, not a headline'},
+                icon: <FaMapLocationDot/>,
+                lead: {
+                    ko: '내비 운영은 특이점 없는 유지보수가 대부분입니다. 부풀리지 않고 커밋에 있는 것만 적습니다.',
+                    en: 'Navigation operations were mostly unremarkable maintenance. Only what the commits show is listed here, without inflation.',
+                },
+                blocks: [
+                    {
+                        kind: 'bullets',
+                        items: [
+                            {
+                                text: {ko: 'iNavi AIR (Groovy · Spring Boot 2.1)', en: 'iNavi AIR (Groovy, Spring Boot 2.1)'},
+                                children: [
+                                    {
+                                        ko: '탐색 프로토콜 v2.2.9 대응 — 위수지역 회피 옵션을 패킷 비트 플래그로. 처음 넣은 플래그 값이 틀려(0x32 · 0x64) 석 달 뒤 0x20 · 0x40 으로 고쳤다',
+                                        en: 'Routing protocol v2.2.9: military-zone avoidance as packet bit flags. The first flag values were wrong (0x32, 0x64) and were corrected to 0x20, 0x40 three months later',
+                                    },
+                                    {
+                                        ko: '로그 API 연동(CCTV · 캐시 이벤트), AIR × 오르다 연동 API, 길찾기 버그 수정, 오퍼월 중복지급 방어(거래 ID + AppKey)',
+                                        en: 'Log API integration (CCTV and cache events), AIR × ORDA integration API, routing bug fix, offerwall double-payment guard keyed on transaction ID and AppKey',
+                                    },
+                                    {
+                                        ko: '핫픽스 롤백 두 번 뒤 12시간 정책 재적용 — 되돌린 것도 커밋에 남아 있다',
+                                        en: 'Two hotfix rollbacks, then the 12-hour policy re-applied — the reversals are in the commits too',
+                                    },
+                                ],
+                            },
+                            {
+                                text: {ko: 'Toyota · 교통 · 통합', en: 'Toyota, traffic and unification'},
+                                children: [
+                                    {
+                                        ko: 'Toyota: API 로그 → BigQuery 적재 경로, 헬스체크 저장소(최근 100건 윈도우 · 실패 코드 집계 — 동료와 함께), CALC_ROUTE_X 신규 규격, CCTV 처리 리팩토링',
+                                        en: 'Toyota: API log path into BigQuery, a health-status store (100-sample window, failure-code tally — with a colleague), the new CALC_ROUTE_X spec, CCTV processing refactor',
+                                    },
+                                    {
+                                        ko: '교통정보 배포 서버: CDN FTP 설정 구조 정리, SKB CDN 로그인 실패 수정',
+                                        en: 'Traffic distribution server: restructured CDN FTP configuration, fixed an SKB CDN login failure',
+                                    },
+                                    {
+                                        ko: 'Groovy 내비 에이전트를 Kotlin 으로 옮기는 통합 서버 — SIRE 클라이언트와 통합 검색 API까지, 아직 초기',
+                                        en: 'A unified server moving the Groovy navigation agent to Kotlin — SIRE client and unified search API so far, still early',
+                                    },
+                                ],
                             },
                         ],
                     },
@@ -887,12 +1098,21 @@ const projects: IProject[] = [
                                 text: {ko: '유지보수 비용 절감', en: 'Lower maintenance cost'},
                                 children: [
                                     {
-                                        ko: '컨텍스트 분리로 변경 영향 범위를 예측 가능하게 만듦',
-                                        en: 'Context separation makes the blast radius of a change predictable'
+                                        ko: 'Python 수집기 일곱 개를 걷고 Kotlin 서버 하나로 — 레거시 통계 코드 제거 커밋 하나로 끝났다',
+                                        en: 'Seven Python collectors replaced by one Kotlin server — the legacy statistics code left in a single commit'
                                     },
                                     {
-                                        ko: '집계 로직 수정 시 수집·조회 계층 배포 불필요',
-                                        en: 'Changing aggregation logic no longer requires deploying collection or query layers'
+                                        ko: '잡 하나를 더하는 일이 Reader · Job · Entity 한 벌이라 영향 범위가 그 셋으로 닫힌다',
+                                        en: 'Adding a job is one Reader, Job and Entity set, so the blast radius closes on those three'
+                                    },
+                                ],
+                            },
+                            {
+                                text: {ko: '남은 것', en: 'What remains'},
+                                children: [
+                                    {
+                                        ko: 'BigQuery 예외를 삼켜 «성공 0행»으로 보이는 자리와 전체 동기화 실패 시 빈 테이블 — 알고 있고 아직 안 고쳤다',
+                                        en: 'A swallowed BigQuery exception that reads as "0 rows, success", and an empty table if a full sync fails — known, not yet fixed'
                                     },
                                 ],
                             },
@@ -915,10 +1135,10 @@ const projects: IProject[] = [
         id: 'smart-library',
         title: {ko: '스마트도서관 시스템 고도화', en: 'Smart Library system modernization'},
         period: {ko: '2021.01 - 2022.06', en: '2021.01 - 2022.06'},
-        role: {ko: 'Full-stack Solution Architect', en: 'Full-stack Solution Architect'},
+        role: {ko: 'Full-Stack Engineer', en: 'Full-Stack Engineer'},
         summary: {
-            ko: '무인 도서 대출·반납 기기, 중앙 서버, 관리자 도구, 모바일 앱을 하나의 운영 플랫폼으로 연결하고 서비스 전반의 검색·동기화·이용자 경험을 고도화했습니다.',
-            en: 'I connected self-service loan kiosks, the central server, admin tools and the mobile app into one operating platform, and modernized search, synchronization and the overall user experience.',
+            ko: '무인 도서관 기기 · 서버 · 앱을 한 플랫폼으로 묶고 검색 병목을 걷어낸 고도화.',
+            en: 'Modernization that tied kiosks, server and app into one platform and removed the search bottleneck.',
         },
         metrics: [
             {value: '80x', label: {ko: '검색 응답 개선', en: 'Search response improvement'}, delta: 'p99 7.5s → 93ms'},
@@ -940,18 +1160,21 @@ const projects: IProject[] = [
                 en: 'Improved admin tooling and the hybrid mobile app to strengthen field operations and user access',
             },
         ],
-        features: [
-            {ko: '무인 도서 대출·반납 서비스 운영 플랫폼 통합', en: 'Unified the self-service loan and return operating platform'},
-            {
-                ko: '기기 데이터 동기화 및 외부 도서 정보 연계 구조 고도화',
-                en: 'Modernized device data sync and external book data integration'
+        story: {
+            problem: {
+                ko: '소켓 미들웨어 뒤에서 검색 p99 가 7.5초. 연결 유실과 스레드 락이 반복됐고 스택은 Node · Angular · Go 로 갈라져 있었다.',
+                en: 'Search p99 was 7.5s behind a socket middleware that kept dropping connections and locking threads; the stack was split across Node, Angular and Go.',
             },
-            {
-                ko: '관리자 프로그램과 모바일 앱 중심의 운영·사용자 경험 개선',
-                en: 'Improved operations and user experience across the admin program and mobile app'
+            action: {
+                ko: 'Spring RoutingDataSource 로 기기 DB 에 직접 붙여 미들웨어를 걷고, 스택을 Java/Spring 하나로 모으고, 하이브리드 앱을 두 스토어에 출시.',
+                en: 'Routed straight to kiosk databases with Spring RoutingDataSource and removed the middleware, unified the stack on Java/Spring, shipped the hybrid app to both stores.',
             },
-        ],
-        stacks: ['Java', 'Spring MVC/Boot', 'MyBatis/JPA', 'MS-SQL', 'Android', 'iOS'],
+            result: {
+                ko: 'p99 7.5s → 93ms (약 80배 · 100 vu/s 검증). 유지보수 단위 3 → 1, 조회 단계 4 → 2.',
+                en: 'p99 7.5s → 93ms (~80x, verified at 100 vu/s). Maintenance units 3 → 1, browsing steps 4 → 2.',
+            },
+        },
+        stacks: ['Java', 'Spring', 'MyBatis / JPA', 'MS-SQL', 'Android · iOS'],
         icon: <FaMobileScreenButton/>,
         thumbnail: {
             src: SmartLibraryDeviceImg,
@@ -1377,13 +1600,5 @@ const projects: IProject[] = [
     },
 ];
 
-export const projectHighlights = [
-    {label: 'Cloud / DevOps', icon: <FaAws/>},
-    {label: 'Spring Backend', icon: <SiSpringboot/>},
-    {label: 'Container Deploy', icon: <SiDocker/>},
-    {label: 'Data Pipeline', icon: <FaDatabase/>},
-    {label: 'Monitoring', icon: <SiGrafana/>},
-    {label: 'Architecture', icon: <FaLayerGroup/>},
-];
 
 export default projects;

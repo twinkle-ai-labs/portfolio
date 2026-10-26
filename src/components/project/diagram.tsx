@@ -146,7 +146,7 @@ export const AwsTopologyDiagram = () => (
                 caption: {ko: '컨테이너 기반 API 서버', en: 'Container-based API servers'},
                 tone: 'blue',
                 nodes: [
-                    {label: 'EC2', sub: {ko: 'Docker 런타임', en: 'Docker runtime'}, icon: <SiAmazonec2/>, tone: 'blue'},
+                    {label: 'EC2', sub: {ko: '상용 2대', en: 'Two prod instances'}, icon: <SiAmazonec2/>, tone: 'blue'},
                     {label: 'Spring Boot', sub: {ko: 'Kotlin API', en: 'Kotlin API'}, icon: <SiSpringboot/>, tone: 'blue'},
                     {label: 'Lambda', sub: {ko: '비동기 후처리', en: 'Async post-processing'}, icon: <SiAwslambda/>, tone: 'blue'},
                 ],
@@ -173,7 +173,7 @@ export const CicdPipelineDiagram = () => (
             {label: 'Jenkins', sub: {ko: '빌드 · 테스트 자동 트리거', en: 'Automated build & test triggers'}, icon: <SiJenkins/>, tone: 'blue'},
             {label: 'Docker', sub: {ko: '이미지 빌드 · 태깅', en: 'Image build & tagging'}, icon: <SiDocker/>, tone: 'blue'},
             {label: 'Harbor', sub: {ko: '사설 레지스트리 적재', en: 'Private registry push'}, icon: <SiHarbor/>, tone: 'violet'},
-            {label: 'Deploy', sub: {ko: 'EC2 무중단 롤아웃', en: 'Zero-downtime rollout to EC2'}, icon: <SiAmazonec2/>, tone: 'green'},
+            {label: 'Deploy', sub: {ko: '개발 서버 SSH 배포 · 상용 2대', en: 'SSH deploy to dev · two prod servers'}, icon: <SiAmazonec2/>, tone: 'green'},
         ]}
     />
 );
@@ -181,15 +181,15 @@ export const CicdPipelineDiagram = () => (
 /** 오르다: 로그 수집 · 관측 체계 */
 export const ObservabilityDiagram = () => (
     <TierDiagram
-        caption={{ko: 'Filebeat · Prometheus · Grafana 관측 체계', en: 'Observability stack on Filebeat, Prometheus and Grafana'}}
+        caption={{ko: 'Logstash 로그 · Prometheus · Grafana 관측 체계', en: 'Observability stack on Logstash logs, Prometheus and Grafana'}}
         tiers={[
             {
                 label: 'Collect',
                 caption: {ko: '로그 · 메트릭 수집', en: 'Log & metric collection'},
                 tone: 'blue',
                 nodes: [
-                    {label: 'Filebeat', sub: {ko: '애플리케이션 로그 추적', en: 'Application log shipping'}, icon: <SiElasticstack/>, tone: 'blue'},
-                    {label: 'Exporter', sub: {ko: '시스템 자원 메트릭', en: 'System resource metrics'}, icon: <FaGaugeHigh/>, tone: 'blue'},
+                    {label: 'Logstash', sub: {ko: '예외 로그 파일 · 시간 롤링', en: 'Exception log files, hourly rolling'}, icon: <SiElasticstack/>, tone: 'blue'},
+                    {label: 'Micrometer', sub: {ko: 'HTTP · JVM · Hikari 메트릭', en: 'HTTP, JVM and Hikari metrics'}, icon: <FaGaugeHigh/>, tone: 'blue'},
                 ],
             },
             {
@@ -197,7 +197,7 @@ export const ObservabilityDiagram = () => (
                 caption: {ko: '시계열 저장 · 임계치 판정', en: 'Time-series storage · threshold rules'},
                 tone: 'amber',
                 nodes: [
-                    {label: 'Prometheus', sub: {ko: '시계열 저장 · 알림 룰', en: 'Time-series store & alert rules'}, icon: <SiPrometheus/>, tone: 'amber'},
+                    {label: 'Prometheus', sub: {ko: '15초 수집 · 규칙 4종', en: '15s scrape, four rules'}, icon: <SiPrometheus/>, tone: 'amber'},
                 ],
             },
             {
@@ -205,9 +205,9 @@ export const ObservabilityDiagram = () => (
                 caption: {ko: '시각화 · 선제 통보', en: 'Visualization · proactive alerting'},
                 tone: 'green',
                 nodes: [
-                    {label: 'Grafana', sub: {ko: '대시보드 · 임계치 패널', en: 'Dashboards & threshold panels'}, icon: <SiGrafana/>, tone: 'green'},
-                    {label: 'Slack', sub: {ko: '장애 알림 채널 연동', en: 'Incident alert channel'}, icon: <SiSlack/>, tone: 'green'},
-                    {label: 'On-call', sub: {ko: '선제 대응 · 원인 추적', en: 'Proactive response & root cause'}, icon: <FaBell/>, tone: 'green'},
+                    {label: 'Grafana', sub: {ko: 'HTTP · JVM · Hikari · 로그', en: 'HTTP, JVM, Hikari and logs'}, icon: <SiGrafana/>, tone: 'green'},
+                    {label: 'Slack', sub: {ko: '예외 로그 채널', en: 'Exception log channel'}, icon: <SiSlack/>, tone: 'green'},
+                    {label: 'On-call', sub: {ko: 'p99 스크립트 · 원인 추적', en: 'p99 script & root cause'}, icon: <FaBell/>, tone: 'green'},
                 ],
             },
         ]}
@@ -217,54 +217,60 @@ export const ObservabilityDiagram = () => (
 /** 통합통계: 도메인 분리(DDD) 구조 */
 export const DomainContextDiagram = () => (
     <TierDiagram
-        caption={{ko: '수집 · 배치 · 조회 컨텍스트 분리 구조', en: 'Collection, batch and query contexts kept separate'}}
+        caption={{ko: '헥사고날 계층 위의 AIR · Toyota 모듈', en: 'AIR and Toyota modules on hexagonal layers'}}
         tiers={[
             {
-                label: 'Collection Context',
-                caption: {ko: '원시 로그 인입', en: 'Raw log ingestion'},
+                label: 'System modules',
+                caption: {ko: '시스템마다 모듈 하나', en: 'One module per system'},
                 tone: 'blue',
                 nodes: [
                     {
-                        label: {ko: '아이나비 에어', en: 'INAVI AIR'},
-                        sub: {ko: '내비게이션 사용 로그', en: 'Navigation usage logs'},
+                        label: {ko: '아이나비 에어', en: 'iNavi AIR'},
+                        sub: {ko: '일간 9 · 월간 2 잡', en: '9 daily, 2 monthly jobs'},
                         icon: <FaMobileScreenButton/>,
                         tone: 'blue',
                     },
                     {
-                        label: {ko: '토요타 하이브리드', en: 'Toyota hybrid'},
-                        sub: {ko: '차량 연동 로그', en: 'In-vehicle logs'},
+                        label: 'Toyota',
+                        sub: {ko: '일간 9 · 월간 2 잡', en: '9 daily, 2 monthly jobs'},
                         icon: <FaCube/>,
                         tone: 'blue',
                     },
                     {
-                        label: {ko: '수집 API', en: 'Ingestion API'},
-                        sub: {ko: '스키마 검증 · 적재', en: 'Schema validation & load'},
+                        label: {ko: 'batch · center · mcp', en: 'batch · center · mcp'},
+                        sub: {ko: '러너 · 운영 대시보드 · MCP', en: 'Runner, ops dashboard, MCP'},
                         icon: <FaServer/>,
                         tone: 'blue',
                     },
                 ],
             },
             {
-                label: 'Batch Context',
-                caption: {ko: '정기 집계 · 정제', en: 'Scheduled aggregation & cleansing'},
+                label: 'Domain · Application',
+                caption: {ko: '도메인 6개는 포트만 안다', en: 'Six domains that know only their ports'},
                 tone: 'amber',
                 nodes: [
-                    {label: 'BigQuery', sub: {ko: '일 단위 파티션 원본', en: 'Daily-partitioned source'}, icon: <SiGooglebigquery/>, tone: 'amber'},
                     {
-                        label: 'Quartz Batch',
-                        sub: {ko: '일 · 월 집계 스케줄', en: 'Daily & monthly schedules'},
+                        label: {ko: '도메인 6', en: '6 domains'},
+                        sub: {ko: 'lifecycle · map · rank · route · search · service', en: 'lifecycle · map · rank · route · search · service'},
+                        icon: <FaLayerGroup/>,
+                        tone: 'amber',
+                    },
+                    {
+                        label: {ko: '청크 동기화', en: 'Chunked sync'},
+                        sub: {ko: '6개월 읽기 · 500행 쓰기', en: '6-month reads, 500-row writes'},
                         icon: <FaClockRotateLeft/>,
                         tone: 'amber',
                     },
                 ],
             },
             {
-                label: 'Query Context',
-                caption: {ko: '사용자 · 경영 지표 조회', en: 'User & business metric queries'},
+                label: 'Infrastructure',
+                caption: {ko: '어댑터', en: 'Adapters'},
                 tone: 'green',
                 nodes: [
-                    {label: 'MySQL', sub: {ko: '집계 결과 적재', en: 'Aggregated result store'}, icon: <SiMysql/>, tone: 'green'},
-                    {label: 'Grafana', sub: {ko: '실시간 분석 대시보드', en: 'Real-time analytics dashboard'}, icon: <SiGrafana/>, tone: 'green'},
+                    {label: 'BigQuery', sub: {ko: '시스템별 클라이언트 · Reader', en: 'Per-system client & Readers'}, icon: <SiGooglebigquery/>, tone: 'green'},
+                    {label: 'MySQL', sub: {ko: 'JPA · air / toyota 스키마', en: 'JPA · air / toyota schemas'}, icon: <SiMysql/>, tone: 'green'},
+                    {label: 'Grafana', sub: {ko: '대시보드 4', en: '4 dashboards'}, icon: <SiGrafana/>, tone: 'green'},
                 ],
             },
         ]}
@@ -293,7 +299,7 @@ export const StatisticsPipelineDiagram = () => (
             },
             {
                 label: {ko: '정기 배치', en: 'Scheduled batch'},
-                sub: {ko: 'Quartz 스케줄 집계 · 정제', en: 'Quartz-scheduled aggregation'},
+                sub: {ko: '@Scheduled 잡 22개', en: '22 @Scheduled jobs'},
                 icon: <FaClockRotateLeft/>,
                 tone: 'amber',
             },

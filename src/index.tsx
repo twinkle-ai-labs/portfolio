@@ -50,6 +50,8 @@ const GA_MEASUREMENT_ID = 'G-12M0W1PBET';
 declare global {
     interface Window {
         gtag?: (...args: any[]) => void;
+        /** 우리 계측의 핑 — template/index.html 이 단다 */
+        __twinkleBeacon?: () => void;
     }
 }
 
@@ -57,6 +59,9 @@ const AnalyticsTracker = () => {
     const location = useLocation();
 
     React.useEffect(() => {
+        // 우리 계측 — gtag 가 없어도(차단돼도) 간다. 경로마다 한 장
+        window.__twinkleBeacon?.();
+
         if (typeof window.gtag !== 'function') {
             return;
         }

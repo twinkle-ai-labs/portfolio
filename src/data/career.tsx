@@ -56,7 +56,7 @@ const careers: ICareer[] = [
         period: [new Date('2024.12.16'), new Date()],
         link: 'https://www.inavisystems.com/',
         dotColor: 'info',
-        position: {ko: 'Lead Backend Engineer · DevOps', en: 'Lead Backend Engineer · DevOps'},
+        position: {ko: 'Backend Engineer · 주임 연구원', en: 'Backend Engineer · Associate Researcher'},
         features: [
             {
                 ko: '신규 서비스의 서버·인프라 아키텍처 전주기 단독 설계 (Owner)',
@@ -100,16 +100,8 @@ const careers: ICareer[] = [
         /* 단기 계약 건이라 개별 사이트를 나열하지 않습니다 — 규모는 features 의 "5종" 으로만 전달합니다. */
         features: [
             {
-                ko: '그누보드5 기반 병원·기업 홈페이지 5종 퍼블리싱',
-                en: 'Published five hospital and corporate websites on Gnuboard5',
-            },
-            {
-                ko: 'LAMP 스택 환경에서 사이트 운영 및 유지 관리',
-                en: 'Operated and maintained the sites on a LAMP stack',
-            },
-            {
-                ko: '반응형 레이아웃 구현 및 크로스 브라우징 대응',
-                en: 'Implemented responsive layouts with cross-browser support',
+                ko: '그누보드5 · LAMP 기반 병원·기업 홈페이지 5종 퍼블리싱과 운영',
+                en: 'Published and ran five hospital and corporate websites on Gnuboard5 / LAMP',
             },
         ],
     },
@@ -125,20 +117,8 @@ const careers: ICareer[] = [
         position: {ko: 'Web Maintenance / Security & SEO Engineer', en: 'Web Maintenance / Security & SEO Engineer'},
         features: [
             {
-                ko: '27개 언어를 제공하는 PHP 다국어 콘텐츠 플랫폼 단독 유지보수',
-                en: 'Sole maintainer of a PHP multilingual content platform serving 27 languages',
-            },
-            {
-                ko: 'CSRF 방어와 관리자 Role 정비 등 보안·인증·권한 체계 개선',
-                en: 'Hardened security, authentication and authorization — CSRF defense, admin role cleanup',
-            },
-            {
-                ko: '키 교체가 가능한 구조로 개인정보 암호화 체계 정립',
-                en: 'Established personal-data encryption designed around rotatable keys',
-            },
-            {
-                ko: '글로벌 SEO 구조 정리 및 운영 자동화 방향 수립',
-                en: 'Restructured global SEO and set the direction for operational automation',
+                ko: '27개 언어 PHP 콘텐츠 플랫폼 단독 유지보수 — CSRF 방어 · 관리자 권한 정비 · 키 교체 가능한 개인정보 암호화',
+                en: 'Sole maintainer of a 27-language PHP content platform — CSRF defense, admin role cleanup, rotatable-key encryption of personal data',
             },
         ],
         projects: [
@@ -164,7 +144,7 @@ const careers: ICareer[] = [
         dotColor: 'primary',
         logo: (<LazyLoadImage src={NicomLogo} alt={"NRobotics"} title={"NRobotics"}/>),
         logoColor: '#fff',
-        position: {ko: 'Full-Stack Engineer', en: 'Full-Stack Engineer'},
+        position: {ko: 'Full-Stack Engineer · 대리', en: 'Full-Stack Engineer · Assistant Manager'},
         features: [
             {
                 ko: '기획부터 배포까지 SDLC 전 과정을 아우르는 10개+ 프로젝트 주도',

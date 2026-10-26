@@ -26,7 +26,8 @@ const skillGroups = [
         sections: [
             {label: 'Database', items: ['MySQL', 'MS-SQL', 'PostgreSQL']},
             {label: 'Analytics', items: ['BigQuery']},
-            {label: 'Batch', items: ['Spring Batch', 'Quartz']},
+            {label: 'Batch', items: ['Spring @Scheduled', 'Quartz']},
+            {label: 'Cache', items: ['Caffeine']},
         ],
     },
     {
@@ -34,7 +35,9 @@ const skillGroups = [
         sections: [
             {label: 'Cloud', items: ['AWS', 'GCP']},
             {label: 'Deploy', items: ['Docker', 'Jenkins', 'Harbor', 'Nginx']},
-            {label: 'Monitoring', items: ['Filebeat', 'Slack', 'Prometheus', 'Grafana']},
+            {label: 'Monitoring', items: ['Logstash', 'Slack', 'Prometheus', 'Grafana']},
+            /* 운영한 적은 없다 — 단일 서비스 · 1인 운영이라 Docker + Jenkins + Harbor 로 충분했다. 개념만 안다고 따로 적는다. */
+            {label: 'Concept only', items: ['Kubernetes']},
         ],
     },
     {

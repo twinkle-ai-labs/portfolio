@@ -34,7 +34,7 @@ const config: IConfig = {
         tel: '010-5705-9594',
         email: 'twinkle.ai.labs@gmail.com',
         degree: 'Bachelor of Computer Engineering',
-        job: {ko: '백엔드 개발자', en: 'Backend Developer'}
+        job: {ko: '백엔드 엔지니어', en: 'Backend Engineer'}
     }
 }
 
