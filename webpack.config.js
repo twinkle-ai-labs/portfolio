@@ -4,6 +4,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 const CnameWebpackPlugin = require('cname-webpack-plugin');
 const path = require("path");
+const seo = require("./seo.config.cjs");
 const webpack = require("webpack");
 
 module.exports = (env, argv) => {
@@ -91,6 +92,7 @@ module.exports = (env, argv) => {
             }),
             new HtmlWebpackPlugin({
                 template: "./template/index.html",
+                templateParameters: { seo, noindex: false },
                 favicon: "./template/favicon.png",
                 inject: "body",
                 minify:
@@ -101,6 +103,16 @@ module.exports = (env, argv) => {
                         }
                         : false,
             }),
+            ...[
+                { filename: "files/index.html", title: "자료 보관함 | Twinkle’s Portfolio", description: "접근 권한이 필요한 개인 자료 보관함입니다.", path: "files/" },
+                { filename: "space/index.html", title: "Twinkle Space | Twinkle’s Portfolio", description: "김희정(twinkle)의 포트폴리오에서 탐색하는 3D 공간입니다.", path: "space/" },
+            ].map(page => new HtmlWebpackPlugin({
+                filename: page.filename,
+                template: "./template/index.html",
+                templateParameters: { seo: { ...seo, title: page.title, description: page.description, url: seo.url + page.path }, noindex: true },
+                inject: "body",
+                chunks: ["main"],
+            })),
             // dotenv 사용을 위한 설정
             new Dotenv(),
             new CleanWebpackPlugin(),

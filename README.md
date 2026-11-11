@@ -185,3 +185,7 @@ template/                 index.html · manifest.json · robots.txt · sitemap.x
 `docs/DESIGN.md`에는 유리 헤더 · `clamp()` 반응형 · Timeline · Profile 구성 ·
 DevOps ∞ 다이어그램을 만들며 **실패한 접근까지** 남겨 두었습니다.
 같은 곳을 다시 손볼 일이 있다면 먼저 읽어 보세요.
+
+## SEO
+
+검색·공유 정보와 정본 주소는 [SEO 규칙](docs/seo.md)을 따릅니다. 빌드에 포함된 `seo:check`가 내보낸 HTML과 사이트맵을 검사합니다.

@@ -43,9 +43,10 @@
   },
   "scripts": {
     "predeploy": "npm run build",
-    "build": "webpack --mode=production",
+    "build": "webpack --mode=production && npm run seo:check",
     "start": "webpack serve --mode=development --open --hot --progress",
-    "deploy": "gh-pages -d dist --cname "
+    "deploy": "gh-pages -d dist --cname ",
+    "seo:check": "python3 scripts/check-seo.py"
   },
   "eslintConfig": {
     "extends": [

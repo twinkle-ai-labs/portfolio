@@ -11,6 +11,8 @@ import reportWebVitals from './reportWebVitals';
 import {Provider} from "react-redux";
 import {store} from "@Store/index";
 
+import RouteMetadata from "./components/RouteMetadata";
+
 const MainApp = React.lazy(() => import("@Pages/main"));
 const SpaceApp = React.lazy(() => import("@Pages/space"));
 const ErrorApp = React.lazy(() => import("@Pages/error"));
@@ -78,6 +80,7 @@ const AnalyticsTracker = () => {
 const AppShell = ({children, fallback = <Root/>}: { children: React.ReactNode, fallback?: React.ReactNode }) => {
     return (
         <React.Suspense fallback={fallback}>
+            <RouteMetadata/>
             <AnalyticsTracker/>
             {children}
         </React.Suspense>

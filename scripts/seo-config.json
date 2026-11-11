@@ -1,0 +1,9 @@
+{
+  "base": "https://me.twinklelabs.kr/",
+  "output": "dist",
+  "noindex": [
+    "404.html",
+    "files/index.html",
+    "space/index.html"
+  ]
+}

@@ -4,10 +4,9 @@
 <head>
     <meta charset="utf-8"/>
 
-    <title><%= process.env.TITLE_FULL %></title>
-    <meta name="title" content="<%= process.env.TITLE_FULL %>">
-    <meta name="description" content="<%= process.env.DESCRIPTION %>">
-    <meta name="keywords" content="<%= process.env.KEYWORDS %>">
+    <title><%= seo.title %></title>
+    <meta name="title" content="<%= seo.title %>">
+    <meta name="description" content="<%= seo.description %>">
     <meta name="author" content="김희정, Heejeong Kim">
     <meta name="creator" content="김희정">
     <meta name="publisher" content="김희정">
@@ -21,52 +20,54 @@
     <meta name="theme-color" content="#110D19">
     <meta name="color-scheme" content="dark">
 
-    <meta name="apple-mobile-web-app-title" content="<%= process.env.TITLE %>">
-    <meta name="application-name" content="<%= process.env.TITLE %>">
+    <meta name="apple-mobile-web-app-title" content="<%= seo.name %>">
+    <meta name="application-name" content="<%= seo.name %>">
     <meta name="HandheldFriendly" content="true">
     <meta name="format-detection" content="telephone=no">
 
     <!-- Naver Site Check -->
     <meta name="naver-site-verification" content="c63d20bff1fe846cca0c323859ff8ba290be8ce0" />
 
-    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-    <meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+    <meta name="robots" content="<%= noindex ? 'noindex,follow' : 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1' %>">
+    <meta name="googlebot" content="<%= noindex ? 'noindex,follow' : 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1' %>">
 
     <!-- Font -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 
     <!-- Canonical -->
-    <link rel="canonical" href="<%= process.env.CUSTOM_URL %>">
+    <link rel="canonical" href="<%= seo.url %>">
     <link rel="manifest" href="/manifest.json">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:locale" content="ko_KR">
-    <meta property="og:url" content="<%= process.env.CUSTOM_URL %>">
-    <meta property="og:title" content="<%= process.env.TITLE_FULL %>">
-    <meta property="og:description" content="<%= process.env.DESCRIPTION %>">
-    <meta property="og:image" content="<%= process.env.CUSTOM_URL %>og.png">
+    <meta property="og:url" content="<%= seo.url %>">
+    <meta property="og:title" content="<%= seo.title %>">
+    <meta property="og:description" content="<%= seo.description %>">
+    <meta property="og:image" content="https://me.twinklelabs.kr/og.png">
     <meta property="og:image:alt" content="김희정 백엔드 엔지니어 포트폴리오">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:site_name" content="<%= process.env.TITLE %>">
+    <meta property="og:site_name" content="<%= seo.name %>">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="<%= process.env.TITLE_FULL %>">
-    <meta name="twitter:image" content="<%= process.env.CUSTOM_URL %>og.png">
+    <meta name="twitter:title" content="<%= seo.title %>">
+    <meta name="twitter:image" content="https://me.twinklelabs.kr/og.png">
     <meta name="twitter:image:alt" content="김희정 백엔드 엔지니어 포트폴리오">
-    <meta name="twitter:description" content="<%= process.env.DESCRIPTION %>">
+    <meta name="twitter:description" content="<%= seo.description %>">
 
+    <% if (!noindex) { %>
     <script type="application/ld+json">
         {
             "@context": "https://schema.org",
             "@type": "Person",
+            "@id": "https://me.twinklelabs.kr/#person",
             "name": "김희정",
-            "alternateName": "Heejeong Kim",
-            "url": "<%= process.env.CUSTOM_URL %>",
+            "alternateName": ["Heejeong Kim", "twinkle"],
+            "url": "<%= seo.url %>",
             "email": "mailto:twinkle.ai.labs@gmail.com",
             "jobTitle": "Backend Engineer",
             "worksFor": {
@@ -90,6 +91,7 @@
             ]
         }
     </script>
+    <% } %>
 
     <!-- GA4 — 광고 칸은 닫고, 통계 칸만 연다 (2026-10-22 · Founder «GA 정상화»).
          네 칸 전부 denied 면 GA4 는 핑을 보고서에 싣지 않아 사용자 · 페이지뷰가 0 이었다(Observatory 에서 봤다).
@@ -174,7 +176,14 @@
     <!-- End Single Page Apps for GitHub Pages -->
 </head>
 <body data-theme="dark">
-    <div id="root"></div>
+    <div id="root">
+        <main style="max-width:64rem;margin:4rem auto;padding:2rem;color:#FAF7FF;background:#110D19;font-family:sans-serif">
+            <h1><%= seo.title %></h1>
+            <p><%= seo.description %></p>
+            <p><a href="https://twinklelabs.kr/ko/">Twinkle AI Labs</a> · <a href="https://blog.twinklelabs.kr/ko/">개발 기록</a> · <a href="https://github.com/twinkle-ai-labs">GitHub</a></p>
+            <noscript><p>프로젝트 상세와 인터랙티브 화면을 보려면 JavaScript를 활성화해주세요.</p></noscript>
+        </main>
+    </div>
     <div id="modal"></div>
 </body>
 </html>

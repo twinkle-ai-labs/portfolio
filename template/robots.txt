@@ -1,6 +1,4 @@
-# https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+Allow: /
 
 Sitemap: https://me.twinklelabs.kr/sitemap.xml
-Sitemap: https://me.twinklelabs.kr/python-coding-bible/sitemap.xml
